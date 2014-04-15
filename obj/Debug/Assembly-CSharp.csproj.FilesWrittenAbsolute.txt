@@ -1,0 +1,6 @@
+/Users/maya/Desktop/Test-Video-Record/Temp/bin/Debug/UnityEngine.dll
+/Users/maya/Desktop/Test-Video-Record/Temp/bin/Debug/UnityEditor.dll
+/Users/maya/Desktop/Test-Video-Record/Temp/bin/Debug/Mono.Cecil.dll
+/Users/maya/Desktop/Test-Video-Record/Temp/bin/Debug/nunit.framework.dll
+/Users/maya/Desktop/Test-Video-Record/Temp/bin/Debug/Unity.DataContract.dll
+/Users/maya/Desktop/Test-Video-Record/Temp/bin/Debug/ICSharpCode.NRefactory.dll
