@@ -3,6 +3,7 @@ using System.Collections;
 
 public class ButtonBar : MonoBehaviour
 {
+	public bool isMain;
 	public GameObject[] mButtons;
 
 	public float offset_x;
@@ -24,9 +25,9 @@ public class ButtonBar : MonoBehaviour
 
 	const float buttonZDepth = 10;
 	const float buttonBarZDepth = 20;
-	const float buttonBarRatio = 0.1f;
-	const float buttonMarginRatio = 0.0125f;
-	const float buttonRatio = 0.09f;
+	float buttonBarRatio = 0.1f;
+	float buttonMarginRatio = 0.0125f;
+	float buttonRatio = 0.088f;
 
 	float buttonSize;
 	float buttonMargin;
@@ -37,18 +38,35 @@ public class ButtonBar : MonoBehaviour
 	{
 		state=States.idle;
 
-		buttonSize = Screen.width*buttonRatio;
-		buttonMargin = Screen.width*buttonMarginRatio;
+		if(!isMain || (isMain && CheckRatios())){
+			buttonSize = Screen.width*buttonRatio;
+			buttonMargin = Screen.width*buttonMarginRatio;
+			GetScale();
+		}
 
-		//(Screen.width*buttonBarRatio)/2, Screen.height/2, Screen.width*buttonBarRatio, Screen.height
-
-		GetScale();
 		GetPosition();
 
 		transform.localScale = new Vector3(scale_x, scale_y, 1);
 		transform.position = new Vector3(pos_x, pos_y, buttonBarZDepth);
 
 		SetButtons();
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Si no caben 5 botones en la botonera principal hay que reajustar los ratios
+	//Puede ocurrir con ratios de pantalla muy largos -> 2:1
+	bool CheckRatios()
+	{
+		float totalHeight = 5*buttonRatio*Screen.width+6*buttonMarginRatio*Screen.width;
+		if(totalHeight > Screen.height){
+			//Los botones son 7 veces mas grandes que los margenes entre ellos
+			buttonMargin = Screen.height/41;
+			buttonSize = 7*buttonMargin;
+			scale_x = 1.13f*buttonSize;
+			scale_y = Screen.height;
+			return false;
+		}
+		return true;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,8 +82,8 @@ public class ButtonBar : MonoBehaviour
 
 	void GetPosition()
 	{
-		pos_x = scale_x/2;
-		pos_y = Screen.height/2;
+		pos_x = scale_x/2.0f;
+		pos_y = Screen.height/2.0f;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
