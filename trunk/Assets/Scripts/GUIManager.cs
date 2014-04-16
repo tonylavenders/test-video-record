@@ -23,8 +23,8 @@ public class GUIManager : MonoBehaviour
 
 	void SetGUICamera()
 	{
-		transform.position = new Vector3(Screen.width/2, Screen.height/2, cameraZDepth);
-		camera.orthographicSize = Screen.height/2;
+		transform.position = new Vector3(Screen.width/2.0f, Screen.height/2.0f, cameraZDepth);
+		camera.orthographicSize = Screen.height/2.0f;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
