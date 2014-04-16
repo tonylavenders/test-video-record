@@ -6,7 +6,6 @@ namespace TVR {
 	public static class Data {
 		private static SqliteDatabase db = new SqliteDatabase();
 		private static List<Scene> mEscenes;
-
 		public static Scene selEpisode;
 
 		public static List<Scene> Episode {
@@ -96,7 +95,6 @@ namespace TVR {
 		}*/
 		
 		public static void closeDB() {
-			//if(!DEBUG)
 			db.ExecuteNonQuery("VACUUM");
 			db.Close();
 			db=null;
