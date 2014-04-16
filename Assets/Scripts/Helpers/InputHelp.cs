@@ -1,9 +1,7 @@
 using UnityEngine;
 
-namespace Helpers
-{	
-	public static class InputHelp
-	{
+namespace TVR.Helpers {	
+	public static class InputHelp {
 		private static Vector2 mMousePositionYDown = Vector2.zero;
 		private static Vector2 mMouseInitPosYDown = Vector2.zero;
 		private static Vector2 mMouseOffsetPosYDown = Vector2.zero;

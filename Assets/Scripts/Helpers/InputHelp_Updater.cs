@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Helpers;
+using TVR.Helpers;
 
 public class InputHelp_Updater : MonoBehaviour {
 	// Update is called once per frame
