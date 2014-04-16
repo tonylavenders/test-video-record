@@ -9,7 +9,7 @@ public class CustomImportSettings : AssetPostprocessor
 	{
 		TextureImporter textureImporter = assetImporter as TextureImporter;
 
-		if(textureImporter.assetPath.Contains("Docs") || textureImporter.assetPath.Contains("InterfaceTextures"))
+		if(textureImporter.assetPath.Contains("Interface"))
 		{
 			textureImporter.textureType = TextureImporterType.GUI;
 			textureImporter.npotScale = TextureImporterNPOTScale.None;
