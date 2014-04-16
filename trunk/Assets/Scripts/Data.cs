@@ -5,20 +5,27 @@ using System;
 namespace TVR {	
 	public static class Data {
 		private static SqliteDatabase db = new SqliteDatabase();
-		/*public static Dictionary<int, Episode> Episodes;
-		public static Episode selEpisode;*/
+		private static List<Scene> mEscenes;
+
+		public static Scene selEpisode;
+
+		public static List<Scene> Episode {
+			get { return mEscenes; }
+		}
 
 		public static void Init() {
 			createDataBase();
-			/*Episodes = new Dictionary<int, Episode>();
 			db.ExecuteNonQuery("VACUUM");
-		
+			mEscenes = new List<Scene>();
+			/*Episodes = new Dictionary<int, Episode>();
+
 			DataTable epis = db.ExecuteQuery("SELECT Episodes.IdEpisode, Number, Title, Information FROM Episodes INNER JOIN EpisodesInfo ON Episodes.IdEpisode = EpisodesInfo.IdEpisode");
 			Episode epi;
 			foreach(DataRow row in epis.Rows) {
 				epi = new Episode((int)row["IdEpisode"], (int)row["Number"], (string)row["Title"], (string)row["Information"]);
 				Episodes.Add(epi.IdEpisode, epi);
 			}*/
+			mEscenes.Sort();
 		}
 		
 		private static void createDataBase() {
@@ -27,109 +34,40 @@ namespace TVR {
 			
 			if(exist && Globals.CLEAR_DATA) {
 				System.IO.File.Delete(Globals.DataBase);
+				if(System.IO.Directory.Exists(Globals.RecordedSoundsPath))
+					System.IO.Directory.Delete(Globals.RecordedSoundsPath, true);
 				exist = false;
 			}
 			
 			db.Open(Globals.DataBase);
 			db.ExecuteNonQuery("PRAGMA foreign_keys=ON;");
-			//db.ExecuteQuery("PRAGMA encoding = 'UTF-16le';");
-			if(exist) {
+			if(exist)
 				VersionDB=(int)db.ExecuteQuery("pragma user_version;")[0]["user_version"];
-			}
 			
-			if(!System.IO.Directory.Exists(Globals.ScreenshotsPath))
-				System.IO.Directory.CreateDirectory(Globals.ScreenshotsPath);
 			if(!System.IO.Directory.Exists(Globals.RecordedSoundsPath))
 				System.IO.Directory.CreateDirectory(Globals.RecordedSoundsPath);
 			
 			if(VersionDB < 1) {
-				db.ExecuteNonQuery("CREATE TABLE [ObjectsTypes] ([IdObjectType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [ObjectType] TEXT)");
 				db.ExecuteNonQuery("CREATE TABLE [BlocksTypes] ([IdBlockType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [BlockType] TEXT)");
-				db.ExecuteNonQuery("CREATE TABLE [KeyFramesTypes] ([IdKeyFrameType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [KeyFrameType] TEXT)");
-				
-				db.ExecuteNonQuery("CREATE TABLE [Episodes] ([IdEpisode] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER)");
-				db.ExecuteNonQuery("CREATE TABLE [EpisodesInfo] ([IdEpisode] INTEGER NOT NULL REFERENCES [Episodes] ([IdEpisode]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER, [Number] INTEGER, [Title] TEXT, [Information] TEXT, PRIMARY KEY ([IdEpisode], [CVSNew]))");
-				db.ExecuteNonQuery("CREATE TABLE [Scenes] ([IdScene] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdEpisode] INTEGER NOT NULL REFERENCES [Episodes] ([IdEpisode]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER)");
-				db.ExecuteNonQuery("CREATE TABLE [ScenesInfo] ([IdScene] INTEGER NOT NULL REFERENCES [Scenes] ([IdScene]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER, [Number] INTEGER, [Title] TEXT, [Information] TEXT, PRIMARY KEY ([IdScene], [CVSNew]))");
-				db.ExecuteNonQuery("CREATE TABLE [Stages] ([IdStage] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdScene] INTEGER NOT NULL REFERENCES [Scenes] ([IdScene]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER)");
-				db.ExecuteNonQuery("CREATE TABLE [StagesInfo] ([IdStage] INTEGER NOT NULL REFERENCES [Stages] ([IdStage]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER, [Number] INTEGER, [Title] TEXT, [Information] TEXT, [Frames] INTEGER, PRIMARY KEY ([IdStage], [CVSNew]))");
-				
-				db.ExecuteNonQuery("CREATE TABLE [Objects] ([IdObject] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdStage] INTEGER NOT NULL REFERENCES [Stages] ([IdStage]) ON DELETE CASCADE, [IdObjectType] INTEGER NOT NULL REFERENCES [ObjectsTypes] ([IdObjectType]), [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER, [IdResource] INTEGER NOT NULL)");
-				db.ExecuteNonQuery("CREATE TABLE [Screenshots] ([IdScreenshot] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdStage] INTEGER NOT NULL REFERENCES [Stages] ([IdStage]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER)");
-				db.ExecuteNonQuery("CREATE TABLE [ScreenshotsInfo] ([IdScreenshot] INTEGER NOT NULL REFERENCES [Screenshots] ([IdScreenshot]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER, [Number] INTEGER, PRIMARY KEY ([IdScreenshot], [CVSNew]))");
+				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (1, 'Time')");
+				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (2, 'Voice')");
 
-				db.ExecuteNonQuery("CREATE TABLE [BlocksTimeline] ([IdBlockTimeline] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdObject] INTEGER NOT NULL REFERENCES [Objects] ([IdObject]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlocksTypes] ([IdBlockType]), [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER, [IdResource] INTEGER NOT NULL)");
-				db.ExecuteNonQuery("CREATE TABLE [BlocksTimelineInfo] ([IdBlockTimeline] INTEGER NOT NULL REFERENCES [BlocksTimeline] ([IdBlockTimeline]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER, [StartFrame] INTEGER, [Frames] INTEGER, [Control] INTEGER, PRIMARY KEY ([IdBlockTimeline], [CVSNew]))");
-				db.ExecuteNonQuery("CREATE TABLE [BlocksTimelineProp] ([IdBlockTimeline] INTEGER NOT NULL REFERENCES [BlocksTimeline] ([IdBlockTimeline]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER, [Dummy] TEXT NOT NULL, [PositionX] NUMERIC NOT NULL, [PositionY] NUMERIC NOT NULL, [PositionZ] NUMERIC NOT NULL, [RotationX] NUMERIC NOT NULL, [RotationY] NUMERIC NOT NULL, [RotationZ] NUMERIC NOT NULL, [ScaleX] NUMERIC NOT NULL, [ScaleY] NUMERIC NOT NULL, [ScaleZ] NUMERIC NOT NULL, PRIMARY KEY ([IdBlockTimeline], [CVSNew]))");
+				db.ExecuteNonQuery("CREATE TABLE [ShotTypes] ([IdShotType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [ShotType] TEXT)");
+				db.ExecuteNonQuery("INSERT INTO Cameras (IdShotType, ShotType) VALUES (1, 'Close Up')");
+				db.ExecuteNonQuery("INSERT INTO Cameras (IdShotType, ShotType) VALUES (2, 'Mid Shot')");
+				db.ExecuteNonQuery("INSERT INTO Cameras (IdShotType, ShotType) VALUES (3, 'Long Shot')");
 
-				db.ExecuteNonQuery("CREATE TABLE [KeyFrames] ([IdKeyFrame] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdObject] INTEGER NOT NULL REFERENCES [Objects] ([IdObject]) ON DELETE CASCADE, [IdKeyFrameType] INTEGER NOT NULL REFERENCES [KeyFramesTypes] ([IdKeyFrameType]), [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER)");
-				db.ExecuteNonQuery("CREATE TABLE [KeyFramesInfo] ([IdKeyFrame] INTEGER NOT NULL REFERENCES [KeyFrames] ([IdKeyFrame]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER, [Frame] INTEGER, [X] NUMERIC, [Y] NUMERIC, [Z] NUMERIC, [Control] INTEGER, PRIMARY KEY ([IdKeyFrame], [CVSNew]))");
-				
-				//db.ExecuteNonQuery("CREATE TRIGGER [NewEpisode] AFTER INSERT ON [Episodes] BEGIN INSERT INTO EpisodesInfo (IdEpisode, CVSNew, Number, Title, Information) VALUES (new.IdEpisode, -1, 1, '" + Texts.EPISODES_NEW_EPISODE + "', ''); INSERT INTO Scenes (IdEpisode, CVSNew) VALUES (new.IdEpisode, -1); END");
-				//db.ExecuteNonQuery("CREATE TRIGGER [NewScene] AFTER INSERT ON [Scenes] BEGIN INSERT INTO ScenesInfo (IdScene, CVSNew, Number, Title, Information) VALUES (new.IdScene, -1, 1, '" + Texts.SCENES_NEW_SCENE + "', ''); INSERT INTO STAGES (IdScene, CVSNew) VALUES (new.IdScene, -1); END");
-				//db.ExecuteNonQuery("CREATE TRIGGER [NewStage] AFTER INSERT ON [Stages] BEGIN INSERT INTO StagesInfo (IdStage, CVSNew, Number, Title, Information, Frames) VALUES (new.IdStage, -1, 1, '" + Texts.SCENE_NEW_STAGE + "', '', 0); INSERT INTO Objects (IdStage, CVSNew, IdObjectType, IdResource) VALUES (new.IdStage, -1, 1, " + Episode.Scene.Stage.StageObject.EMPTY_RESOURCE + "); INSERT INTO Objects (IdStage, CVSNew, IdObjectType, IdResource) VALUES (new.IdStage, -1, 2, 1); END");  //La cámara se tiene que crear al crear el escenario.
-				db.ExecuteNonQuery("CREATE TRIGGER [NewScreenshot] AFTER INSERT ON [Screenshots] BEGIN INSERT INTO ScreenshotsInfo (IdScreenshot, CVSNew, Number) VALUES (new.IdScreenshot, -1, 1); END");
-				db.ExecuteNonQuery("CREATE TRIGGER [NewBlockTimeline] AFTER INSERT ON [BlocksTimeline] BEGIN INSERT INTO BlocksTimelineInfo (IdBlockTimeline, CVSNew, StartFrame, Frames, Control) VALUES (new.IdBlockTimeline, -1, -1, -1, 0); END");
-				db.ExecuteNonQuery("CREATE TRIGGER [NewKeyFrame] AFTER INSERT ON [KeyFrames] BEGIN INSERT INTO KeyFramesInfo (IdKeyFrame, CVSNew, Frame, X, Y, Z, Control) VALUES (new.IdKeyFrame, -1, -1, -1, -1, -1, 0); END");
-		
-				db.ExecuteNonQuery("INSERT INTO ObjectsTypes (IdObjectType, ObjectType) VALUES (1, 'Background')");
-				db.ExecuteNonQuery("INSERT INTO ObjectsTypes (IdObjectType, ObjectType) VALUES (2, 'Camera')");
-				db.ExecuteNonQuery("INSERT INTO ObjectsTypes (IdObjectType, ObjectType) VALUES (3, 'Character')");
-				db.ExecuteNonQuery("INSERT INTO ObjectsTypes (IdObjectType, ObjectType) VALUES (4, 'Prop')");
-				db.ExecuteNonQuery("INSERT INTO ObjectsTypes (IdObjectType, ObjectType) VALUES (5, 'FX')");
-		
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (1, 'Visibility')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (2, 'Animation')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (3, 'Expression')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (4, 'Sound')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (5, 'Voice')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (6, 'Music')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (7, 'Prop1')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (8, 'Prop2')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (9, 'Prop3')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (10, 'Sprite2D1')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (11, 'Sprite2D2')");
-
-				db.ExecuteNonQuery("INSERT INTO KeyFramesTypes (IdKeyFrameType, KeyFrameType) VALUES (1, 'Position')");
-				db.ExecuteNonQuery("INSERT INTO KeyFramesTypes (IdKeyFrameType, KeyFrameType) VALUES (2, 'Rotation')");
-				db.ExecuteNonQuery("INSERT INTO KeyFramesTypes (IdKeyFrameType, KeyFrameType) VALUES (3, 'Scale')");
-
-				db.ExecuteNonQuery("INSERT INTO Episodes (CVSNew) VALUES (0)");
-				createDirectory(Globals.ScreenshotsPath); //Para forzar el vaciado.
-				
-				db.ExecuteNonQuery("CREATE TABLE [RecordedSounds] ([IdRecordedSound] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER)");
-				db.ExecuteNonQuery("CREATE TABLE [RecordedSoundsInfo] ([IdRecordedSound] INTEGER NOT NULL REFERENCES [RecordedSounds] ([IdRecordedSound]) ON DELETE CASCADE, [CVSNew] INTEGER NOT NULL, [CVSDel] INTEGER, [Number] INTEGER, [Name] TEXT, [FrequencyPlayback] INTEGER, PRIMARY KEY ([IdRecordedSound], [CVSNew]))");
-				//db.ExecuteNonQuery("CREATE TRIGGER [NewRecordedSound] AFTER INSERT ON [RecordedSounds] BEGIN INSERT INTO RecordedSoundsInfo (IdRecordedSound, CVSNew, Number, Name, FrequencyPlayback) VALUES (new.IdRecordedSound, -1, 1, '" + Texts.NEW_AUDIO_DATA + "', 44100); END");
-				createDirectory(Globals.RecordedSoundsPath); //Para forzar el vaciado.
+				db.ExecuteNonQuery("CREATE TABLE [Scenes] ([IdScene] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER, [Title] TEXT, [Information] TEXT, [IdCharacter] INTEGER, [IdBackground] INTEGER, [IdMusic] INTEGER");
+				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdScene] INTEGER NOT NULL REFERENCES [Scenes] ([IdScene]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlocksTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [Number] INTEGER, [Frames] INTEGER, [IdExpression] INTEGER, [IdAnimation] INTEGER");
 				db.ExecuteQuery("pragma user_version=1;");
 			}
 			/*if(VersionDB < 2) {
 				if(VersionDB > 0) {
-					db.ExecuteNonQuery("ALTER TABLE [BlocksTimelineProp] ADD COLUMN [PositionX] NUMERIC NOT NULL DEFAULT 0");
-					db.ExecuteNonQuery("ALTER TABLE [BlocksTimelineProp] ADD COLUMN [PositionY] NUMERIC NOT NULL DEFAULT 0");
-					db.ExecuteNonQuery("ALTER TABLE [BlocksTimelineProp] ADD COLUMN [PositionZ] NUMERIC NOT NULL DEFAULT 0");
-					db.ExecuteNonQuery("ALTER TABLE [BlocksTimelineProp] ADD COLUMN [ScaleX] NUMERIC NOT NULL DEFAULT 1");
-					db.ExecuteNonQuery("ALTER TABLE [BlocksTimelineProp] ADD COLUMN [ScaleY] NUMERIC NOT NULL DEFAULT 1");
-					db.ExecuteNonQuery("ALTER TABLE [BlocksTimelineProp] ADD COLUMN [ScaleZ] NUMERIC NOT NULL DEFAULT 1");
 				}
-				//db.ExecuteQuery("pragma user_version=2;");
-			}
-			if(VersionDB < 3) {
-				if(VersionDB > 0) {
-					db.ExecuteNonQuery("UPDATE BlocksTypes SET BlockType = 'Sprite2D1' WHERE  IdBlockType = 10");
-					db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (11, 'Sprite2D2')");
-				}
-				db.ExecuteQuery("pragma user_version=3;");
+				db.ExecuteQuery("pragma user_version=2;");
 			}*/
 		}
 		
-		public static void createDirectory(string path) {
-			if(System.IO.Directory.Exists(path))
-				System.IO.Directory.Delete(path, true);
-			
-			System.IO.Directory.CreateDirectory(path);
-		}
-
 		/*public static Episode newEpisode(int number, string title, string info) {
 			if(number>Episodes.Count+1)
 				throw new System.Exception("The number is greater than the number of items.");
@@ -149,7 +87,7 @@ namespace TVR {
 			//mFolderVoices.Content.Sort();
 			return RS;
 		}
-		
+
 		public static RecordedSound newRecordedSound(string name, AudioClip audioClip, int FrequencyPlayback) {
 			if(mFolderVoices.Content.Count==0)
 				return newRecordedSound(1, name, audioClip, FrequencyPlayback);
@@ -162,6 +100,23 @@ namespace TVR {
 			db.ExecuteNonQuery("VACUUM");
 			db.Close();
 			db=null;
+		}
+
+		public class Scene : System.IComparable<Scene> {
+			private int mNumber;
+			public int Number {
+				get { return mNumber; }
+				set { mNumber = value; }
+			}
+
+			public int CompareTo(Scene other) {		
+				if(this.Number < other.Number)
+					return -1;
+				else if(this.Number > other.Number)
+						return 1;
+					else
+						return 0;
+			}
 		}
 			
 		/*public class Episode : System.IComparable<Episode> {
