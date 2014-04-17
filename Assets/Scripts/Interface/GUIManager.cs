@@ -8,6 +8,10 @@ using System.Collections;
 public class GUIManager : MonoBehaviour
 {
 	public GameObject mMainButtonBar;
+	public GameObject mCharactersButtonBar;
+
+	GameObject mMainButtonBarInstance;
+	GameObject mCharactersButtonBarInstance;
 
 	const float cameraZDepth = 0;
 
@@ -16,7 +20,9 @@ public class GUIManager : MonoBehaviour
 	void Start()
 	{
 		SetGUICamera();
-		Instantiate(mMainButtonBar);
+
+		mMainButtonBarInstance = Instantiate(mMainButtonBar) as GameObject;
+		mMainButtonBarInstance.transform.parent = transform;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,10 +37,56 @@ public class GUIManager : MonoBehaviour
 
 	void OnGUI()
 	{
-		//En el Samsung Galaxy S se cuelga al pulsar el boton 'Home' para salir 
+		//This is necessary for the Samsung Galaxy S (Android 2.3)
+		//Pressing HOME button freezes the device
 		if(GUI.Button(new Rect(Screen.width/2-50, 10, 100, 50), "QUIT")){
 			Application.Quit();
 		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonCharactersPressed(ContentType contentType)
+	{
+		Debug.Log(contentType + " - characters pressed");
+
+		mCharactersButtonBarInstance = Instantiate(mCharactersButtonBar) as GameObject;
+		mCharactersButtonBarInstance.transform.parent = transform;
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonBackgroundsPressed(ContentType contentType)
+	{
+		Debug.Log(contentType + " - backgrounds pressed");
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonMusicPressed(ContentType contentType)
+	{
+		Debug.Log(contentType + " - music pressed");
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonSharePressed(ContentType contentType)
+	{
+		Debug.Log(contentType + " - share pressed");
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonDeletePressed(ContentType contentType)
+	{
+		Debug.Log(contentType + " - delete pressed");
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonCharPressed(ContentType contentType)
+	{
+		Debug.Log(contentType + " pressed");
 	}
 }
 

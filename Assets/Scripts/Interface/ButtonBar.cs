@@ -1,14 +1,13 @@
 using UnityEngine;
 using System.Collections;
+using TVR;
 
 public class ButtonBar : MonoBehaviour
 {
-	public bool isMain;
 	public GameObject[] mButtons;
+	GameObject[] mButtonsInstances;
 
-	public float offset_x;
-	public float max_y;
-	public float min_y;
+	public float depth_x = 0;
 	public float vSpeed = 15;
 	public float smoothTime = 0.8f;
 
@@ -16,10 +15,12 @@ public class ButtonBar : MonoBehaviour
 
 	float desplY = 0.0f;
 	float velY = 0.0f;
+
+	float startTime;
 	
 	enum States{
 		idle,
-		touch
+		touch,
 	}
 	States state;
 
@@ -32,38 +33,49 @@ public class ButtonBar : MonoBehaviour
 	float buttonSize;
 	float buttonMargin;
 
+	public GUIManager mGUIManager;
+
+	const int MAX_BUTTONS=5;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void Awake()
+	{
+		mButtonsInstances = new GameObject[mButtons.Length];
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Start()
 	{
-		state=States.idle;
+		mGUIManager = transform.parent.GetComponent<GUIManager>();
 
-		if(!isMain || (isMain && CheckRatios())){
+		startTime=Time.time;
+
+		if(CheckRatios()){
 			buttonSize = Screen.width*buttonRatio;
 			buttonMargin = Screen.width*buttonMarginRatio;
-			GetScale();
+			SetScale();
 		}
 
-		GetPosition();
-
 		transform.localScale = new Vector3(scale_x, scale_y, 1);
-		transform.position = new Vector3(pos_x, pos_y, buttonBarZDepth);
 
-		SetButtons();
+		SetPosition();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Si no caben 5 botones en la botonera principal hay que reajustar los ratios
-	//Puede ocurrir con ratios de pantalla muy largos -> 2:1
+	//Main button bar must have 5 buttons, if it doesn't fit then it's necessary to recalculate the ratios
+	//This happens with very large ratios -> 2:1
 	bool CheckRatios()
 	{
 		float totalHeight = 5*buttonRatio*Screen.width+6*buttonMarginRatio*Screen.width;
 		if(totalHeight > Screen.height){
-			//Los botones son 7 veces mas grandes que los margenes entre ellos
+			//The relation between buttons and margins is 7-1
 			buttonMargin = Screen.height/41;
 			buttonSize = 7*buttonMargin;
 			scale_x = 1.13f*buttonSize;
-			scale_y = Screen.height;
+			float buttonsTotalHeight = buttonSize*mButtons.Length + buttonMargin*(mButtons.Length+1);
+			scale_y = Mathf.Max(buttonsTotalHeight, Screen.height);
 			return false;
 		}
 		return true;
@@ -71,7 +83,7 @@ public class ButtonBar : MonoBehaviour
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	void GetScale()
+	void SetScale()
 	{
 		scale_x = Screen.width*buttonBarRatio;
 		float buttonsTotalHeight = buttonSize*mButtons.Length + buttonMargin*(mButtons.Length+1);
@@ -80,28 +92,40 @@ public class ButtonBar : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void GetPosition()
+	void SetPosition()
 	{
-		pos_x = scale_x/2.0f;
-		pos_y = Screen.height/2.0f;
+		//Set the button bar in the initial position and set the buttons
+		transform.position = new Vector3(scale_x/2.0f, Screen.height/2.0f, buttonBarZDepth);
+		SetButtons();
+
+		//Move the button bar to the correct position (buttons are moved with the button bar)
+		pos_x = (scale_x/2.0f) + scale_x*depth_x + depth_x;
+
+		//If more than 5 buttons, then the first button is top aligned
+		if(mButtons.Length>MAX_BUTTONS)
+			pos_y = Screen.height/2-(transform.localScale.y-Screen.height)/2;
+		else
+			pos_y = Screen.height/2.0f;
+
+		transform.position = new Vector3(pos_x, pos_y, buttonBarZDepth);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	//Set the position of the first button, then set the position of the other buttons
 	void SetButtons()
 	{
-		GameObject button1 = Instantiate(mButtons[0]) as GameObject;
-		button1.transform.position = new Vector3(pos_x, (mButtons.Length-1)*(buttonSize/2+buttonMargin/2) + Screen.height/2, buttonZDepth);
-		button1.transform.localScale = new Vector3(buttonSize, buttonSize, 1);
-		button1.name = "Button_01";
-		button1.transform.parent = transform;
+		mButtonsInstances[0] = Instantiate(mButtons[0]) as GameObject;
+		mButtonsInstances[0].transform.position = new Vector3(scale_x/2.0f, (mButtons.Length-1)*(buttonSize/2+buttonMargin/2) + Screen.height/2, buttonZDepth);
+		mButtonsInstances[0].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
+		mButtonsInstances[0].transform.parent = transform;
+		mButtonsInstances[0].GetComponent<BasicButton>().SetID(1);
 
-		for(int i=1;i<mButtons.Length;i++){
-			GameObject buttonI = Instantiate(mButtons[i]) as GameObject;
-			buttonI.transform.position = new Vector3(pos_x, button1.transform.position.y-(buttonSize+buttonMargin)*i, buttonZDepth);
-			buttonI.transform.localScale = new Vector3(buttonSize, buttonSize, 1);
-			buttonI.name = "Button_0"+(i+1).ToString();
-			buttonI.transform.parent = transform;
+		for(int i=1;i<mButtonsInstances.Length;i++){
+			mButtonsInstances[i] = Instantiate(mButtons[i]) as GameObject;
+			mButtonsInstances[i].transform.position = new Vector3(scale_x/2.0f, mButtonsInstances[0].transform.position.y-(buttonSize+buttonMargin)*i, buttonZDepth);
+			mButtonsInstances[i].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
+			mButtonsInstances[i].transform.parent = transform;
+			mButtonsInstances[i].GetComponent<BasicButton>().SetID(i+1);
 		}
 	}
 
@@ -109,6 +133,11 @@ public class ButtonBar : MonoBehaviour
 	
 	void Update()
 	{
+		//fade_in
+		float t = (Time.time - startTime) / Globals.ANIMATIONDURATION;
+		Color c = renderer.material.color;
+		renderer.material.color = new Color(c.r, c.g, c.b, Mathf.SmoothStep(0.0f, 1.0f, t));
+		
 		float v = Input.GetAxis("Mouse Y");
 
 		//Check if user is touching the button bar
@@ -129,8 +158,19 @@ public class ButtonBar : MonoBehaviour
 		}
 
 		desplY = Mathf.SmoothDamp(desplY, 0.0f, ref velY, smoothTime);
-		float new_pos_y = Mathf.Clamp(transform.position.y+desplY, Screen.height/2-(transform.localScale.y-Screen.height)/2, Screen.height/2+(transform.localScale.y-Screen.height)/2);
+		float min_y = Screen.height/2-(transform.localScale.y-Screen.height)/2;
+		float max_y = Screen.height/2+(transform.localScale.y-Screen.height)/2;
+		float new_pos_y = Mathf.Clamp(transform.position.y+desplY, min_y, max_y);
 		transform.position = new Vector3(transform.position.x, new_pos_y, transform.position.z);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//A button informs to the ButtonBar that is pressed, ButtonBar informs all buttons to get unchecked
+	public void ButtonPressed(int id)
+	{
+		foreach(GameObject button in mButtonsInstances){
+			button.GetComponent<BasicButton>().UnCheck(id);
+		}
 	}
 }
 
