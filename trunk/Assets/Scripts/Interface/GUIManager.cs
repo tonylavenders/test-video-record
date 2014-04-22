@@ -9,11 +9,15 @@ public class GUIManager : MonoBehaviour
 {
 	public GameObject mMainButtonBar;
 	public GameObject mCharactersButtonBar;
+	public GameObject mBackgroundsButtonBar;
 
 	GameObject mMainButtonBarInstance;
 	GameObject mCharactersButtonBarInstance;
+	GameObject mBackgroundsButtonBarInstance;
 
 	const float cameraZDepth = 0;
+
+	public bool bChildActive;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,21 +48,43 @@ public class GUIManager : MonoBehaviour
 		}
 	}
 
+	void OnApplicationPause()
+	{
+		Application.Quit();
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public void OnButtonCharactersPressed(ContentType contentType)
 	{
-		Debug.Log(contentType + " - characters pressed");
+		//Debug.Log(contentType + " - characters pressed");
 
-		mCharactersButtonBarInstance = Instantiate(mCharactersButtonBar) as GameObject;
-		mCharactersButtonBarInstance.transform.parent = transform;
+		if(mBackgroundsButtonBarInstance!=null){
+			mBackgroundsButtonBarInstance.GetComponent<ButtonBar>().Hide();
+		}
+
+		if(mCharactersButtonBarInstance==null){
+			mCharactersButtonBarInstance = Instantiate(mCharactersButtonBar) as GameObject;
+			mCharactersButtonBarInstance.transform.parent = transform;
+			bChildActive=true;
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void OnButtonBackgroundsPressed(ContentType contentType)
 	{
-		Debug.Log(contentType + " - backgrounds pressed");
+		//Debug.Log(contentType + " - backgrounds pressed");
+
+		if(mCharactersButtonBarInstance!=null){
+			mCharactersButtonBarInstance.GetComponent<ButtonBar>().Hide();
+		}
+
+		if(mBackgroundsButtonBarInstance==null){
+			mBackgroundsButtonBarInstance = Instantiate(mBackgroundsButtonBar) as GameObject;
+			mBackgroundsButtonBarInstance.transform.parent = transform;
+			bChildActive=true;
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
