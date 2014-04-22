@@ -13,6 +13,7 @@ public class ButtonBar : MonoBehaviour
 	public float depth_x = 0;
 	public float vSpeed = 15;
 	public float smoothTime = 0.8f;
+	bool bInit=false;
 
 	float pos_x, pos_y, scale_x, scale_y;
 	float desplY = 0.0f;
@@ -55,15 +56,24 @@ public class ButtonBar : MonoBehaviour
 
 	void Start()
 	{
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void Init()
+	{
 		SetScale();
 		SetPosition();
 		SetSeparator();
-
+		
 		mFadeStartValue=0.0f;
 		mFadeEndValue=1.0f;
 		mFade = new SmoothStep(mFadeStartValue,mFadeEndValue,1.0f,false);
+		
+		state=States.hidden;
 
-		Show();
+		bInit=true;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,14 +153,17 @@ public class ButtonBar : MonoBehaviour
 	
 	void Update()
 	{
+		if(state==States.hidden)
+			return;
+
 		//Fade
 		if(mFade.Enable)
 			mFade.Update();
 		Color c = renderer.material.color;
 		renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 
-		//if(mFadeEndValue==0.0f && mFade.Value<0.001f)
-		//	Destroy(gameObject);
+		if(mFadeEndValue==0.0f && mFade.Value<0.001f)
+			state=States.hidden;
 
 		//Check if user is touching the button bar
 		RaycastHit hit;
@@ -191,21 +204,29 @@ public class ButtonBar : MonoBehaviour
 	
 	public void Show()
 	{
+		if(!bInit)
+			Init();
+
 		mFadeEndValue=1.0f;
 		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
 
 		foreach(GameObject button in mButtonsInstances){
 			button.GetComponent<BasicButton>().Show();
 		}
+
+		state=States.idle;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public void Hide()
 	{
+		if(!bInit)
+			Init();
+
 		mFadeEndValue=0.0f;
 		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
-
+	
 		foreach(GameObject button in mButtonsInstances){
 			button.GetComponent<BasicButton>().Hide();
 		}
