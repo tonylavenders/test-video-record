@@ -19,6 +19,7 @@ public class GUIManager : MonoBehaviour
 	void Start()
 	{
 		SetGUICamera();
+		mMainButtonBar.GetComponent<ButtonBar>().Show();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,8 +57,8 @@ public class GUIManager : MonoBehaviour
 
 	public void OnButtonCharactersPressed(ContentType contentType)
 	{
-		mBackgroundsButtonBar.SetActive(false);
-		mCharactersButtonBar.SetActive(true);
+		mCharactersButtonBar.GetComponent<ButtonBar>().Show();
+		mBackgroundsButtonBar.GetComponent<ButtonBar>().Hide();
 
 		mMainButtonBar.GetComponent<ButtonBar>().Separator.SetActive(true);
 	}
@@ -66,8 +67,8 @@ public class GUIManager : MonoBehaviour
 	
 	public void OnButtonBackgroundsPressed(ContentType contentType)
 	{
-		mCharactersButtonBar.SetActive(false);
-		mBackgroundsButtonBar.SetActive(true);
+		mCharactersButtonBar.GetComponent<ButtonBar>().Hide();
+		mBackgroundsButtonBar.GetComponent<ButtonBar>().Show();
 
 		mMainButtonBar.GetComponent<ButtonBar>().Separator.SetActive(true);
 	}

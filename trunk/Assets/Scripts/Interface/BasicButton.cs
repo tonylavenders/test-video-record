@@ -47,6 +47,12 @@ public class BasicButton : MonoBehaviour
 
 	Vector2 mMouseInitPos;
 
+	enum States{
+		hidden,
+		idle,
+	}
+	States state;
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
 	void Awake()
@@ -69,6 +75,9 @@ public class BasicButton : MonoBehaviour
 	
 	void Update()
 	{
+		if(state==States.hidden)
+			return;
+
 		//Fade
 		if(mFade.Enable)
 			mFade.Update();
@@ -152,6 +161,8 @@ public class BasicButton : MonoBehaviour
 		mFade.Reset(1.0f, Globals.ANIMATIONDURATION);
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Show();
+
+		state=States.idle;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,6 +172,8 @@ public class BasicButton : MonoBehaviour
 		mFade.Reset(0.0f, Globals.ANIMATIONDURATION);
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Hide();
+
+		state=States.hidden;
 	}
 }
 
