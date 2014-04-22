@@ -2,11 +2,12 @@ using UnityEngine;
 using System.Collections;
 using TVR;
 using TVR.Utils;
+using TVR.Helpers;
 
 public class ButtonBar : MonoBehaviour
 {
 	public GameObject[] mButtons;
-	public GameObject mSeparator;
+	public GameObject Separator;
 	GameObject[] mButtonsInstances;
 
 	public float depth_x = 0;
@@ -22,6 +23,7 @@ public class ButtonBar : MonoBehaviour
 	float mFadeEndValue;
 
 	enum States{
+		hidden,
 		idle,
 		touch,
 	}
@@ -39,20 +41,21 @@ public class ButtonBar : MonoBehaviour
 
 	const int MAX_BUTTONS=5;
 
+	public int lastButtonSel=0;
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Awake()
 	{
 		mButtonsInstances = new GameObject[mButtons.Length];
+		mGUIManager = transform.parent.GetComponent<GUIManager>();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Start()
 	{
-		mGUIManager = transform.parent.GetComponent<GUIManager>();
-
-		SetScale ();
+		SetScale();
 		SetPosition();
 		SetSeparator();
 
@@ -125,14 +128,14 @@ public class ButtonBar : MonoBehaviour
 			mButtonsInstances[i].GetComponent<BasicButton>().SetID(i+1);
 		}
 	}
-
+	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	
 	void SetSeparator()
 	{
-		if(mSeparator!=null){
-			mSeparator.transform.localScale = new Vector3(1/mSeparator.transform.lossyScale.x, 1, 1);
-			mSeparator.transform.position = new Vector3(scale_x+0.5f, Screen.height/2, buttonBarZDepth);
+		if(Separator!=null){
+			Separator.transform.localScale = new Vector3(1/Separator.transform.lossyScale.x, 1, 1);
+			Separator.transform.position = new Vector3(scale_x+0.5f, Screen.height/2, buttonBarZDepth);
 		}
 	}
 
@@ -143,27 +146,26 @@ public class ButtonBar : MonoBehaviour
 		//Fade
 		if(mFade.Enable)
 			mFade.Update();
-
 		Color c = renderer.material.color;
 		renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 
-		if(mFadeEndValue==0.0f && mFade.Value<0.001f)
-			Destroy(gameObject);
+		//if(mFadeEndValue==0.0f && mFade.Value<0.001f)
+		//	Destroy(gameObject);
 
 		//Check if user is touching the button bar
-		float v = Input.GetAxis("Mouse Y");
-
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		if(Input.GetMouseButton(0) && collider.Raycast(ray, out hit, 1000.0f)){
+		if(Input.GetMouseButtonDown(0) && collider.Raycast(ray, out hit, 1000.0f)){
 			state=States.touch;
 		}
-		else{
+		else if(InputHelp.GetMouseButtonUp(0)) {
 			state=States.idle;
 		}
 
 		//Move the button bar
-		if(state==States.touch){
+		float v = InputHelp.mouseDeltaPositionYDown.y/15.0f;
+
+		if(InputHelp.GetMouseButton(0) && state==States.touch){
 			float desplYcopia = desplY;
 			desplY = v * vSpeed;
 			desplY = Mathf.Lerp(desplY, desplYcopia, smoothTime);
@@ -174,9 +176,6 @@ public class ButtonBar : MonoBehaviour
 		float max_y = Screen.height/2+(transform.localScale.y-Screen.height)/2;
 		float new_pos_y = Mathf.Clamp(transform.position.y+desplY, min_y, max_y);
 		transform.position = new Vector3(transform.position.x, new_pos_y, transform.position.z);
-
-		if(mSeparator!=null)
-			mSeparator.SetActive(mGUIManager.bChildActive);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
