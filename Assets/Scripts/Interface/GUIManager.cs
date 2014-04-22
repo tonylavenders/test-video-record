@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using UnityEngine;
 using System.Collections;
+using TVR.Helpers;
 
 //Script attached to the GUICamera object
 public class GUIManager : MonoBehaviour
@@ -11,22 +12,13 @@ public class GUIManager : MonoBehaviour
 	public GameObject mCharactersButtonBar;
 	public GameObject mBackgroundsButtonBar;
 
-	GameObject mMainButtonBarInstance;
-	GameObject mCharactersButtonBarInstance;
-	GameObject mBackgroundsButtonBarInstance;
-
 	const float cameraZDepth = 0;
-
-	public bool bChildActive;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Start()
 	{
 		SetGUICamera();
-
-		mMainButtonBarInstance = Instantiate(mMainButtonBar) as GameObject;
-		mMainButtonBarInstance.transform.parent = transform;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,6 +27,13 @@ public class GUIManager : MonoBehaviour
 	{
 		transform.position = new Vector3(Screen.width/2.0f, Screen.height/2.0f, cameraZDepth);
 		camera.orthographicSize = Screen.height/2.0f;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void Update()
+	{
+		InputHelp.Update();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,34 +56,20 @@ public class GUIManager : MonoBehaviour
 
 	public void OnButtonCharactersPressed(ContentType contentType)
 	{
-		//Debug.Log(contentType + " - characters pressed");
+		mBackgroundsButtonBar.SetActive(false);
+		mCharactersButtonBar.SetActive(true);
 
-		if(mBackgroundsButtonBarInstance!=null){
-			mBackgroundsButtonBarInstance.GetComponent<ButtonBar>().Hide();
-		}
-
-		if(mCharactersButtonBarInstance==null){
-			mCharactersButtonBarInstance = Instantiate(mCharactersButtonBar) as GameObject;
-			mCharactersButtonBarInstance.transform.parent = transform;
-			bChildActive=true;
-		}
+		mMainButtonBar.GetComponent<ButtonBar>().Separator.SetActive(true);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void OnButtonBackgroundsPressed(ContentType contentType)
 	{
-		//Debug.Log(contentType + " - backgrounds pressed");
+		mCharactersButtonBar.SetActive(false);
+		mBackgroundsButtonBar.SetActive(true);
 
-		if(mCharactersButtonBarInstance!=null){
-			mCharactersButtonBarInstance.GetComponent<ButtonBar>().Hide();
-		}
-
-		if(mBackgroundsButtonBarInstance==null){
-			mBackgroundsButtonBarInstance = Instantiate(mBackgroundsButtonBar) as GameObject;
-			mBackgroundsButtonBarInstance.transform.parent = transform;
-			bChildActive=true;
-		}
+		mMainButtonBar.GetComponent<ButtonBar>().Separator.SetActive(true);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +95,14 @@ public class GUIManager : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void OnButtonCharPressed(ContentType contentType)
+	public void OnButtonCharacterPressed(ContentType contentType)
+	{
+		Debug.Log(contentType + " pressed");
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonBackgroundPressed(ContentType contentType)
 	{
 		Debug.Log(contentType + " pressed");
 	}

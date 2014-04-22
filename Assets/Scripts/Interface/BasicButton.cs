@@ -2,6 +2,7 @@
 using System.Collections;
 using TVR;
 using TVR.Utils;
+using TVR.Helpers;
 
 public enum ButtonType{
 	MAIN_CHARACTERS,
@@ -18,15 +19,15 @@ public enum ButtonType{
 public enum ContentType{
 	LIB,
 	CHAR_01, CHAR_02, CHAR_03, CHAR_04, CHAR_05, CHAR_06, CHAR_07, CHAR_08, CHAR_09,
-	BACKGROUND_01,
-	BACKGROUND_02,
-	BACKGROUND_03
+	BACKGROUND_01, BACKGROUND_02, BACKGROUND_03, BACKGROUND_04, BACKGROUND_05, BACKGROUND_06,BACKGROUND_07
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public class BasicButton : MonoBehaviour
 {
+	const int MAXDISABLEBUTTONS = 450; //((15^2)*2) Máximo desplazamiento antes de desactivar los botones 15 pixeles.
+
 	public Texture texChecked;
 	public Texture texUnchecked;
 	public bool bKeepSt;
@@ -43,6 +44,8 @@ public class BasicButton : MonoBehaviour
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
 	Transform mGUIText;
+
+	Vector2 mMouseInitPos;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
@@ -66,22 +69,31 @@ public class BasicButton : MonoBehaviour
 	
 	void Update()
 	{
+		//Fade
 		if(mFade.Enable)
 			mFade.Update();
-
 		Color c = renderer.material.color;
 		renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 
 		//Check if user is touching the button
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		if(Input.GetMouseButtonUp(0) && collider.Raycast(ray, out hit, 1000.0f)){
-			if(!bChecked){
-				renderer.sharedMaterial.mainTexture = texChecked;
-				bChecked=true;
-				mButtonBar.ButtonPressed(mID);
-				if(buttonCallback!=null)
-					buttonCallback(contentType);
+
+		if(collider.Raycast(ray, out hit, 1000.0f)){
+			if(Input.GetMouseButtonDown(0)){
+				mMouseInitPos=InputHelp.mousePosition;
+			}
+			if(Input.GetMouseButtonUp(0)){
+				Vector2 mMovement = InputHelp.mousePosition-mMouseInitPos;
+				if(mMovement.sqrMagnitude < MAXDISABLEBUTTONS){
+					if(!bChecked){
+						renderer.sharedMaterial.mainTexture = texChecked;
+						bChecked=true;
+						mButtonBar.ButtonPressed(mID);
+						if(buttonCallback!=null)
+							buttonCallback(contentType);
+					}
+				}
 			}
 		}
 	}
@@ -126,7 +138,10 @@ public class BasicButton : MonoBehaviour
 			buttonCallback = mGUIManager.OnButtonDeletePressed;
 		}
 		else if(buttonType==ButtonType.CHAR){
-			buttonCallback = mGUIManager.OnButtonCharPressed;
+			buttonCallback = mGUIManager.OnButtonCharacterPressed;
+		}
+		else if(buttonType==ButtonType.BACKGROUND){
+			buttonCallback = mGUIManager.OnButtonBackgroundPressed;
 		}
 	}
 	

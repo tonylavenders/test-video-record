@@ -110,7 +110,7 @@ namespace TVR.Helpers {
 			mDeltaMousePositionYDown = pos - mMousePositionYDown;
 			mMousePositionYDown = pos;
 
-			if(Application.platform == RuntimePlatform.IPhonePlayer) {
+			if(Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android) {
 				if(Mathf.Abs(mMouseOffsetPosYDown.x) < 8) {
 					mMousePositionYUp.x = mMouseInitPosYDown.x;
 					mMouseOffsetPosYDown.x = mMouseInitPosYDown.x - mMousePositionYDown.x;
@@ -134,7 +134,7 @@ namespace TVR.Helpers {
 		private static Vector2 GetMousePos() {
 			Vector2 mousePos = Vector2.zero;
 			
-			if(Application.platform == RuntimePlatform.IPhonePlayer) {
+			if(Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android) {
 				if(Input.touchCount == 1 || (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)) {
 					if(!mMultiTouch) {
 						if(Input.GetMouseButtonDown(0)) {
