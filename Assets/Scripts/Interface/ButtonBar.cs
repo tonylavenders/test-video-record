@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Collections;
 using TVR;
+using TVR.Utils;
 
 public class ButtonBar : MonoBehaviour
 {
 	public GameObject[] mButtons;
+	public GameObject mSeparator;
 	GameObject[] mButtonsInstances;
 
 	public float depth_x = 0;
@@ -12,12 +14,13 @@ public class ButtonBar : MonoBehaviour
 	public float smoothTime = 0.8f;
 
 	float pos_x, pos_y, scale_x, scale_y;
-
 	float desplY = 0.0f;
 	float velY = 0.0f;
 
-	float startTime;
-	
+	SmoothStep mFade;
+	float mFadeStartValue;
+	float mFadeEndValue;
+
 	enum States{
 		idle,
 		touch,
@@ -29,7 +32,6 @@ public class ButtonBar : MonoBehaviour
 	float buttonBarRatio = 0.1f;
 	float buttonMarginRatio = 0.0125f;
 	float buttonRatio = 0.088f;
-
 	float buttonSize;
 	float buttonMargin;
 
@@ -50,44 +52,39 @@ public class ButtonBar : MonoBehaviour
 	{
 		mGUIManager = transform.parent.GetComponent<GUIManager>();
 
-		startTime=Time.time;
-
-		if(CheckRatios()){
-			buttonSize = Screen.width*buttonRatio;
-			buttonMargin = Screen.width*buttonMarginRatio;
-			SetScale();
-		}
-
-		transform.localScale = new Vector3(scale_x, scale_y, 1);
-
+		SetScale ();
 		SetPosition();
+		SetSeparator();
+
+		mFadeStartValue=0.0f;
+		mFadeEndValue=1.0f;
+		mFade = new SmoothStep(mFadeStartValue,mFadeEndValue,1.0f,false);
+
+		Show();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main button bar must have 5 buttons, if it doesn't fit then it's necessary to recalculate the ratios
 	//This happens with very large ratios -> 2:1
-	bool CheckRatios()
+	void SetScale()
 	{
 		float totalHeight = 5*buttonRatio*Screen.width+6*buttonMarginRatio*Screen.width;
+
 		if(totalHeight > Screen.height){
 			//The relation between buttons and margins is 7-1
 			buttonMargin = Screen.height/41;
 			buttonSize = 7*buttonMargin;
 			scale_x = 1.13f*buttonSize;
-			float buttonsTotalHeight = buttonSize*mButtons.Length + buttonMargin*(mButtons.Length+1);
-			scale_y = Mathf.Max(buttonsTotalHeight, Screen.height);
-			return false;
 		}
-		return true;
-	}
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	void SetScale()
-	{
-		scale_x = Screen.width*buttonBarRatio;
+		else{
+			buttonMargin = Screen.width*buttonMarginRatio;
+			buttonSize = Screen.width*buttonRatio;
+			scale_x = Screen.width*buttonBarRatio;
+		}
 		float buttonsTotalHeight = buttonSize*mButtons.Length + buttonMargin*(mButtons.Length+1);
 		scale_y = Mathf.Max(buttonsTotalHeight, Screen.height);
+
+		transform.localScale = new Vector3(scale_x, scale_y, 1);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,17 +127,32 @@ public class ButtonBar : MonoBehaviour
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void SetSeparator()
+	{
+		if(mSeparator!=null){
+			mSeparator.transform.localScale = new Vector3(1/mSeparator.transform.lossyScale.x, 1, 1);
+			mSeparator.transform.position = new Vector3(scale_x+0.5f, Screen.height/2, buttonBarZDepth);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	void Update()
 	{
-		//fade_in
-		float t = (Time.time - startTime) / Globals.ANIMATIONDURATION;
+		//Fade
+		if(mFade.Enable)
+			mFade.Update();
+
 		Color c = renderer.material.color;
-		renderer.material.color = new Color(c.r, c.g, c.b, Mathf.SmoothStep(0.0f, 1.0f, t));
-		
-		float v = Input.GetAxis("Mouse Y");
+		renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
+
+		if(mFadeEndValue==0.0f && mFade.Value<0.001f)
+			Destroy(gameObject);
 
 		//Check if user is touching the button bar
+		float v = Input.GetAxis("Mouse Y");
+
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		if(Input.GetMouseButton(0) && collider.Raycast(ray, out hit, 1000.0f)){
@@ -162,6 +174,9 @@ public class ButtonBar : MonoBehaviour
 		float max_y = Screen.height/2+(transform.localScale.y-Screen.height)/2;
 		float new_pos_y = Mathf.Clamp(transform.position.y+desplY, min_y, max_y);
 		transform.position = new Vector3(transform.position.x, new_pos_y, transform.position.z);
+
+		if(mSeparator!=null)
+			mSeparator.SetActive(mGUIManager.bChildActive);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -172,12 +187,31 @@ public class ButtonBar : MonoBehaviour
 			button.GetComponent<BasicButton>().UnCheck(id);
 		}
 	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void Show()
+	{
+		mFadeEndValue=1.0f;
+		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
+
+		foreach(GameObject button in mButtonsInstances){
+			button.GetComponent<BasicButton>().Show();
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void Hide()
+	{
+		mFadeEndValue=0.0f;
+		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
+
+		foreach(GameObject button in mButtonsInstances){
+			button.GetComponent<BasicButton>().Hide();
+		}
+	}
 }
-
-
-
-
-
 
 
 

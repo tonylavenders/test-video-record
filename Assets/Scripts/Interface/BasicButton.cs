@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using TVR;
+using TVR.Utils;
 
 public enum ButtonType{
 	MAIN_CHARACTERS,
@@ -36,19 +37,26 @@ public class BasicButton : MonoBehaviour
 	public delegate void ButtonCallback(ContentType contentType);
 	public ButtonCallback buttonCallback;
 
+	SmoothStep mFade;
+
 	int mID;
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
+	Transform mGUIText;
 
-	float startTime;
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+	void Awake()
+	{
+		renderer.sharedMaterial.mainTexture = texUnchecked;
+		mGUIText = transform.FindChild("GUI Text");
+		mFade = new SmoothStep(0.0f,1.0f,1.0f,false);
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Start()
 	{
-		startTime=Time.time;
-
-		renderer.sharedMaterial.mainTexture = texUnchecked;
 		mButtonBar = transform.parent.GetComponent<ButtonBar>();
 		mGUIManager = mButtonBar.mGUIManager;
 		SetCallback();
@@ -58,10 +66,11 @@ public class BasicButton : MonoBehaviour
 	
 	void Update()
 	{
-		//fade_in
-		float t = (Time.time - startTime) / Globals.ANIMATIONDURATION;
+		if(mFade.Enable)
+			mFade.Update();
+
 		Color c = renderer.material.color;
-		renderer.material.color = new Color(c.r, c.g, c.b, Mathf.SmoothStep(0.0f, 1.0f, t));
+		renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 
 		//Check if user is touching the button
 		RaycastHit hit;
@@ -120,10 +129,25 @@ public class BasicButton : MonoBehaviour
 			buttonCallback = mGUIManager.OnButtonCharPressed;
 		}
 	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void Show()
+	{
+		mFade.Reset(1.0f, Globals.ANIMATIONDURATION);
+		if(mGUIText)
+			mGUIText.gameObject.GetComponent<GUITextController>().Show();
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void Hide()
+	{
+		mFade.Reset(0.0f, Globals.ANIMATIONDURATION);
+		if(mGUIText)
+			mGUIText.gameObject.GetComponent<GUITextController>().Hide();
+	}
 }
-
-
-
 
 
 
