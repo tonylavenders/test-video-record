@@ -41,7 +41,7 @@ namespace TVR {
 		public const int SCREENSHOT_WIDTH = 81;
 		public const int SCREENSHOT_HEIGHT = 81;
 		public static string BasePath = UnityEngine.Application.persistentDataPath;
-		public static string DataBase = System.IO.Path.Combine(BasePath, "BRBRec.db");
+		public static string DataBase = System.IO.Path.Combine(BasePath, "TVR.db");
 		public static string ScreenshotsPath = System.IO.Path.Combine(BasePath, "Screenshots");
 		public static string RecordedSoundsPath = System.IO.Path.Combine(BasePath, "RecordedSounds");
 		public static string RendersPath = System.IO.Path.Combine(BasePath, "Renders");

@@ -30,7 +30,6 @@ namespace TVR {
 		private static void createDataBase() {
 			bool exist = System.IO.File.Exists(Globals.DataBase);
 			int VersionDB = 0;
-			
 			if(exist && Globals.CLEAR_DATA) {
 				System.IO.File.Delete(Globals.DataBase);
 				if(System.IO.Directory.Exists(Globals.RecordedSoundsPath))
@@ -52,13 +51,13 @@ namespace TVR {
 				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (2, 'Voice')");
 
 				db.ExecuteNonQuery("CREATE TABLE [ShotTypes] ([IdShotType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [ShotType] TEXT NOT NULL)");
-				db.ExecuteNonQuery("INSERT INTO Cameras (IdShotType, ShotType) VALUES (1, 'Close Up')");
-				db.ExecuteNonQuery("INSERT INTO Cameras (IdShotType, ShotType) VALUES (2, 'Mid Shot')");
-				db.ExecuteNonQuery("INSERT INTO Cameras (IdShotType, ShotType) VALUES (3, 'Long Shot')");
+				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (1, 'Close Up')");
+				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (2, 'Mid Shot')");
+				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (3, 'Long Shot')");
 
-				db.ExecuteNonQuery("CREATE TABLE [Scenes] ([IdScene] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER NOT NULL, [Title] TEXT NOT NULL, [Information] TEXT NOT NULL, [IdCharacter] INTEGER NOT NULL, [IdBackground] INTEGER NOT NULL, [IdMusic] INTEGER");
-				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdScene] INTEGER NOT NULL REFERENCES [Scenes] ([IdScene]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlocksTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL");
-				db.ExecuteNonQuery("CREATE TABLE [CharacterProps] ([IdCharacterProps] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdBlock] INTEGER NOT NULL REFERENCES [Blocks] ([IdBlock]) ON DELETE CASCADE, [IdResource] INTEGER NOT NULL, [Dummy] TEXT NOT NULL");
+				db.ExecuteNonQuery("CREATE TABLE [Scenes] ([IdScene] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER NOT NULL, [Title] TEXT NOT NULL, [Information] TEXT NOT NULL, [IdCharacter] INTEGER NOT NULL, [IdBackground] INTEGER NOT NULL, [IdMusic] INTEGER)");
+				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdScene] INTEGER NOT NULL REFERENCES [Scenes] ([IdScene]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlocksTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL)");
+				db.ExecuteNonQuery("CREATE TABLE [CharacterProps] ([IdCharacterProps] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdBlock] INTEGER NOT NULL REFERENCES [Blocks] ([IdBlock]) ON DELETE CASCADE, [IdResource] INTEGER NOT NULL, [Dummy] TEXT NOT NULL)");
 				db.ExecuteQuery("pragma user_version=1;");
 			}
 			/*if(VersionDB < 2) {

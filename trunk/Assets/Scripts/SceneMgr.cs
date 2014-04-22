@@ -16,8 +16,8 @@ public class SceneMgr : MonoBehaviour  {
 	
 	States mState;
 	
-	string mSceneCurrent;
-	string mSceneNext;
+	string mCurrentScene;
+	string mNextScene;
 	
 	static SceneMgr mInstance = null;
 	
@@ -29,11 +29,12 @@ public class SceneMgr : MonoBehaviour  {
 	Color mCurrentColor;
 	
 	SmoothStep mAlpha;
-	
+#if !UNITY_ANDROID
 	AsyncOperation mAsync;
+#endif
 	
-	public static SceneMgr Get() {
-		return mInstance;
+	public static SceneMgr Get {
+		get { return mInstance; }
 	}
 	
 	void Init() {
@@ -42,8 +43,8 @@ public class SceneMgr : MonoBehaviour  {
 		//BRBRec.ResourcesLibrary.Init();
 		Data.Init();
 		
-		mSceneCurrent = "Menus";
-		Application.LoadLevel(mSceneCurrent);
+		/*mCurrentScene = "Menus";
+		Application.LoadLevel(mCurrentScene);*/
 		
 		mState = States.OUT;
 		mBlack = (Texture)TVR.Helpers.ResourcesManager.LoadResource("Shared/black_pixel", "SceneMgr");
@@ -61,12 +62,18 @@ public class SceneMgr : MonoBehaviour  {
 	}
 	
 	bool SetScene(string sNewScene) {
+#if UNITY_ANDROID
+		mSceneCurrent = sNewScene;
+		Application.LoadLevel(sSceneCurrent);
+		return true;
+#else
 		if(mAsync.progress >= 0.9f) {
 			mAsync.allowSceneActivation = true;
-			mSceneCurrent = sNewScene;
+			mCurrentScene = sNewScene;
 			return true;
 		} else
 			return false;
+#endif
 	}
 	
 	public bool IsFadeFinished() {
@@ -74,13 +81,14 @@ public class SceneMgr : MonoBehaviour  {
 	}
 
 	public void SwitchTo(string sNewScene) {
-		if (mSceneCurrent == sNewScene )
+		if (mCurrentScene == sNewScene )
 			return;
 		
-		mSceneNext = sNewScene;
-		mAsync = Application.LoadLevelAsync(mSceneNext);
+		mNextScene = sNewScene;
+#if !UNITY_ANDROID
+		mAsync = Application.LoadLevelAsync(mNextScene);
 		mAsync.allowSceneActivation=false;
-		
+#endif
 		mState = States.IN;			
 		mAlpha.Reset(1, Globals.ANIMATIONDURATION);
 	}
@@ -93,8 +101,9 @@ public class SceneMgr : MonoBehaviour  {
 		switch(mState) {
 		case States.IN:
 			if(mAlpha.Ended) {
-				if(SetScene(mSceneNext)) {
+				if(SetScene(mNextScene)) {
 					mState = States.OUT;
+					mAlpha.Reset(0, Globals.ANIMATIONDURATION);
 				}
 			}
 			break;
