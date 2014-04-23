@@ -14,7 +14,9 @@ namespace TVR {
 
 		public static void Init() {
 			createDataBase();
+#if !UNITY_ANDROID
 			db.ExecuteNonQuery("VACUUM");
+#endif
 			mEscenes = new List<Scene>();
 			/*Episodes = new Dictionary<int, Episode>();
 
@@ -68,7 +70,9 @@ namespace TVR {
 		}
 		
 		public static void closeDB() {
+#if !UNITY_ANDROID
 			db.ExecuteNonQuery("VACUUM");
+#endif
 			db.Close();
 			db = null;
 		}
