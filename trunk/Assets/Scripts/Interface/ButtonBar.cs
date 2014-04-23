@@ -33,9 +33,9 @@ public class ButtonBar : MonoBehaviour
 
 	const float buttonZDepth = 10;
 	const float buttonBarZDepth = 20;
-	float buttonBarRatio = 0.1f;
-	float buttonMarginRatio = 0.0125f;
-	float buttonRatio = 0.088f;
+	const float buttonBarRatio = 0.1f;
+	const float buttonMarginRatio = 0.0125f;
+	const float buttonRatio = 0.088f;
 	float buttonSize;
 	float buttonMargin;
 
