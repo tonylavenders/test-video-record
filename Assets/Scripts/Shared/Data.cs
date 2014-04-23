@@ -5,11 +5,11 @@ using System;
 namespace TVR {	
 	public static class Data {
 		private static SqliteDatabase db = new SqliteDatabase();
-		private static List<Scene> mEscenes;
+		private static List<Scene> mScenes;
 		public static Scene selEpisode;
 
-		public static List<Scene> Episode {
-			get { return mEscenes; }
+		public static List<Scene> Scenes {
+			get { return mScenes; }
 		}
 
 		public static void Init() {
@@ -17,16 +17,17 @@ namespace TVR {
 #if !UNITY_ANDROID
 			db.ExecuteNonQuery("VACUUM");
 #endif
-			mEscenes = new List<Scene>();
-			/*Episodes = new Dictionary<int, Episode>();
+			mScenes = new List<Scene>();
 
-			DataTable epis = db.ExecuteQuery("SELECT Episodes.IdEpisode, Number, Title, Information FROM Episodes INNER JOIN EpisodesInfo ON Episodes.IdEpisode = EpisodesInfo.IdEpisode");
-			Episode epi;
-			foreach(DataRow row in epis.Rows) {
-				epi = new Episode((int)row["IdEpisode"], (int)row["Number"], (string)row["Title"], (string)row["Information"]);
-				Episodes.Add(epi.IdEpisode, epi);
-			}*/
-			mEscenes.Sort();
+			mScenes = new List<Scene>();
+
+			DataTable scenes = db.ExecuteQuery("SELECT IdScene, Number, Title, Information, IdCharacter, IdBackground, IdMusic FROM Scenes");
+			Scene scene;
+			foreach(DataRow row in scenes.Rows) {
+				scene = new Scene((int)row["IdScene"], (int)row["Number"], (string)row["Title"], (string)row["Information"], (int)row["IdCharacter"], (int)row["IdBackground"], (int?)row["IdMusic"]);
+				mScenes.Add(scene);
+			}
+			mScenes.Sort();
 		}
 		
 		private static void createDataBase() {
@@ -77,16 +78,16 @@ namespace TVR {
 			db = null;
 		}
 
-		/*public static Episode newEpisode(int number, string title, string info) {
-			if(number>Episodes.Count+1)
+		/*public static Scene newScene(int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
+			if(number > mScenes.Count + 1)
 				throw new System.Exception("The number is greater than the number of items.");
-			Episode epi = new Episode(-1,number,title,info);
+			Episode epi = new Episode(-1, number, title, info);
 			epi.save();
-			Episodes.Add(epi.IdEpisode,epi);
+			Episodes.Add(epi.IdEpisode, epi);
 			return epi;
-		}
+		}*/
 
-		public static RecordedSound newRecordedSound(int number, string name, AudioClip audioClip, int FrequencyPlayback) {
+		/*public static RecordedSound newRecordedSound(int number, string name, AudioClip audioClip, int FrequencyPlayback) {
 			if(number>dicRecordedSounds.Count+1)
 				throw new System.Exception("The number is greater than the number of items.");
 			RecordedSound RS = new RecordedSound(-1,number,name,audioClip,FrequencyPlayback);
@@ -150,7 +151,7 @@ namespace TVR {
 				get { return mIdMusic; }
 				set { mIdMusic = value; }
 			}
-			private int IdMusicNotNull {
+			private int IdMusicNotNullable {
 				get { return mIdMusic ?? -1; }
 				set {
 					if(value < 0)
@@ -158,6 +159,36 @@ namespace TVR {
 					else
 						mIdMusic = value;
 				}
+			}
+
+			public Scene(int idScene, int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
+				mIdScene = idScene;
+				mNumber = number;
+				mTitle = title;
+				mInformation = information;
+				mIdCharacter = idCharacter;
+				mIdBackground = idBackground;
+				mIdMusic = idMusic;
+			}
+
+			public void save() {
+				/*if (mIdEpisode == -1) {
+					db.ExecuteNonQuery ("INSERT INTO Episodes (CVSNew) VALUES (" + Data.Version + ")");
+					mIdEpisode = (int)db.ExecuteQuery ("SELECT MAX(IdEpisode) as ID FROM Episodes") [0] ["ID"];
+					db.ExecuteNonQuery ("UPDATE EpisodesInfo SET Number = " + mNumber + ", Title = '" + Title.Replace ("'", "''").Trim () + "', Information = '" + Information.Replace ("'", "''").Trim () + "' WHERE IdEpisode = " + mIdEpisode + " AND CVSNew = -1");
+					CVS.CVSEvent evt = new CVS.CVSEvent (CVS.CVSTypes.Create, this);
+					OnChange (evt);
+				} else {
+					if (mOldInformation == Information && mOldTitle == Title)
+						return;
+					db.ExecuteNonQuery ("UPDATE EpisodesInfo SET CVSDel = " + Data.Version + " WHERE IdEpisode = " + mIdEpisode + " AND CVSDel IS NULL");
+					db.ExecuteNonQuery ("INSERT INTO EpisodesInfo (IdEpisode, CVSNew, Number, Title, Information) VALUES (" + mIdEpisode + ", " + Data.Version + ", " + mNumber + ", '" + Title.Replace ("'", "''").Trim () + "', '" + Information.Replace ("'", "''").Trim () + "')");
+					CVS.CVSEvent evt = new CVS.CVSEvent (CVS.CVSTypes.Info, this);
+					//Si se agregan campos los cambios se tiene que agregar en el undoLocal Renumered.
+					OnChange (evt);
+					mOldTitle = Title;
+					mOldInformation = Information;
+				}*/
 			}
 
 			public int CompareTo(Scene other) {		
@@ -242,26 +273,6 @@ namespace TVR {
 				db.ExecuteNonQuery("UPDATE Episodes SET CVSDel = " + Data.Version + " WHERE IdEpisode = " + mIdEpisode + " AND CVSDel IS NULL");
 				CVS.CVSEvent evt = new CVS.CVSEvent(CVS.CVSTypes.Delete, this);
 				OnChange(evt);
-			}
-			
-			public void save() {
-				if (mIdEpisode == -1) {
-					db.ExecuteNonQuery ("INSERT INTO Episodes (CVSNew) VALUES (" + Data.Version + ")");
-					mIdEpisode = (int)db.ExecuteQuery ("SELECT MAX(IdEpisode) as ID FROM Episodes") [0] ["ID"];
-					db.ExecuteNonQuery ("UPDATE EpisodesInfo SET Number = " + mNumber + ", Title = '" + Title.Replace ("'", "''").Trim () + "', Information = '" + Information.Replace ("'", "''").Trim () + "' WHERE IdEpisode = " + mIdEpisode + " AND CVSNew = -1");
-					CVS.CVSEvent evt = new CVS.CVSEvent (CVS.CVSTypes.Create, this);
-					OnChange (evt);
-				} else {
-					if (mOldInformation == Information && mOldTitle == Title)
-						return;
-					db.ExecuteNonQuery ("UPDATE EpisodesInfo SET CVSDel = " + Data.Version + " WHERE IdEpisode = " + mIdEpisode + " AND CVSDel IS NULL");
-					db.ExecuteNonQuery ("INSERT INTO EpisodesInfo (IdEpisode, CVSNew, Number, Title, Information) VALUES (" + mIdEpisode + ", " + Data.Version + ", " + mNumber + ", '" + Title.Replace ("'", "''").Trim () + "', '" + Information.Replace ("'", "''").Trim () + "')");
-					CVS.CVSEvent evt = new CVS.CVSEvent (CVS.CVSTypes.Info, this);
-					//Si se agregan campos los cambios se tiene que agregar en el undoLocal Renumered.
-					OnChange (evt);
-					mOldTitle = Title;
-					mOldInformation = Information;
-				}
 			}
 			
 			public void saveAudioClips(string path, System.IO.StreamWriter log, Export_Main export) {
