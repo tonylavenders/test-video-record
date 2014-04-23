@@ -28,7 +28,6 @@ namespace TVR {
 		}
 		
 		private static void createDataBase() {
-			Debug.Log(Globals.DataBase);
 			bool exist = System.IO.File.Exists(Globals.DataBase);
 			int VersionDB = 0;
 			if(exist && Globals.CLEAR_DATA) {
