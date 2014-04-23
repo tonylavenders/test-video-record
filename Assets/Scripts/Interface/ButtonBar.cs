@@ -11,14 +11,14 @@ public class ButtonBar : MonoBehaviour
 	GameObject[] mButtonsInstances;
 
 	public float depth_x = 0;
-	public float vSpeed = 15;
-	public float smoothTime = 0.8f;
+	//public const float vSpeed = 15;
+	//public const float smoothTime = 0.8f;
 	bool bInit=false;
 
 	float pos_x, pos_y, scale_x, scale_y;
-	float desplY = 0.0f;
-	float velY = 0.0f;
-	float v;
+	//float desplY = 0.0f;
+	//float velY = 0.0f;
+	//float v;
 
 	SmoothStep mFade;
 	float mFadeEndValue;
@@ -45,6 +45,10 @@ public class ButtonBar : MonoBehaviour
 
 	public int lastButtonSel=0;
 
+	float[] mSpeedsY;
+	int mSpeedPos;
+	SmoothStep mSpeed;
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Awake()
@@ -54,6 +58,10 @@ public class ButtonBar : MonoBehaviour
 
 		mFadeEndValue=1.0f;
 		mFade = new SmoothStep(0.0f,0.0f,1.0f,false);
+
+		mSpeedsY = new float[Globals.SPEEDS];
+		mSpeedPos = 0;
+		mSpeed = new SmoothStep(0, 0, Globals.BRAKEDURATION, false, 0);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,25 +167,52 @@ public class ButtonBar : MonoBehaviour
 		//Check if user is touching the button bar
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		if(Input.GetMouseButtonDown(0) && collider.Raycast(ray, out hit, 1000.0f)){
-			state=States.touch;
+		if(Input.GetMouseButtonDown(0) && collider.Raycast(ray, out hit, 1000.0f)) {
+			state = States.touch;
+			mSpeedPos = 0;
+			for(int i = 0; i < Globals.SPEEDS; i++) {
+				mSpeedsY[i] = 0.0f;
+			}
+			mSpeed.End();
 		}
-		else if(InputHelp.GetMouseButtonUp(0)) {
-			state=States.idle;
-		}
+		/*else if(InputHelp.GetMouseButtonUp(0)) {
+			state = States.idle;
+		}*/
+
+		if(state == States.touch) {
+			if(InputHelp.GetMouseButtonUp(0)) {
+				for(int i = 0; i < Globals.SPEEDS; i++)
+					mSpeed.Value += mSpeedsY[i];
+
+				mSpeed.Value = mSpeed.Value / Globals.SPEEDS;
+				if(Mathf.Abs(mSpeed.Value) < Globals.MINIMUMSPEED)
+					mSpeed.Value = 0;
+				else
+					mSpeed.Reset(0.0f, Globals.BRAKEDURATION, true);
+				state = States.idle;
+			} else {
+				mSpeedsY[mSpeedPos] = InputHelp.mouseDeltaPositionYDown.y;
+				mSpeed.Value = InputHelp.mouseDeltaPositionYDown.y;
+				mSpeedPos++;
+				if(mSpeedPos == Globals.SPEEDS)
+					mSpeedPos = 0;
+			}
+		} else
+			mSpeed.Update();
 
 		//Move the button bar
-		v = InputHelp.mouseDeltaPositionYDown.y/15.0f;
+		/*v = InputHelp.mouseDeltaPositionYDown.y/15.0f;
 		if(InputHelp.GetMouseButton(0) && state==States.touch){
 			float desplYcopia = desplY;
 			desplY = v * vSpeed;
 			desplY = Mathf.Lerp(desplY, desplYcopia, smoothTime);
 		}
 
-		desplY = Mathf.SmoothDamp(desplY, 0.0f, ref velY, smoothTime);
-		float min_y = Screen.height/2-(transform.localScale.y-Screen.height)/2;
-		float max_y = Screen.height/2+(transform.localScale.y-Screen.height)/2;
-		float new_pos_y = Mathf.Clamp(transform.position.y+desplY, min_y, max_y);
+		desplY = Mathf.SmoothDamp(desplY, 0.0f, ref velY, smoothTime);*/
+		float desplY = mSpeed.Value;
+		float min_y = Screen.height / 2 - (transform.localScale.y - Screen.height) / 2;
+		float max_y = Screen.height / 2 + (transform.localScale.y - Screen.height) / 2;
+		float new_pos_y = Mathf.Clamp(transform.position.y + desplY, min_y, max_y);
 		transform.position = new Vector3(transform.position.x, new_pos_y, transform.position.z);
 	}
 
@@ -188,6 +223,7 @@ public class ButtonBar : MonoBehaviour
 		foreach(GameObject button in mButtonsInstances){
 			button.GetComponent<BasicButton>().UnCheck(id);
 		}
+		mSpeed.End();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
