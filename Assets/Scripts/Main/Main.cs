@@ -10,7 +10,7 @@ public class Main : MonoBehaviour {
 	}
 
 	void Update() {
-		if(TVR.Helpers.InputHelp.GetMouseButtonUp(0) && ! click) {
+		if(TVR.Helpers.InputHelp.GetMouseButtonUp(0) && !click) {
 			SceneMgr.Get.SwitchTo("ChapterMgr");
 			click = true;
 		}
