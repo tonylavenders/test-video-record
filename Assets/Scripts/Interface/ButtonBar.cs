@@ -23,6 +23,12 @@ public class ButtonBar : MonoBehaviour
 	SmoothStep mFade;
 	float mFadeEndValue;
 
+	public enum Aligns{
+		left,
+		right
+	}
+	public Aligns align;
+
 	enum States{
 		fade_out,
 		hidden,
@@ -108,7 +114,12 @@ public class ButtonBar : MonoBehaviour
 		SetButtons();
 
 		//Move the button bar to the correct position (buttons are moved with the button bar)
-		pos_x = (scale_x/2.0f) + scale_x*depth_x + depth_x;
+		if(align==Aligns.left){
+			pos_x = (scale_x/2.0f) + scale_x*depth_x + depth_x;
+		}
+		else if(align==Aligns.right){
+			pos_x = Screen.width - (scale_x/2.0f) + scale_x*depth_x + depth_x;
+		}
 
 		//If more than 5 buttons, then the first button is top aligned
 		if(mButtons.Length>MAX_BUTTONS)
@@ -129,12 +140,14 @@ public class ButtonBar : MonoBehaviour
 		mButtonsInstances[0].transform.parent = transform;
 		mButtonsInstances[0].GetComponent<BasicButton>().SetID(1);
 
-		for(int i=1;i<mButtonsInstances.Length;i++){
-			mButtonsInstances[i] = Instantiate(mButtons[i]) as GameObject;
-			mButtonsInstances[i].transform.position = new Vector3(scale_x/2.0f, mButtonsInstances[0].transform.position.y-(buttonSize+buttonMargin)*i, buttonZDepth);
-			mButtonsInstances[i].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
-			mButtonsInstances[i].transform.parent = transform;
-			mButtonsInstances[i].GetComponent<BasicButton>().SetID(i+1);
+		if(mButtonsInstances.Length>1){
+			for(int i=1;i<mButtonsInstances.Length;i++){
+				mButtonsInstances[i] = Instantiate(mButtons[i]) as GameObject;
+				mButtonsInstances[i].transform.position = new Vector3(scale_x/2.0f, mButtonsInstances[0].transform.position.y-(buttonSize+buttonMargin)*i, buttonZDepth);
+				mButtonsInstances[i].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
+				mButtonsInstances[i].transform.parent = transform;
+				mButtonsInstances[i].GetComponent<BasicButton>().SetID(i+1);
+			}
 		}
 	}
 	
@@ -175,9 +188,6 @@ public class ButtonBar : MonoBehaviour
 			}
 			mSpeed.End();
 		}
-		/*else if(InputHelp.GetMouseButtonUp(0)) {
-			state = States.idle;
-		}*/
 
 		if(state == States.touch) {
 			if(InputHelp.GetMouseButtonUp(0)) {
@@ -200,15 +210,6 @@ public class ButtonBar : MonoBehaviour
 		} else
 			mSpeed.Update();
 
-		//Move the button bar
-		/*v = InputHelp.mouseDeltaPositionYDown.y/15.0f;
-		if(InputHelp.GetMouseButton(0) && state==States.touch){
-			float desplYcopia = desplY;
-			desplY = v * vSpeed;
-			desplY = Mathf.Lerp(desplY, desplYcopia, smoothTime);
-		}
-
-		desplY = Mathf.SmoothDamp(desplY, 0.0f, ref velY, smoothTime);*/
 		if(mSpeed.Value != 0) {
 			float desplY = mSpeed.Value;
 			float min_y = Screen.height / 2 - (transform.localScale.y - Screen.height) / 2;
@@ -220,12 +221,23 @@ public class ButtonBar : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//A button informs to the ButtonBar that is pressed, ButtonBar informs all buttons to get unchecked
-	public void ButtonPressed(int id)
+	public void ButtonPressed(BasicButton sender)
 	{
 		foreach(GameObject button in mButtonsInstances){
-			button.GetComponent<BasicButton>().UnCheck(id);
+			BasicButton b = button.GetComponent<BasicButton>();
+			if(sender!=b)
+				b.Checked=false;
 		}
 		mSpeed.End();
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void EnableButtons()
+	{
+		foreach(GameObject button in mButtonsInstances){
+			button.GetComponent<BasicButton>().Enable();
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

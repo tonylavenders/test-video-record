@@ -10,6 +10,7 @@ public enum ButtonType{
 	MAIN_MUSIC,
 	MAIN_SHARE,
 	MAIN_DELETE,
+	ADD_CHAPTER,
 	CHAR,
 	BACKGROUND
 }
@@ -17,7 +18,7 @@ public enum ButtonType{
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public enum ContentType{
-	LIB,
+	MAIN,
 	CHAR_01, CHAR_02, CHAR_03, CHAR_04, CHAR_05, CHAR_06, CHAR_07, CHAR_08, CHAR_09,
 	BACKGROUND_01, BACKGROUND_02, BACKGROUND_03, BACKGROUND_04, BACKGROUND_05, BACKGROUND_06,BACKGROUND_07
 }
@@ -30,13 +31,33 @@ public class BasicButton : MonoBehaviour
 
 	public Texture texChecked;
 	public Texture texUnchecked;
-	public bool bKeepSt;
-	public bool bChecked;
+	public bool bKeepSt = true;
+	public bool bUnselectable = true;
+	public bool bEnabled=true;
+	bool bClicked;
+
+	bool bChecked;
+	public bool Checked{
+		get { return bChecked; }
+		set {
+			if(bChecked!=value) {
+				bChecked=value;
+				if(checkedCallback!=null)
+					checkedCallback(this);
+				if(value) {
+					renderer.sharedMaterial.mainTexture = texChecked;
+					mButtonBar.ButtonPressed(this);
+				} else
+					renderer.sharedMaterial.mainTexture = texUnchecked;
+			}
+		}
+	}
 	public ButtonType buttonType;
 	public ContentType contentType;
 
-	public delegate void ButtonCallback(ContentType contentType);
-	public ButtonCallback buttonCallback;
+	public delegate void ButtonCallback(BasicButton sender);
+	public ButtonCallback clickedCallback;
+	public ButtonCallback checkedCallback;
 
 	SmoothStep mFade;
 	float mFadeEndValue;
@@ -94,27 +115,46 @@ public class BasicButton : MonoBehaviour
 		if(mFadeEndValue==0.0f && mFade.Value<0.001f)
 			state=States.hidden;
 
-		//Check if user is touching the button
-		RaycastHit hit;
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		if(bEnabled){
+			//Check if user is touching the button
+			RaycastHit hit;
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-		if(collider.Raycast(ray, out hit, 1000.0f)){
-			if(Input.GetMouseButtonDown(0)){
-				mMouseInitPos=InputHelp.mousePosition;
-			}
-			if(Input.GetMouseButtonUp(0)){
-				Vector2 mMovement = InputHelp.mousePosition-mMouseInitPos;
-				if(mMovement.sqrMagnitude < MAXDISABLEBUTTONS){
-					if(!bChecked){
+			if(collider.Raycast(ray, out hit, 1000.0f)){
+				if(InputHelp.GetMouseButtonDown(0)){
+					mMouseInitPos=InputHelp.mousePosition;
+					bClicked=true;
+					if(!bKeepSt)
 						renderer.sharedMaterial.mainTexture = texChecked;
-						bChecked=true;
-						mButtonBar.ButtonPressed(mID);
-						if(buttonCallback!=null)
-							buttonCallback(contentType);
+				} else if(bClicked) {
+					if(InputHelp.GetMouseButton(0)) {
+						Vector2 mMovement = InputHelp.mousePosition-mMouseInitPos;
+						if(mMovement.sqrMagnitude > MAXDISABLEBUTTONS) {
+							if(!bKeepSt)
+								renderer.sharedMaterial.mainTexture = texUnchecked;
+							bClicked=false;
+						}
+					} else if(InputHelp.GetMouseButtonUp(0)){
+						if(bKeepSt)
+							Checked=!Checked || bUnselectable;
+						else
+							renderer.sharedMaterial.mainTexture = texUnchecked;
+						mButtonBar.ButtonPressed(this);
+						if(clickedCallback!=null)
+							clickedCallback(this);
+						bClicked=false;
 					}
 				}
 			}
 		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void Enable()
+	{
+		bEnabled=true;
+		mFade.Reset(1.0f, Globals.ANIMATIONDURATION);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,41 +166,31 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void UnCheck(int current_id)
-	{
-		if(current_id==mID)
-			return;
-
-		if(bChecked){
-			bChecked=false;
-			renderer.sharedMaterial.mainTexture = texUnchecked;
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	void SetCallback()
 	{
 		if(buttonType==ButtonType.MAIN_CHARACTERS){
-			buttonCallback = mGUIManager.OnButtonCharactersPressed;
+			checkedCallback = mGUIManager.OnButtonCharactersPressed;
 		}
 		else if(buttonType==ButtonType.MAIN_BACKGROUNDS){
-			buttonCallback = mGUIManager.OnButtonBackgroundsPressed;
+			checkedCallback = mGUIManager.OnButtonBackgroundsPressed;
 		}
 		else if(buttonType==ButtonType.MAIN_MUSIC){
-			buttonCallback = mGUIManager.OnButtonMusicPressed;
+			checkedCallback = mGUIManager.OnButtonMusicPressed;
 		}
 		else if(buttonType==ButtonType.MAIN_SHARE){
-			buttonCallback = mGUIManager.OnButtonSharePressed;
+			clickedCallback = mGUIManager.OnButtonSharePressed;
 		}
 		else if(buttonType==ButtonType.MAIN_DELETE){
-			buttonCallback = mGUIManager.OnButtonDeletePressed;
+			clickedCallback = mGUIManager.OnButtonDeletePressed;
+		}
+		else if(buttonType==ButtonType.ADD_CHAPTER){
+			clickedCallback = mGUIManager.OnButtonAddChapterPressed;
 		}
 		else if(buttonType==ButtonType.CHAR){
-			buttonCallback = mGUIManager.OnButtonCharacterPressed;
+			clickedCallback = mGUIManager.OnButtonCharacterPressed;
 		}
 		else if(buttonType==ButtonType.BACKGROUND){
-			buttonCallback = mGUIManager.OnButtonBackgroundPressed;
+			clickedCallback = mGUIManager.OnButtonBackgroundPressed;
 		}
 	}
 	
@@ -168,7 +198,10 @@ public class BasicButton : MonoBehaviour
 	
 	public void Show()
 	{
-		mFadeEndValue=1.0f;
+		if(bEnabled)
+			mFadeEndValue=1.0f;
+		else
+			mFadeEndValue=0.3f;
 		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
 
 		if(mGUIText)

@@ -11,8 +11,10 @@ public class GUIManager : MonoBehaviour
 	public GameObject mMainButtonBar;
 	public GameObject mCharactersButtonBar;
 	public GameObject mBackgroundsButtonBar;
+	public GameObject mChaptersButtonBar;
 
 	const float cameraZDepth = 0;
+	int Counter = 0; 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,6 +22,7 @@ public class GUIManager : MonoBehaviour
 	{
 		SetGUICamera();
 		mMainButtonBar.GetComponent<ButtonBar>().Show();
+		mChaptersButtonBar.GetComponent<ButtonBar>().Show();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,78 +35,92 @@ public class GUIManager : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void Update()
-	{
-		//InputHelp.Update();
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void OnGUI()
-	{
+	void OnGUI(){
 		//This is necessary for the Samsung Galaxy S (Android 2.3)
 		//Pressing HOME button freezes the device
 		if(GUI.Button(new Rect(Screen.width/2-50, 10, 100, 50), "QUIT")){
 			Application.Quit();
 		}
 	}
-
-	void OnApplicationPause()
-	{
+	void OnApplicationPause(){
 		Application.Quit();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void OnButtonCharactersPressed(ContentType contentType)
+	public void OnButtonCharactersPressed(BasicButton sender)
 	{
-		mCharactersButtonBar.GetComponent<ButtonBar>().Show();
-		mBackgroundsButtonBar.GetComponent<ButtonBar>().Hide();
+		if(sender.Checked)
+			mCharactersButtonBar.GetComponent<ButtonBar>().Show();
+		else
+			mCharactersButtonBar.GetComponent<ButtonBar>().Hide();
 
-		mMainButtonBar.GetComponent<ButtonBar>().Separator.SetActive(true);
+		Count(sender.Checked);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void OnButtonBackgroundsPressed(ContentType contentType)
+	public void OnButtonBackgroundsPressed(BasicButton sender)
 	{
-		mCharactersButtonBar.GetComponent<ButtonBar>().Hide();
-		mBackgroundsButtonBar.GetComponent<ButtonBar>().Show();
+		if(sender.Checked)
+			mBackgroundsButtonBar.GetComponent<ButtonBar>().Show();
+		else
+			mBackgroundsButtonBar.GetComponent<ButtonBar>().Hide();
 
-		mMainButtonBar.GetComponent<ButtonBar>().Separator.SetActive(true);
+		Count (sender.Checked);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void Count(bool bCount)
+	{
+		if(bCount)
+			Counter++;
+		else
+			Counter--;
+
+		mMainButtonBar.GetComponent<ButtonBar>().Separator.SetActive(Counter!=0);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void OnButtonMusicPressed(ContentType contentType)
+	public void OnButtonMusicPressed(BasicButton sender)
 	{
 		//Debug.Log(contentType + " - music pressed");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void OnButtonSharePressed(ContentType contentType)
+	public void OnButtonSharePressed(BasicButton sender)
 	{
 		//Debug.Log(contentType + " - share pressed");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void OnButtonDeletePressed(ContentType contentType)
+	public void OnButtonDeletePressed(BasicButton sender)
 	{
 		//Debug.Log(contentType + " - delete pressed");
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonAddChapterPressed(BasicButton sender)
+	{
+		//Debug.Log(contentType + " pressed");
+		mMainButtonBar.GetComponent<ButtonBar>().EnableButtons();
+	}
 
-	public void OnButtonCharacterPressed(ContentType contentType)
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonCharacterPressed(BasicButton sender)
 	{
 		//Debug.Log(contentType + " pressed");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void OnButtonBackgroundPressed(ContentType contentType)
+	public void OnButtonBackgroundPressed(BasicButton sender)
 	{
 		//Debug.Log(contentType + " pressed");
 	}
