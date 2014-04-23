@@ -127,7 +127,7 @@ public class SqliteDatabase {
 		IntPtr stmHandle = Prepare(query);
 		if(sqlite3_step(stmHandle) != SQLITE_DONE) {
 			IntPtr errorMsg = sqlite3_errmsg(_connection);
-			throw new SqliteException(Marshal.PtrToStringAnsi(errorMsg));
+			UnityEngine.Debug.Log(Marshal.PtrToStringAnsi(errorMsg));
 			//throw new SqliteException("Could not execute SQL statement.");
 		}
 		Finalize(stmHandle);
