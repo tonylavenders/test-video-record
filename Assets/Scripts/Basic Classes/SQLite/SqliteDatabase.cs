@@ -127,7 +127,7 @@ public class SqliteDatabase {
 		IntPtr stmHandle = Prepare(query);
 		int code = sqlite3_step(stmHandle);
 		if(code != SQLITE_DONE) {
-			throw new SqliteException("Could not execute SQL statement. Errord code:" + code);
+			throw new SqliteException("Could not execute SQL statement. Errord code: " + code);
 		}
 		Finalize(stmHandle);
 	}
