@@ -67,6 +67,12 @@ namespace TVR {
 			}*/
 		}
 		
+		public static void closeDB() {
+			db.ExecuteNonQuery("VACUUM");
+			db.Close();
+			db = null;
+		}
+
 		/*public static Episode newEpisode(int number, string title, string info) {
 			if(number>Episodes.Count+1)
 				throw new System.Exception("The number is greater than the number of items.");
@@ -74,9 +80,9 @@ namespace TVR {
 			epi.save();
 			Episodes.Add(epi.IdEpisode,epi);
 			return epi;
-		}*/
-		
-		/*public static RecordedSound newRecordedSound(int number, string name, AudioClip audioClip, int FrequencyPlayback) {
+		}
+
+		public static RecordedSound newRecordedSound(int number, string name, AudioClip audioClip, int FrequencyPlayback) {
 			if(number>dicRecordedSounds.Count+1)
 				throw new System.Exception("The number is greater than the number of items.");
 			RecordedSound RS = new RecordedSound(-1,number,name,audioClip,FrequencyPlayback);
@@ -93,18 +99,61 @@ namespace TVR {
 			else
 				return newRecordedSound(mFolderVoices.Content[mFolderVoices.Content.Count-1].Number+1, name, audioClip, FrequencyPlayback);
 		}*/
-		
-		public static void closeDB() {
-			db.ExecuteNonQuery("VACUUM");
-			db.Close();
-			db = null;
-		}
 
 		public class Scene : System.IComparable<Scene> {
+			private int mIdScene;
 			private int mNumber;
+			private string mTitle;
+			private string mInformation;
+			private int mIdCharacter;
+			private int mIdBackground;
+			private int? mIdMusic;
+			//v2 = v1 ?? default(int);
+			//v2 = v1 == null ? default(int) : v1;
+			/*if(v1==null)
+			   v2 = default(int);
+			else
+			   v2 = v1;*/
+			//v2 = v1.GetValueOrDefault();
+			//v2 = v1.GetValueOrDefault(-1);
+			/*if(v1.HasValue)
+   				v2 = v1.Value;*/
+
+			public int IdScene {
+				get { return mIdScene; }
+			}
 			public int Number {
 				get { return mNumber; }
 				set { mNumber = value; }
+			}
+			public string Title {
+				get { return mTitle; }
+				set { mTitle = value; }
+			}
+			private string Information {
+				get { return mInformation; }
+				set { mInformation = value; }
+			}
+			private int IdCharacter {
+				get { return mIdCharacter; }
+				set { mIdCharacter = value; }
+			}
+			private int IdBackground {
+				get { return mIdBackground; }
+				set { mIdBackground = value; }
+			}
+			private int? IdMusic {
+				get { return mIdMusic; }
+				set { mIdMusic = value; }
+			}
+			private int IdMusicNotNull {
+				get { return mIdMusic ?? -1; }
+				set {
+					if(value < 0)
+						mIdMusic = null;
+					else
+						mIdMusic = value;
+				}
 			}
 
 			public int CompareTo(Scene other) {		
@@ -116,7 +165,7 @@ namespace TVR {
 						return 0;
 			}
 		}
-			
+
 		/*public class Episode : System.IComparable<Episode> {
 			private int mIdEpisode;
 			internal int mNumber;

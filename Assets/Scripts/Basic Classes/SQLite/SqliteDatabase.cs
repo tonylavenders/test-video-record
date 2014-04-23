@@ -125,8 +125,9 @@ public class SqliteDatabase {
 			throw new SqliteException("SQLite database is not open.");
 		}
 		IntPtr stmHandle = Prepare(query);
-		if(sqlite3_step(stmHandle) != SQLITE_DONE) {
-			throw new SqliteException("Could not execute SQL statement.");
+		int code = sqlite3_step(stmHandle);
+		if(code != SQLITE_DONE) {
+			throw new SqliteException("Could not execute SQL statement. Errord code:" + code);
 		}
 		Finalize(stmHandle);
 	}
