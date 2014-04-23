@@ -209,11 +209,13 @@ public class ButtonBar : MonoBehaviour
 		}
 
 		desplY = Mathf.SmoothDamp(desplY, 0.0f, ref velY, smoothTime);*/
-		float desplY = mSpeed.Value;
-		float min_y = Screen.height / 2 - (transform.localScale.y - Screen.height) / 2;
-		float max_y = Screen.height / 2 + (transform.localScale.y - Screen.height) / 2;
-		float new_pos_y = Mathf.Clamp(transform.position.y + desplY, min_y, max_y);
-		transform.position = new Vector3(transform.position.x, new_pos_y, transform.position.z);
+		if(mSpeed.Value != 0) {
+			float desplY = mSpeed.Value;
+			float min_y = Screen.height / 2 - (transform.localScale.y - Screen.height) / 2;
+			float max_y = Screen.height / 2 + (transform.localScale.y - Screen.height) / 2;
+			float new_pos_y = Mathf.Clamp(transform.position.y + desplY, min_y, max_y);
+			transform.position = new Vector3(transform.position.x, new_pos_y, transform.position.z);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
