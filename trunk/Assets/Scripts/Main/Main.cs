@@ -15,4 +15,8 @@ public class Main : MonoBehaviour {
 			click = true;
 		}
 	}
+
+	void OnGUI() {
+		GUI.Label(new Rect(Screen.width/2, Screen.height/2, 200, 50), "Touch the screen");
+	}
 }
