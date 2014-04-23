@@ -77,35 +77,35 @@ public class GUIManager : MonoBehaviour
 	
 	public void OnButtonMusicPressed(ContentType contentType)
 	{
-		Debug.Log(contentType + " - music pressed");
+		//Debug.Log(contentType + " - music pressed");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void OnButtonSharePressed(ContentType contentType)
 	{
-		Debug.Log(contentType + " - share pressed");
+		//Debug.Log(contentType + " - share pressed");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void OnButtonDeletePressed(ContentType contentType)
 	{
-		Debug.Log(contentType + " - delete pressed");
+		//Debug.Log(contentType + " - delete pressed");
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public void OnButtonCharacterPressed(ContentType contentType)
 	{
-		Debug.Log(contentType + " pressed");
+		//Debug.Log(contentType + " pressed");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void OnButtonBackgroundPressed(ContentType contentType)
 	{
-		Debug.Log(contentType + " pressed");
+		//Debug.Log(contentType + " pressed");
 	}
 }
 

@@ -39,6 +39,7 @@ public class BasicButton : MonoBehaviour
 	public ButtonCallback buttonCallback;
 
 	SmoothStep mFade;
+	float mFadeEndValue;
 
 	int mID;
 	ButtonBar mButtonBar;
@@ -48,6 +49,7 @@ public class BasicButton : MonoBehaviour
 	Vector2 mMouseInitPos;
 
 	enum States{
+		fade_out,
 		hidden,
 		idle,
 	}
@@ -59,7 +61,12 @@ public class BasicButton : MonoBehaviour
 	{
 		renderer.sharedMaterial.mainTexture = texUnchecked;
 		mGUIText = transform.FindChild("GUI Text");
-		mFade = new SmoothStep(0.0f,1.0f,1.0f,false);
+
+		Color c = renderer.material.color;
+		renderer.material.color = new Color(c.r, c.g, c.b, 0.0f);
+
+		mFadeEndValue=1.0f;
+		mFade = new SmoothStep(0.0f,0.0f,1.0f,false);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,6 +90,9 @@ public class BasicButton : MonoBehaviour
 			mFade.Update();
 		Color c = renderer.material.color;
 		renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
+
+		if(mFadeEndValue==0.0f && mFade.Value<0.001f)
+			state=States.hidden;
 
 		//Check if user is touching the button
 		RaycastHit hit;
@@ -158,7 +168,9 @@ public class BasicButton : MonoBehaviour
 	
 	public void Show()
 	{
-		mFade.Reset(1.0f, Globals.ANIMATIONDURATION);
+		mFadeEndValue=1.0f;
+		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
+
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Show();
 
@@ -169,11 +181,13 @@ public class BasicButton : MonoBehaviour
 	
 	public void Hide()
 	{
-		mFade.Reset(0.0f, Globals.ANIMATIONDURATION);
+		mFadeEndValue=0.0f;
+		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
+
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Hide();
 
-		state=States.hidden;
+		state=States.fade_out;
 	}
 }
 

@@ -18,12 +18,13 @@ public class ButtonBar : MonoBehaviour
 	float pos_x, pos_y, scale_x, scale_y;
 	float desplY = 0.0f;
 	float velY = 0.0f;
+	float v;
 
 	SmoothStep mFade;
-	float mFadeStartValue;
 	float mFadeEndValue;
 
 	enum States{
+		fade_out,
 		hidden,
 		idle,
 		touch,
@@ -50,13 +51,9 @@ public class ButtonBar : MonoBehaviour
 	{
 		mButtonsInstances = new GameObject[mButtons.Length];
 		mGUIManager = transform.parent.GetComponent<GUIManager>();
-	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void Start()
-	{
-
+		mFadeEndValue=1.0f;
+		mFade = new SmoothStep(0.0f,0.0f,1.0f,false);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,12 +63,6 @@ public class ButtonBar : MonoBehaviour
 		SetScale();
 		SetPosition();
 		SetSeparator();
-		
-		mFadeStartValue=0.0f;
-		mFadeEndValue=1.0f;
-		mFade = new SmoothStep(mFadeStartValue,mFadeEndValue,1.0f,false);
-		
-		state=States.hidden;
 
 		bInit=true;
 	}
@@ -176,8 +167,7 @@ public class ButtonBar : MonoBehaviour
 		}
 
 		//Move the button bar
-		float v = InputHelp.mouseDeltaPositionYDown.y/15.0f;
-
+		v = InputHelp.mouseDeltaPositionYDown.y/15.0f;
 		if(InputHelp.GetMouseButton(0) && state==States.touch){
 			float desplYcopia = desplY;
 			desplY = v * vSpeed;
@@ -230,6 +220,8 @@ public class ButtonBar : MonoBehaviour
 		foreach(GameObject button in mButtonsInstances){
 			button.GetComponent<BasicButton>().Hide();
 		}
+
+		state=States.fade_out;
 	}
 }
 
