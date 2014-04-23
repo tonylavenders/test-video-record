@@ -63,8 +63,8 @@ public class SceneMgr : MonoBehaviour  {
 	
 	bool SetScene(string sNewScene) {
 #if UNITY_ANDROID
-		mSceneCurrent = sNewScene;
-		Application.LoadLevel(sSceneCurrent);
+		mCurrentScene = sNewScene;
+		Application.LoadLevel(mCurrentScene);
 		return true;
 #else
 		if(mAsync.progress >= 0.9f) {
