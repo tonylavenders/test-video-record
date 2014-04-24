@@ -36,7 +36,7 @@ public class ButtonBarChapters : ButtonBar
 		listButtons[numChapters].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
 		listButtons[numChapters].transform.parent = transform;
 		listButtons[numChapters].GetComponent<BasicButton>().Show(0.2f, 0.2f);
-		listButtons[numChapters].GetComponent<BasicButton>().mGUIText.guiText.text+=numChapters.ToString("00");
+		listButtons[numChapters].GetComponent<BasicButton>().Text+=numChapters.ToString("00");
 
 		ButtonPressed(listButtons[numChapters].GetComponent<BasicButton>());
 		listButtons[0].GetComponent<BasicButton>().Hide(0 ,0.2f);
