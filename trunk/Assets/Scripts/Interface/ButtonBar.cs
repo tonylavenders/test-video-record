@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using TVR;
 using TVR.Utils;
 using TVR.Helpers;
@@ -7,18 +8,13 @@ using TVR.Helpers;
 public class ButtonBar : MonoBehaviour
 {
 	public GameObject[] mButtons;
+	protected List<GameObject> listButtons;
 	public GameObject Separator;
-	GameObject[] mButtonsInstances;
 
 	public float depth_x = 0;
-	//public const float vSpeed = 15;
-	//public const float smoothTime = 0.8f;
 	bool bInit=false;
 
-	float pos_x, pos_y, scale_x, scale_y;
-	//float desplY = 0.0f;
-	//float velY = 0.0f;
-	//float v;
+	protected float pos_x, pos_y, scale_x, scale_y;
 
 	SmoothStep mFade;
 	float mFadeEndValue;
@@ -37,13 +33,13 @@ public class ButtonBar : MonoBehaviour
 	}
 	States state;
 
-	const float buttonZDepth = 10;
+	protected const float buttonZDepth = 10;
 	const float buttonBarZDepth = 20;
 	const float buttonBarRatio = 0.1f;
 	const float buttonMarginRatio = 0.0125f;
 	const float buttonRatio = 0.088f;
-	float buttonSize;
-	float buttonMargin;
+	protected float buttonSize;
+	protected float buttonMargin;
 
 	public GUIManager mGUIManager;
 
@@ -59,7 +55,7 @@ public class ButtonBar : MonoBehaviour
 
 	void Awake()
 	{
-		mButtonsInstances = new GameObject[mButtons.Length];
+		listButtons = new List<GameObject>();
 		mGUIManager = transform.parent.GetComponent<GUIManager>();
 
 		mFadeEndValue=1.0f;
@@ -132,21 +128,21 @@ public class ButtonBar : MonoBehaviour
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Set the position of the first button, then set the position of the other buttons
-	void SetButtons()
+	protected virtual void SetButtons()
 	{
-		mButtonsInstances[0] = Instantiate(mButtons[0]) as GameObject;
-		mButtonsInstances[0].transform.position = new Vector3(scale_x/2.0f, (mButtons.Length-1)*(buttonSize/2+buttonMargin/2) + Screen.height/2, buttonZDepth);
-		mButtonsInstances[0].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
-		mButtonsInstances[0].transform.parent = transform;
-		mButtonsInstances[0].GetComponent<BasicButton>().SetID(1);
+		listButtons.Add(Instantiate(mButtons[0]) as GameObject);
+		listButtons[0].transform.position = new Vector3(scale_x/2.0f, (mButtons.Length-1)*(buttonSize/2+buttonMargin/2) + Screen.height/2, buttonZDepth);
+		listButtons[0].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
+		listButtons[0].transform.parent = transform;
+		listButtons[0].GetComponent<BasicButton>().SetID(1);
 
-		if(mButtonsInstances.Length>1){
-			for(int i=1;i<mButtonsInstances.Length;i++){
-				mButtonsInstances[i] = Instantiate(mButtons[i]) as GameObject;
-				mButtonsInstances[i].transform.position = new Vector3(scale_x/2.0f, mButtonsInstances[0].transform.position.y-(buttonSize+buttonMargin)*i, buttonZDepth);
-				mButtonsInstances[i].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
-				mButtonsInstances[i].transform.parent = transform;
-				mButtonsInstances[i].GetComponent<BasicButton>().SetID(i+1);
+		if(mButtons.Length>1){
+			for(int i=1;i<mButtons.Length;i++){
+				listButtons.Add(Instantiate(mButtons[i]) as GameObject);
+				listButtons[i].transform.position = new Vector3(scale_x/2.0f, listButtons[0].transform.position.y-(buttonSize+buttonMargin)*i, buttonZDepth);
+				listButtons[i].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
+				listButtons[i].transform.parent = transform;
+				listButtons[i].GetComponent<BasicButton>().SetID(i+1);
 			}
 		}
 	}
@@ -223,7 +219,7 @@ public class ButtonBar : MonoBehaviour
 	//A button informs to the ButtonBar that is pressed, ButtonBar informs all buttons to get unchecked
 	public void ButtonPressed(BasicButton sender)
 	{
-		foreach(GameObject button in mButtonsInstances){
+		foreach(GameObject button in listButtons){
 			BasicButton b = button.GetComponent<BasicButton>();
 			if(sender!=b)
 				b.Checked=false;
@@ -235,7 +231,7 @@ public class ButtonBar : MonoBehaviour
 
 	public void EnableButtons()
 	{
-		foreach(GameObject button in mButtonsInstances){
+		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Enable = true;
 		}
 	}
@@ -250,7 +246,7 @@ public class ButtonBar : MonoBehaviour
 		mFadeEndValue=1.0f;
 		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
 
-		foreach(GameObject button in mButtonsInstances){
+		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Show();
 		}
 
@@ -261,13 +257,10 @@ public class ButtonBar : MonoBehaviour
 
 	public void Hide()
 	{
-		if(!bInit)
-			Init();
-
 		mFadeEndValue=0.0f;
 		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
 	
-		foreach(GameObject button in mButtonsInstances){
+		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Hide();
 		}
 
