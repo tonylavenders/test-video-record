@@ -34,6 +34,24 @@ public class BasicButton : MonoBehaviour
 	public bool bKeepSt = true;
 	public bool bUnselectable = true;
 	public bool bEnabled=true;
+	public bool Enable {
+		get { return bEnabled; }
+		set {
+			if(bEnabled != value) {
+				bEnabled = value;
+				if(enabledCallback != null)
+					enabledCallback(this);
+				if(state == States.fade_in || state == States.idle) {
+					if(value)
+						mFade.Reset(1f, Globals.ANIMATIONDURATION);
+					else
+						mFade.Reset(0.3f, Globals.ANIMATIONDURATION);
+				}
+				if(!value)
+					Checked = false;
+			}
+		}
+	}
 	bool bClicked;
 
 	bool bChecked;
@@ -58,9 +76,9 @@ public class BasicButton : MonoBehaviour
 	public delegate void ButtonCallback(BasicButton sender);
 	public ButtonCallback clickedCallback;
 	public ButtonCallback checkedCallback;
+	public ButtonCallback enabledCallback;
 
 	SmoothStep mFade;
-	float mFadeEndValue;
 
 	int mID;
 	ButtonBar mButtonBar;
@@ -73,6 +91,7 @@ public class BasicButton : MonoBehaviour
 	enum States{
 		fade_out,
 		hidden,
+		fade_in,
 		idle,
 	}
 	States state;
@@ -82,22 +101,19 @@ public class BasicButton : MonoBehaviour
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
-	void Awake()
-	{
+	void Awake() {
 		renderer.sharedMaterial.mainTexture = texUnchecked;
 		mGUIText = transform.FindChild("GUI Text");
 
 		Color c = renderer.material.color;
 		renderer.material.color = new Color(c.r, c.g, c.b, 0.0f);
 
-		mFadeEndValue=1.0f;
-		mFade = new SmoothStep(0.0f,0.0f,1.0f,false);
+		mFade = new SmoothStep(0.0f, 0.0f, 1.0f, false);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void Start()
-	{
+	void Start() {
 		mButtonBar = transform.parent.GetComponent<ButtonBar>();
 		mGUIManager = mButtonBar.mGUIManager;
 		SetCallback();
@@ -105,21 +121,25 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	void Update()
-	{
-		if(state==States.hidden)
+	void Update() {
+		if(state == States.hidden)
 			return;
 
 		//Fade
-		if(mFade.Enable)
-			mFade.Update();
-		Color c = renderer.material.color;
-		renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
+		if(!mFade.Ended) {
+			if(mFade.Update() == SmoothStep.State.inFade) {
+				if(mFade.Ended) {
+					if(mFade.Value == 0)
+						state = States.hidden;
+					else
+						state = States.idle;
+				}
+				Color c = renderer.material.color;
+				renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
+			}
+		}
 
-		if(mFadeEndValue==0.0f && mFade.Value<0.001f)
-			state=States.hidden;
-
-		if(bEnabled && mSharedTime != Time.time) {
+		if(bEnabled && state == States.idle && mSharedTime != Time.time) {
 			//Check if user is touching the button
 			RaycastHit hit;
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -156,76 +176,63 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void Enable()
-	{
-		bEnabled=true;
+	/*public void Enable() {
+		bEnabled = true;
 		mFade.Reset(1.0f, Globals.ANIMATIONDURATION);
+		state = States.fade_in;
+	}*/
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void SetID(int _id) {
+		mID = _id;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void SetID(int _id)
-	{
-		mID=_id;
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void SetCallback()
-	{
-		if(buttonType==ButtonType.MAIN_CHARACTERS){
+	void SetCallback() {
+		if(buttonType == ButtonType.MAIN_CHARACTERS) {
 			checkedCallback = mGUIManager.OnButtonCharactersPressed;
-		}
-		else if(buttonType==ButtonType.MAIN_BACKGROUNDS){
+		} else if(buttonType == ButtonType.MAIN_BACKGROUNDS) {
 			checkedCallback = mGUIManager.OnButtonBackgroundsPressed;
-		}
-		else if(buttonType==ButtonType.MAIN_MUSIC){
+		} else if(buttonType == ButtonType.MAIN_MUSIC) {
 			checkedCallback = mGUIManager.OnButtonMusicPressed;
-		}
-		else if(buttonType==ButtonType.MAIN_SHARE){
+		} else if(buttonType == ButtonType.MAIN_SHARE) {
 			clickedCallback = mGUIManager.OnButtonSharePressed;
-		}
-		else if(buttonType==ButtonType.MAIN_DELETE){
+		} else if(buttonType == ButtonType.MAIN_DELETE) {
 			clickedCallback = mGUIManager.OnButtonDeletePressed;
-		}
-		else if(buttonType==ButtonType.ADD_CHAPTER){
+		} else if(buttonType == ButtonType.ADD_CHAPTER) {
 			clickedCallback = mGUIManager.OnButtonAddChapterPressed;
-		}
-		else if(buttonType==ButtonType.CHAR){
+		} else if(buttonType == ButtonType.CHAR) {
 			clickedCallback = mGUIManager.OnButtonCharacterPressed;
-		}
-		else if(buttonType==ButtonType.BACKGROUND){
+		} else if(buttonType == ButtonType.BACKGROUND) {
 			clickedCallback = mGUIManager.OnButtonBackgroundPressed;
 		}
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Show()
-	{
+	public void Show() {
 		if(bEnabled)
-			mFadeEndValue=1.0f;
+			mFade.Reset(1f, Globals.ANIMATIONDURATION);
 		else
-			mFadeEndValue=0.3f;
-		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
+			mFade.Reset(0.3f, Globals.ANIMATIONDURATION);
 
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Show();
 
-		state=States.idle;
+		state = States.fade_in;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Hide()
-	{
-		mFadeEndValue=0.0f;
-		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
+	public void Hide() {
+		mFade.Reset(0f, Globals.ANIMATIONDURATION);
 
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Hide();
 
-		state=States.fade_out;
+		state = States.fade_out;
 	}
 }
 

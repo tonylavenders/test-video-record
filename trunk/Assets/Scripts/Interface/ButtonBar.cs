@@ -236,7 +236,7 @@ public class ButtonBar : MonoBehaviour
 	public void EnableButtons()
 	{
 		foreach(GameObject button in mButtonsInstances){
-			button.GetComponent<BasicButton>().Enable();
+			button.GetComponent<BasicButton>().Enable = true;
 		}
 	}
 
