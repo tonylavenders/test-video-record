@@ -67,7 +67,8 @@ public class BasicButton : MonoBehaviour
 					checkedCallback(this);
 				if(value) {
 					renderer.sharedMaterial.mainTexture = texChecked;
-					mButtonBar.ButtonPressed(this);
+					if(mButtonBar != null)
+						mButtonBar.ButtonPressed(this);
 				} else
 					renderer.sharedMaterial.mainTexture = texUnchecked;
 			}
@@ -91,13 +92,13 @@ public class BasicButton : MonoBehaviour
 
 	Vector2 mMouseInitPos;
 
-	enum States{
+	public enum States{
 		fade_out,
 		hidden,
 		fade_in,
 		idle,
 	}
-	States state;
+	public States state;
 
 	public static bool anyButtonJustPressed {
 		get { return mSharedTime == Time.time; }
@@ -219,12 +220,12 @@ public class BasicButton : MonoBehaviour
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Show()
+	public void Show(float delay = 0)
 	{
 		if(bEnabled)
-			mFade.Reset(1f, Globals.ANIMATIONDURATION);
+			mFade.Reset(1f, Globals.ANIMATIONDURATION, true, delay);
 		else
-			mFade.Reset(0.3f, Globals.ANIMATIONDURATION);
+			mFade.Reset(0.3f, Globals.ANIMATIONDURATION, true, delay);
 
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Show();

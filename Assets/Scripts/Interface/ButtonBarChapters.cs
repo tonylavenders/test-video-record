@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class ButtonBarChapters : ButtonBar
 {
 	int numChapters;
+	bool bAddingChapter;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,17 +33,30 @@ public class ButtonBarChapters : ButtonBar
 		//Add chapter button
 		listButtons.Add(Instantiate(mButtons[1]) as GameObject);
 		listButtons[numChapters].transform.position = listButtons[0].transform.position;
-		//listButtons[0].transform.position = listButtons[numChapters].transform.position - new Vector3(0, buttonMargin+buttonSize, 0);
-		listButtons[0].GetComponent<BasicButton>().Hide();
 		listButtons[numChapters].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
 		listButtons[numChapters].transform.parent = transform;
-		listButtons[numChapters].GetComponent<BasicButton>().Show();
-
+		listButtons[numChapters].GetComponent<BasicButton>().Show(0.3f);
+		listButtons[numChapters].GetComponent<BasicButton>().Checked=true;
+		ButtonPressed(listButtons[numChapters].GetComponent<BasicButton>());
+		listButtons[0].GetComponent<BasicButton>().Hide();
 		mGUIManager.mMainButtonBar.GetComponent<ButtonBar>().EnableButtons();
+
+		bAddingChapter=true;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	protected override void Update()
+	{
+		base.Update();
+
+		if(bAddingChapter && listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.hidden){
+			listButtons[0].transform.position = listButtons[numChapters].transform.position - new Vector3(0, buttonMargin+buttonSize, 0);
+			listButtons[0].GetComponent<BasicButton>().Show();
+			bAddingChapter=false;
+		}
+	}
 }
+
 
 
