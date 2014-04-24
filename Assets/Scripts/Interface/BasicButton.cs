@@ -11,6 +11,7 @@ public enum ButtonType{
 	MAIN_SHARE,
 	MAIN_DELETE,
 	ADD_CHAPTER,
+	CHAPTER,
 	CHAR,
 	BACKGROUND
 }
@@ -101,9 +102,11 @@ public class BasicButton : MonoBehaviour
 	public static bool anyButtonJustPressed {
 		get { return mSharedTime == Time.time; }
 	}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
-	void Awake() {
+	void Awake()
+	{
 		renderer.sharedMaterial.mainTexture = texUnchecked;
 		mGUIText = transform.FindChild("GUI Text");
 
@@ -115,7 +118,8 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void Start() {
+	void Start()
+	{
 		mButtonBar = transform.parent.GetComponent<ButtonBar>();
 		mGUIManager = mButtonBar.mGUIManager;
 		SetCallback();
@@ -123,7 +127,8 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	void Update() {
+	void Update()
+	{
 		if(state == States.hidden)
 			return;
 
@@ -184,13 +189,15 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void SetID(int _id) {
+	public void SetID(int _id)
+	{
 		mID = _id;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void SetCallback() {
+	void SetCallback()
+	{
 		if(buttonType == ButtonType.MAIN_CHARACTERS) {
 			checkedCallback = mGUIManager.OnButtonCharactersPressed;
 		} else if(buttonType == ButtonType.MAIN_BACKGROUNDS) {
@@ -202,7 +209,7 @@ public class BasicButton : MonoBehaviour
 		} else if(buttonType == ButtonType.MAIN_DELETE) {
 			clickedCallback = mGUIManager.OnButtonDeletePressed;
 		} else if(buttonType == ButtonType.ADD_CHAPTER) {
-			clickedCallback = mGUIManager.OnButtonAddChapterPressed;
+			clickedCallback = transform.parent.GetComponent<ButtonBarChapters>().OnButtonAddChapterPressed;
 		} else if(buttonType == ButtonType.CHAR) {
 			clickedCallback = mGUIManager.OnButtonCharacterPressed;
 		} else if(buttonType == ButtonType.BACKGROUND) {
@@ -212,9 +219,10 @@ public class BasicButton : MonoBehaviour
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Show() {
+	public void Show()
+	{
 		if(bEnabled)
-			mFade.Reset(1f, Globals.ANIMATIONDURATION);
+			mFade.Reset(1f, Globals.ANIMATIONDURATION*4.0f);
 		else
 			mFade.Reset(0.3f, Globals.ANIMATIONDURATION);
 
@@ -226,7 +234,8 @@ public class BasicButton : MonoBehaviour
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Hide() {
+	public void Hide()
+	{
 		mFade.Reset(0f, Globals.ANIMATIONDURATION);
 
 		if(mGUIText)
