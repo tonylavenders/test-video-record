@@ -95,7 +95,7 @@ class QueueManager : MonoBehaviour {
 	}
 
 	void Update() {
-				if(mPauseOnButtonDown && (InputHelp.GetAnyMouseButton || InputHelp.GetAnyMouseButtonDown || Input.anyKey || Input.anyKeyDown))
+		if(mPauseOnButtonDown && (InputHelp.GetAnyMouseButton || InputHelp.GetAnyMouseButtonDown || Input.anyKey || Input.anyKeyDown))
 			mFramesDelayCounter = 90;
 
 		if(!pause) {

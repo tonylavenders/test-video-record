@@ -37,7 +37,7 @@ public class BasicButton : MonoBehaviour
 	bool bClicked;
 
 	bool bChecked;
-	public bool Checked{
+	public bool Checked {
 		get { return bChecked; }
 		set {
 			if(bChecked!=value) {
@@ -66,6 +66,7 @@ public class BasicButton : MonoBehaviour
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
 	Transform mGUIText;
+	static float mSharedTime;
 
 	Vector2 mMouseInitPos;
 
@@ -76,6 +77,9 @@ public class BasicButton : MonoBehaviour
 	}
 	States state;
 
+	public static bool anyButtonJustPressed {
+		get { return mSharedTime == Time.time; }
+	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
 	void Awake()
@@ -115,35 +119,36 @@ public class BasicButton : MonoBehaviour
 		if(mFadeEndValue==0.0f && mFade.Value<0.001f)
 			state=States.hidden;
 
-		if(bEnabled){
+		if(bEnabled && mSharedTime != Time.time) {
 			//Check if user is touching the button
 			RaycastHit hit;
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-			if(collider.Raycast(ray, out hit, 1000.0f)){
-				if(InputHelp.GetMouseButtonDown(0)){
-					mMouseInitPos=InputHelp.mousePosition;
-					bClicked=true;
+			if(InputHelp.GetMouseButtonDown(0)) {
+				if(collider.Raycast(ray, out hit, 1000.0f)) {
+					mMouseInitPos = InputHelp.mousePosition;
+					mSharedTime = Time.time;
+					bClicked = true;
 					if(!bKeepSt)
 						renderer.sharedMaterial.mainTexture = texChecked;
-				} else if(bClicked) {
-					if(InputHelp.GetMouseButton(0)) {
-						Vector2 mMovement = InputHelp.mousePosition-mMouseInitPos;
-						if(mMovement.sqrMagnitude > MAXDISABLEBUTTONS) {
-							if(!bKeepSt)
-								renderer.sharedMaterial.mainTexture = texUnchecked;
-							bClicked=false;
-						}
-					} else if(InputHelp.GetMouseButtonUp(0)){
-						if(bKeepSt)
-							Checked=!Checked || bUnselectable;
-						else
+				}
+			} else if(bClicked) {
+				if(InputHelp.GetMouseButton(0)) {
+					Vector2 mMovement = InputHelp.mousePosition - mMouseInitPos;
+					if(mMovement.sqrMagnitude > MAXDISABLEBUTTONS) {
+						if(!bKeepSt)
 							renderer.sharedMaterial.mainTexture = texUnchecked;
-						mButtonBar.ButtonPressed(this);
-						if(clickedCallback!=null)
-							clickedCallback(this);
-						bClicked=false;
+						bClicked = false;
 					}
+				} else if(InputHelp.GetMouseButtonUp(0)) {
+					if(bKeepSt)
+						Checked = !Checked || bUnselectable;
+					else
+						renderer.sharedMaterial.mainTexture = texUnchecked;
+					mButtonBar.ButtonPressed(this);
+					if(clickedCallback != null)
+						clickedCallback(this);
+					bClicked = false;
 				}
 			}
 		}
