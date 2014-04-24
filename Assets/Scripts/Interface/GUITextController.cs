@@ -43,16 +43,16 @@ public class GUITextController : MonoBehaviour
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Show()
+	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
-		mFade.Reset(1.0f, Globals.ANIMATIONDURATION);
+		mFade.Reset(1.0f, duration, true, delay);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Hide()
+	public void Hide(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
-		mFade.Reset(0.0f, Globals.ANIMATIONDURATION);
+		mFade.Reset(0.0f, duration, true, delay);
 	}
 }
 
