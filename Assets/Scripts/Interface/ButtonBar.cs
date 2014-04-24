@@ -17,7 +17,6 @@ public class ButtonBar : MonoBehaviour
 	protected float pos_x, pos_y, scale_x, scale_y;
 
 	SmoothStep mFade;
-	float mFadeEndValue;
 
 	public enum Aligns{
 		left,
@@ -28,6 +27,7 @@ public class ButtonBar : MonoBehaviour
 	enum States{
 		fade_out,
 		hidden,
+		fade_in,
 		idle,
 		touch,
 	}
@@ -58,7 +58,6 @@ public class ButtonBar : MonoBehaviour
 		listButtons = new List<GameObject>();
 		mGUIManager = transform.parent.GetComponent<GUIManager>();
 
-		mFadeEndValue=1.0f;
 		mFade = new SmoothStep(0.0f,0.0f,1.0f,false);
 
 		mSpeedsY = new float[Globals.SPEEDS];
@@ -165,18 +164,21 @@ public class ButtonBar : MonoBehaviour
 			return;
 
 		//Fade
-		if(mFade.Enable)
-			mFade.Update();
-		Color c = renderer.material.color;
-		renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
-
-		if(mFadeEndValue==0.0f && mFade.Value<0.001f)
-			state=States.hidden;
+		if(mFade.Update() == SmoothStep.State.inFade) {
+			if(mFade.Ended) {
+				if(mFade.Value == 0)
+					state = States.hidden;
+				else
+					state = States.idle;
+			}
+			Color c = renderer.material.color;
+			renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
+		}
 
 		//Check if user is touching the button bar
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		if(Input.GetMouseButtonDown(0) && collider.Raycast(ray, out hit, 1000.0f)) {
+		if(state == States.idle && Input.GetMouseButtonDown(0) && collider.Raycast(ray, out hit, 1000.0f)) {
 			state = States.touch;
 			mSpeedPos = 0;
 			for(int i = 0; i < Globals.SPEEDS; i++) {
@@ -243,22 +245,20 @@ public class ButtonBar : MonoBehaviour
 		if(!bInit)
 			Init();
 
-		mFadeEndValue=1.0f;
-		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
+		mFade.Reset(1f, Globals.ANIMATIONDURATION);
 
 		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Show();
 		}
 
-		state=States.idle;
+		state=States.fade_in;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public void Hide()
 	{
-		mFadeEndValue=0.0f;
-		mFade.Reset(mFadeEndValue, Globals.ANIMATIONDURATION);
+		mFade.Reset(0f, Globals.ANIMATIONDURATION);
 	
 		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Hide();
