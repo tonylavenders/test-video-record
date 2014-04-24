@@ -33,7 +33,8 @@ public class BasicButton : MonoBehaviour
 	public Texture texUnchecked;
 	public bool bKeepSt = true;
 	public bool bUnselectable = true;
-	public bool bEnabled=true;
+	[HideInInspector] [SerializeField] bool bEnabled=true;
+	[ExposeProperty]
 	public bool Enable {
 		get { return bEnabled; }
 		set {
@@ -54,7 +55,8 @@ public class BasicButton : MonoBehaviour
 	}
 	bool bClicked;
 
-	bool bChecked;
+	[HideInInspector] [SerializeField] bool bChecked;
+	[ExposeProperty]
 	public bool Checked {
 		get { return bChecked; }
 		set {
@@ -126,17 +128,15 @@ public class BasicButton : MonoBehaviour
 			return;
 
 		//Fade
-		if(!mFade.Ended) {
-			if(mFade.Update() == SmoothStep.State.inFade) {
-				if(mFade.Ended) {
-					if(mFade.Value == 0)
-						state = States.hidden;
-					else
-						state = States.idle;
-				}
-				Color c = renderer.material.color;
-				renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
+		if(mFade.Update() == SmoothStep.State.inFade) {
+			if(mFade.Ended) {
+				if(mFade.Value == 0)
+					state = States.hidden;
+				else
+					state = States.idle;
 			}
+			Color c = renderer.material.color;
+			renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 		}
 
 		if(bEnabled && state == States.idle && mSharedTime != Time.time) {
