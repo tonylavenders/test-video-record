@@ -222,7 +222,7 @@ public class BasicButton : MonoBehaviour
 	public void Show()
 	{
 		if(bEnabled)
-			mFade.Reset(1f, Globals.ANIMATIONDURATION*4.0f);
+			mFade.Reset(1f, Globals.ANIMATIONDURATION);
 		else
 			mFade.Reset(0.3f, Globals.ANIMATIONDURATION);
 

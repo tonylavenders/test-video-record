@@ -32,11 +32,17 @@ public class ButtonBarChapters : ButtonBar
 		//Add chapter button
 		listButtons.Add(Instantiate(mButtons[1]) as GameObject);
 		listButtons[numChapters].transform.position = listButtons[0].transform.position;
-		listButtons[0].transform.position = listButtons[numChapters].transform.position - new Vector3(0, buttonMargin+buttonSize, 0);
+		//listButtons[0].transform.position = listButtons[numChapters].transform.position - new Vector3(0, buttonMargin+buttonSize, 0);
+		listButtons[0].GetComponent<BasicButton>().Hide();
 		listButtons[numChapters].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
 		listButtons[numChapters].transform.parent = transform;
 		listButtons[numChapters].GetComponent<BasicButton>().Show();
+
+		mGUIManager.mMainButtonBar.GetComponent<ButtonBar>().EnableButtons();
 	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 }
 
 
