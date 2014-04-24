@@ -14,7 +14,20 @@ public class GUIManager : MonoBehaviour
 	public GameObject mChaptersButtonBar;
 
 	const float cameraZDepth = 0;
-	int Counter = 0; 
+	int Counter = 0;
+	Blur mBlur;
+	[ExposeProperty]
+	public bool blur {
+		get {
+			return mBlur.enabled;
+		}
+		set {
+			mBlur.enabled = value;
+			foreach(BasicButton b in transform.GetComponentsInChildren<BasicButton>()) {
+				b.Blur = value;
+			}
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,6 +36,7 @@ public class GUIManager : MonoBehaviour
 		SetGUICamera();
 		mMainButtonBar.GetComponent<ButtonBar>().Show();
 		mChaptersButtonBar.GetComponent<ButtonBar>().Show();
+		mBlur = transform.GetComponent<Blur>();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,6 +54,9 @@ public class GUIManager : MonoBehaviour
 		//Pressing HOME button freezes the device
 		if(GUI.Button(new Rect(Screen.width/2-50, 10, 100, 50), "QUIT")){
 			Application.Quit();
+		}
+		if(GUI.Button(new Rect(Screen.width/2-50, 70, 100, 50), "Blur")){
+			blur = !blur;
 		}
 	}
 	void OnApplicationPause(){

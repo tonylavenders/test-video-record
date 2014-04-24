@@ -74,6 +74,29 @@ public class BasicButton : MonoBehaviour
 			}
 		}
 	}
+	[ExposeProperty]
+	public string Text {
+		get { return mGUIText.guiText.text; }
+		set {
+			mGUIText.guiText.text = value;
+			mText3D.text = value;
+		}
+	}
+	[ExposeProperty]
+	public bool Blur {
+		get {
+			if(mText3D != null)
+				return mText3D.gameObject.activeSelf;
+			else
+				return false;
+		}
+		set {
+			if(mGUIText != null)
+				mGUIText.gameObject.SetActive(!value);
+			if(mText3D != null)
+				mText3D.gameObject.SetActive(value);
+		}
+	}
 	public ButtonType buttonType;
 	public ContentType contentType;
 
@@ -87,7 +110,8 @@ public class BasicButton : MonoBehaviour
 	int mID;
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
-	public Transform mGUIText;
+	Transform mGUIText;
+	TextMesh mText3D;
 	static float mSharedTime;
 
 	Vector2 mMouseInitPos;
@@ -110,6 +134,9 @@ public class BasicButton : MonoBehaviour
 	{
 		renderer.sharedMaterial.mainTexture = texUnchecked;
 		mGUIText = transform.FindChild("GUI Text");
+		Transform t = transform.FindChild("New Text");
+		if(t != null)
+			mText3D = transform.FindChild("New Text").GetComponent<TextMesh>();
 
 		Color c = renderer.material.color;
 		renderer.material.color = new Color(c.r, c.g, c.b, 0.0f);
