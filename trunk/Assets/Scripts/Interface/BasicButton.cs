@@ -87,7 +87,7 @@ public class BasicButton : MonoBehaviour
 	int mID;
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
-	Transform mGUIText;
+	public Transform mGUIText;
 	static float mSharedTime;
 
 	Vector2 mMouseInitPos;
@@ -171,7 +171,7 @@ public class BasicButton : MonoBehaviour
 						Checked = !Checked || bUnselectable;
 					else
 						renderer.sharedMaterial.mainTexture = texUnchecked;
-					mButtonBar.ButtonPressed(this);
+					//mButtonBar.ButtonPressed(this);
 					if(clickedCallback != null)
 						clickedCallback(this);
 					bClicked = false;
@@ -220,27 +220,27 @@ public class BasicButton : MonoBehaviour
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Show(float delay = 0)
+	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
 		if(bEnabled)
-			mFade.Reset(1f, Globals.ANIMATIONDURATION, true, delay);
+			mFade.Reset(1f, duration, true, delay);
 		else
-			mFade.Reset(0.3f, Globals.ANIMATIONDURATION, true, delay);
+			mFade.Reset(0.3f, duration, true, delay);
 
 		if(mGUIText)
-			mGUIText.gameObject.GetComponent<GUITextController>().Show();
+			mGUIText.gameObject.GetComponent<GUITextController>().Show(delay, duration);
 
 		state = States.fade_in;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Hide()
+	public void Hide(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
-		mFade.Reset(0f, Globals.ANIMATIONDURATION);
+		mFade.Reset(0f, duration, true, delay);
 
 		if(mGUIText)
-			mGUIText.gameObject.GetComponent<GUITextController>().Hide();
+			mGUIText.gameObject.GetComponent<GUITextController>().Hide(delay, duration);
 
 		state = States.fade_out;
 	}

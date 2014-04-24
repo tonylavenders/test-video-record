@@ -35,10 +35,13 @@ public class ButtonBarChapters : ButtonBar
 		listButtons[numChapters].transform.position = listButtons[0].transform.position;
 		listButtons[numChapters].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
 		listButtons[numChapters].transform.parent = transform;
-		listButtons[numChapters].GetComponent<BasicButton>().Show(0.3f);
-		listButtons[numChapters].GetComponent<BasicButton>().Checked=true;
+		listButtons[numChapters].GetComponent<BasicButton>().Show(0.2f, 0.2f);
+
+		listButtons[numChapters].GetComponent<BasicButton>().mGUIText.guiText.text+=numChapters.ToString("00");
+
 		ButtonPressed(listButtons[numChapters].GetComponent<BasicButton>());
-		listButtons[0].GetComponent<BasicButton>().Hide();
+		listButtons[0].GetComponent<BasicButton>().Hide(0 ,0.2f);
+		listButtons[0].GetComponent<BasicButton>().Checked=true;
 		mGUIManager.mMainButtonBar.GetComponent<ButtonBar>().EnableButtons();
 
 		bAddingChapter=true;
@@ -52,8 +55,9 @@ public class ButtonBarChapters : ButtonBar
 
 		if(bAddingChapter && listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.hidden){
 			listButtons[0].transform.position = listButtons[numChapters].transform.position - new Vector3(0, buttonMargin+buttonSize, 0);
-			listButtons[0].GetComponent<BasicButton>().Show();
+			listButtons[0].GetComponent<BasicButton>().Show(0, 0.2f);
 			bAddingChapter=false;
+			listButtons[numChapters].GetComponent<BasicButton>().Checked=true;
 		}
 	}
 }
