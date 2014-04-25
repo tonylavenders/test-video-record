@@ -15,16 +15,26 @@ public class GUIManager : MonoBehaviour
 
 	const float cameraZDepth = 0;
 	public int Counter = 0;
-	Blur mBlur;
+	cBlur mBlur;
 	[ExposeProperty]
 	public bool blur {
 		get {
 			return mBlur.enabled;
 		}
 		set {
-			mBlur.enabled = value;
-			foreach(BasicButton b in transform.GetComponentsInChildren<BasicButton>()) {
-				b.Blur = value;
+			if(value != mBlur.enabled) {
+				mBlur.enabled = value;
+				foreach(BasicButton b in transform.GetComponentsInChildren<BasicButton>()) {
+					b.Blur = value;
+				}
+				if(value) {
+					Camera[] c = new Camera[2];
+					c[0] = GameObject.Find("CameraMain").GetComponent<Camera>();
+					c[1] = transform.GetComponent<Camera>();
+					mBlur.proccess(c);
+				} else {
+					mBlur.clear();
+				}
 			}
 		}
 	}
@@ -36,7 +46,7 @@ public class GUIManager : MonoBehaviour
 		SetGUICamera();
 		mMainButtonBar.GetComponent<ButtonBar>().Show();
 		mChaptersButtonBar.GetComponent<ButtonBar>().Show();
-		mBlur = transform.GetComponent<Blur>();
+		mBlur = transform.GetComponent<cBlur>();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,6 +62,7 @@ public class GUIManager : MonoBehaviour
 	void OnGUI(){
 		//This is necessary for the Samsung Galaxy S (Android 2.3)
 		//Pressing HOME button freezes the device
+		mBlur.render();
 		if(GUI.Button(new Rect(Screen.width/2-50, 10, 100, 50), "QUIT")){
 			Application.Quit();
 		}
