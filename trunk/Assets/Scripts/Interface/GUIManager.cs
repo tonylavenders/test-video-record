@@ -59,18 +59,20 @@ public class GUIManager : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void OnGUI(){
+	void OnGUI() {
+
 		//This is necessary for the Samsung Galaxy S (Android 2.3)
 		//Pressing HOME button freezes the device
 		mBlur.render();
-		if(GUI.Button(new Rect(Screen.width/2-50, 10, 100, 50), "QUIT")){
+		if(GUI.Button(new Rect(Screen.width / 2 - 50, 10, 100, 50), "QUIT")) {
 			Application.Quit();
 		}
-		if(GUI.Button(new Rect(Screen.width/2-50, 70, 100, 50), "Blur")){
+		if(GUI.Button(new Rect(Screen.width / 2 - 50, 70, 100, 50), "Blur")) {
 			blur = !blur;
 		}
 	}
-	void OnApplicationPause(){
+
+	void OnApplicationPause() {
 		Application.Quit();
 	}
 
