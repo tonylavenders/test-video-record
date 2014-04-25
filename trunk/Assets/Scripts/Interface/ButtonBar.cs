@@ -164,9 +164,8 @@ public class ButtonBar : MonoBehaviour
 	
 	protected virtual void Update()
 	{
-		if(state==States.hidden)
+		if(state==States.hidden || Camera.main == null)
 			return;
-
 		//MoveY
 		if(mMoveY.Update() == SmoothStep.State.inFade){
 			transform.position = new Vector3(transform.position.x, mMoveY.Value, transform.position.z);

@@ -157,7 +157,7 @@ public class BasicButton : MonoBehaviour
 	
 	void Update()
 	{
-		if(state == States.hidden)
+		if(state == States.hidden || Camera.main == null)
 			return;
 
 		//Fade
