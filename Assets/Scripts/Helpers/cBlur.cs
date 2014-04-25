@@ -15,13 +15,11 @@ public class cBlur : PostEffectsBase {
 
 	[Range(1, 4)]
 	public int blurIterations = 2;
-
 	public BlurType blurType = BlurType.StandardGauss;
-
 	public Shader blurShader;
+	public Color Tint = Color.white;
 	private Material mBlurMaterial = null;
-	public RenderTexture mRT;
-	public Texture2D mTex;
+	RenderTexture mRT;
 	private Camera[] mCameras;
 
 	public override bool CheckResources() {
@@ -51,7 +49,7 @@ public class cBlur : PostEffectsBase {
 			return;
 		}
 		mBlurMaterial = CheckShaderAndCreateMaterial(blurShader, mBlurMaterial);
-		mRT = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32);
+		mRT = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.RGB565);
 		mRT.Create();
 		mCameras = Cameras;
 		foreach(Camera c in mCameras) {
@@ -92,18 +90,19 @@ public class cBlur : PostEffectsBase {
 			rt = rt2;
 		}
 		mRT.Release();
+		mRT = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.RGB565);
+		mRT.Create();
 		Graphics.Blit(rt, mRT);
-
-		RenderTexture.active = mRT;
-		mTex = new Texture2D(mRT.width, mRT.height);
-		mTex.ReadPixels(new Rect(0, 0, mTex.width, mTex.height), 0, 0);
-		RenderTexture.active = null;
 
 		RenderTexture.ReleaseTemporary(rt);
 	}
 
 	public void render() {
-		if(enabled && mRT != null)
+		if(enabled && mRT != null) {
+			Color current = GUI.color;
+			GUI.color = Tint;
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mRT);
+			GUI.color = current;
+		}
 	}
 }
