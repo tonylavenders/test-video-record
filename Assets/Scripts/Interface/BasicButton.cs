@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using TVR;
 using TVR.Utils;
@@ -249,10 +249,7 @@ public class BasicButton : MonoBehaviour
 	
 	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
-		if(bEnabled)
-			mFade.Reset(1f, duration, true, delay);
-		else
-			mFade.Reset(0.3f, duration, true, delay);
+		mFade.Reset(bEnabled ? 1f : 0.3f, duration, true, delay);
 
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Show(delay, duration);

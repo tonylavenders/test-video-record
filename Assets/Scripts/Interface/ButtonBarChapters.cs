@@ -50,40 +50,6 @@ public class ButtonBarChapters : ButtonBar
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void ResizeButtonBar()
-	{
-		float buttonsTotalHeight = buttonSize*listButtons.Count + buttonMargin*(listButtons.Count+1);
-		if(buttonsTotalHeight > Screen.height)
-		{
-			//Move buttons to correct place
-			listButtons[1].transform.position = new Vector3(listButtons[1].transform.position.x, (listButtons.Count-1)*(buttonSize/2+buttonMargin/2) + Screen.height/2, buttonZDepth);
-			for(int i=2;i<listButtons.Count;i++){
-				listButtons[i].transform.position = new Vector3(listButtons[1].transform.position.x, listButtons[1].transform.position.y-(buttonSize+buttonMargin)*(i-1), buttonZDepth);
-			}
-			listButtons[0].transform.position = new Vector3(listButtons[1].transform.position.x, listButtons[1].transform.position.y-(buttonSize+buttonMargin)*(listButtons.Count-1), buttonZDepth);
-
-			//Detach buttons
-			foreach(GameObject button in listButtons){
-				button.transform.parent=null;
-			}
-			//Resize button bar
-			scale_y = buttonsTotalHeight;
-			transform.localScale = new Vector3(scale_x, scale_y, 1);
-			transform.position = new Vector3(transform.position.x, Screen.height/2, transform.position.z);
-
-			//Attach buttons
-			foreach(GameObject button in listButtons){
-				button.transform.parent=transform;
-			}
-
-			//Align to bottom
-			pos_y = Screen.height/2+(transform.localScale.y-Screen.height)/2;
-			transform.position = new Vector3(transform.position.x, pos_y, transform.position.z);
-		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	protected override void Update()
 	{
 		base.Update();
@@ -95,6 +61,34 @@ public class ButtonBarChapters : ButtonBar
 			listButtons[numChapters].GetComponent<BasicButton>().Checked=true;
 
 			ResizeButtonBar();
+		}
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	void ResizeButtonBar()
+	{
+		float buttonsTotalHeight = buttonSize*listButtons.Count + buttonMargin*(listButtons.Count+1);
+		if(buttonsTotalHeight > Screen.height)
+		{
+			//Detach buttons
+			foreach(GameObject button in listButtons){
+				button.transform.parent=null;
+			}
+			//Resize button bar
+			scale_y = buttonsTotalHeight;
+			transform.localScale = new Vector3(scale_x, scale_y, 1);
+
+			//Move buttonbar to the correct position
+			float correct_y = (listButtons[1].transform.position.y+listButtons[0].transform.position.y)/2.0f;
+			transform.position = new Vector3(transform.position.x, correct_y, transform.position.z);
+			
+			//Attach buttons
+			foreach(GameObject button in listButtons){
+				button.transform.parent=transform; }
+			
+			//Align to bottom
+			GoToButtonPosition(listButtons[0].transform);
 		}
 	}
 }
