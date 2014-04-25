@@ -76,10 +76,19 @@ public class BasicButton : MonoBehaviour
 	}
 	[ExposeProperty]
 	public string Text {
-		get { return mGUIText.guiText.text; }
+		get { 
+			if(mGUIText!=null)
+				return mGUIText.guiText.text;
+			else if(mText3D!=null)
+				return mText3D.text;
+			else
+				return "";
+		}
 		set {
-			mGUIText.guiText.text = value;
-			mText3D.text = value;
+			if(mGUIText!=null) 
+				mGUIText.guiText.text = value;
+			if(mText3D!=null)
+				mText3D.text = value;
 		}
 	}
 	[ExposeProperty]
@@ -228,19 +237,26 @@ public class BasicButton : MonoBehaviour
 	{
 		if(buttonType == ButtonType.MAIN_CHARACTERS) {
 			checkedCallback = mGUIManager.OnButtonCharactersPressed;
-		} else if(buttonType == ButtonType.MAIN_BACKGROUNDS) {
+		}
+		else if(buttonType == ButtonType.MAIN_BACKGROUNDS) {
 			checkedCallback = mGUIManager.OnButtonBackgroundsPressed;
-		} else if(buttonType == ButtonType.MAIN_MUSIC) {
+		}
+		else if(buttonType == ButtonType.MAIN_MUSIC) {
 			checkedCallback = mGUIManager.OnButtonMusicPressed;
-		} else if(buttonType == ButtonType.MAIN_SHARE) {
+		}
+		else if(buttonType == ButtonType.MAIN_SHARE) {
 			clickedCallback = mGUIManager.OnButtonSharePressed;
-		} else if(buttonType == ButtonType.MAIN_DELETE) {
-			clickedCallback = mGUIManager.OnButtonDeletePressed;
-		} else if(buttonType == ButtonType.ADD_CHAPTER) {
+		}
+		else if(buttonType == ButtonType.MAIN_DELETE) {
+			clickedCallback = mGUIManager.mChaptersButtonBar.GetComponent<ButtonBarChapters>().OnButtonDeleteChapterPressed;
+		}
+		else if(buttonType == ButtonType.ADD_CHAPTER) {
 			clickedCallback = transform.parent.GetComponent<ButtonBarChapters>().OnButtonAddChapterPressed;
-		} else if(buttonType == ButtonType.CHAR) {
+		}
+		else if(buttonType == ButtonType.CHAR) {
 			clickedCallback = mGUIManager.OnButtonCharacterPressed;
-		} else if(buttonType == ButtonType.BACKGROUND) {
+		}
+		else if(buttonType == ButtonType.BACKGROUND) {
 			clickedCallback = mGUIManager.OnButtonBackgroundPressed;
 		}
 	}
