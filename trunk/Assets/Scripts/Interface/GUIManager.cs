@@ -16,7 +16,6 @@ public class GUIManager : MonoBehaviour
 	const float cameraZDepth = 0;
 	public int Counter = 0;
 	cBlur mBlur;
-	[ExposeProperty]
 	public bool blur {
 		get {
 			return mBlur.enabled;
