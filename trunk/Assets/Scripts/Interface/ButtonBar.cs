@@ -17,6 +17,7 @@ public class ButtonBar : MonoBehaviour
 	protected float pos_x, pos_y, scale_x, scale_y;
 
 	SmoothStep mFade;
+	SmoothStep mMoveY;
 
 	public enum Aligns{
 		left,
@@ -45,7 +46,7 @@ public class ButtonBar : MonoBehaviour
 
 	const int MAX_BUTTONS=5;
 
-	public int lastButtonSel=0;
+	BasicButton currentSelected=null;
 
 	float[] mSpeedsY;
 	int mSpeedPos;
@@ -59,10 +60,13 @@ public class ButtonBar : MonoBehaviour
 		mGUIManager = transform.parent.GetComponent<GUIManager>();
 
 		mFade = new SmoothStep(0.0f,0.0f,1.0f,false);
+		mMoveY = new SmoothStep(0.0f,0.0f,1.0f,false);
 
 		mSpeedsY = new float[Globals.SPEEDS];
 		mSpeedPos = 0;
 		mSpeed = new SmoothStep(0, 0, Globals.BRAKEDURATION, false, 0);
+
+		state=States.hidden;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,6 +167,13 @@ public class ButtonBar : MonoBehaviour
 		if(state==States.hidden)
 			return;
 
+		//MoveY
+		if(mMoveY.Update() == SmoothStep.State.inFade){
+			transform.position = new Vector3(transform.position.x, mMoveY.Value, transform.position.z);
+			if(!mMoveY.Ended)
+				return;
+		}
+
 		//Fade
 		if(mFade.Update() == SmoothStep.State.inFade) {
 			if(mFade.Ended) {
@@ -221,6 +232,8 @@ public class ButtonBar : MonoBehaviour
 	//A button informs to the ButtonBar that is pressed, ButtonBar informs all buttons to get unchecked
 	public void ButtonPressed(BasicButton sender)
 	{
+		currentSelected=sender;
+
 		foreach(GameObject button in listButtons){
 			BasicButton b = button.GetComponent<BasicButton>();
 			if(sender!=b)
@@ -239,32 +252,72 @@ public class ButtonBar : MonoBehaviour
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	protected void GoToButtonPosition(Transform button)
+	{
+		//Button outside top screen
+		if(button.position.y+buttonSize/2 > Screen.height){
+			float finalYbutton = Screen.height-buttonMargin-buttonSize/2;
+			float finalY = transform.position.y-(button.position.y-finalYbutton);
+			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION);
+		}
+		//Button outside bottom screen
+		else if(button.position.y-buttonSize/2 < 0){
+			float finalYbutton = buttonMargin+buttonSize/2;
+			float finalY = transform.position.y+(finalYbutton-button.position.y);
+			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void Show()
 	{
 		if(!bInit)
 			Init();
 
-		mFade.Reset(1f, Globals.ANIMATIONDURATION);
-
-		foreach(GameObject button in listButtons){
-			button.GetComponent<BasicButton>().Show();
+		//First time buttonbar is opened
+		if(mGUIManager.Counter==0){
+			mFade.Reset(1f, Globals.ANIMATIONDURATION);
+			state=States.fade_in;
+			foreach(GameObject button in listButtons){
+				button.GetComponent<BasicButton>().Show(); 
+			}
+		}
+		else{
+			mFade.Value=1f;
+			Color c = renderer.material.color;
+			renderer.material.color = new Color(c.r, c.g, c.b, 1.0f); 
+			state=States.idle;
+			foreach(GameObject button in listButtons){
+				button.GetComponent<BasicButton>().Show(0.2f, 0.2f); 
+			}
 		}
 
-		state=States.fade_in;
+		if(currentSelected!=null)
+			GoToButtonPosition(currentSelected.transform);
+
+		mSpeed.End();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public void Hide()
 	{
-		mFade.Reset(0f, Globals.ANIMATIONDURATION);
-	
-		foreach(GameObject button in listButtons){
-			button.GetComponent<BasicButton>().Hide();
+		if(mGUIManager.Counter==1){
+			mFade.Reset(0f, Globals.ANIMATIONDURATION);
+			state=States.fade_out;
+		}
+		else{
+			mFade.Value=0f;
+			Color c = renderer.material.color;
+			renderer.material.color = new Color(c.r, c.g, c.b, 0.0f);
+			state=States.hidden;
 		}
 
-		state=States.fade_out;
+		foreach(GameObject button in listButtons){
+			button.GetComponent<BasicButton>().Hide(0, 0.2f);
+		}
 	}
 }
 

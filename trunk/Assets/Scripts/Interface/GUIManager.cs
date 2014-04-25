@@ -14,7 +14,7 @@ public class GUIManager : MonoBehaviour
 	public GameObject mChaptersButtonBar;
 
 	const float cameraZDepth = 0;
-	int Counter = 0;
+	public int Counter = 0;
 	Blur mBlur;
 	[ExposeProperty]
 	public bool blur {

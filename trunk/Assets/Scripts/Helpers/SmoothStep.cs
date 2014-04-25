@@ -22,9 +22,9 @@ namespace TVR.Utils {
 			set {
 				mDelta = mValue - value;
 				mValue = value;
-				/*mValue0=value;
+				mValue0=value;
 				mValue1=value;
-				mEnabled=false;*/
+				mEnabled=false;
 			}
 		}
 		
