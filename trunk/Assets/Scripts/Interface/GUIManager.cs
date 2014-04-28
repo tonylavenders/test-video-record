@@ -15,7 +15,7 @@ public class GUIManager : MonoBehaviour
 
 	const float cameraZDepth = 0;
 	public int Counter = 0;
-	cBlur mBlur;
+	iBlur mBlur;
 	public bool blur {
 		get {
 			return mBlur.enabled;
@@ -26,14 +26,13 @@ public class GUIManager : MonoBehaviour
 				foreach(BasicButton b in transform.GetComponentsInChildren<BasicButton>()) {
 					b.Blur = value;
 				}
-				if(value) {
+				/*if(value) {
 					Camera[] c = new Camera[2];
 					c[0] = GameObject.Find("CameraMain").GetComponent<Camera>();
 					c[1] = transform.GetComponent<Camera>();
 					mBlur.proccess(c);
-				} else {
-					mBlur.clear();
-				}
+				} else
+					mBlur.clear();*/
 			}
 		}
 	}
@@ -45,7 +44,14 @@ public class GUIManager : MonoBehaviour
 		SetGUICamera();
 		mMainButtonBar.GetComponent<ButtonBar>().Show();
 		mChaptersButtonBar.GetComponent<ButtonBar>().Show();
+		//mBlur = transform.GetComponent<cBlur>();
 		mBlur = transform.GetComponent<cBlur>();
+		if(!mBlur.isSupported())
+			mBlur = transform.GetComponent<cBlur2>();
+		Camera[] c = new Camera[2];
+		c[0] = GameObject.Find("CameraMain").GetComponent<Camera>();
+		c[1] = transform.GetComponent<Camera>();
+		mBlur.Cameras = c;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
