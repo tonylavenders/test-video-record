@@ -18,14 +18,14 @@ public class GUIManager : MonoBehaviour
 	iBlur mBlur;
 	public bool blur {
 		get {
-			return mBlur.enabled;
+			return mBlur.Enable;
 		}
 		set {
-			if(value != mBlur.enabled) {
-				mBlur.enabled = value;
+			if(value != mBlur.Enable) {
 				foreach(BasicButton b in transform.GetComponentsInChildren<BasicButton>()) {
 					b.Blur = value;
 				}
+				mBlur.Enable = value;
 				/*if(value) {
 					Camera[] c = new Camera[2];
 					c[0] = GameObject.Find("CameraMain").GetComponent<Camera>();
@@ -52,6 +52,7 @@ public class GUIManager : MonoBehaviour
 		c[0] = GameObject.Find("CameraMain").GetComponent<Camera>();
 		c[1] = transform.GetComponent<Camera>();
 		mBlur.Cameras = c;
+		mBlur.enabled = true;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +69,7 @@ public class GUIManager : MonoBehaviour
 
 		//This is necessary for the Samsung Galaxy S (Android 2.3)
 		//Pressing HOME button freezes the device
-		mBlur.render();
+		//mBlur.render();
 		if(GUI.Button(new Rect(Screen.width / 2 - 50, 10, 100, 50), "QUIT")) {
 			Application.Quit();
 		}

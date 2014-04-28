@@ -167,15 +167,17 @@ public class ButtonBar : MonoBehaviour
 		if(state==States.hidden || Camera.main == null)
 			return;
 		//MoveY
-		if(mMoveY.Update() == SmoothStep.State.inFade){
+		SmoothStep.State SSState = mMoveY.Update();
+		if(SSState == SmoothStep.State.inFade || SSState==SmoothStep.State.justEnd) {
 			transform.position = new Vector3(transform.position.x, mMoveY.Value, transform.position.z);
 			if(!mMoveY.Ended)
 				return;
 		}
 
 		//Fade
-		if(mFade.Update() == SmoothStep.State.inFade) {
-			if(mFade.Ended) {
+		 SSState = mFade.Update();
+		if(SSState == SmoothStep.State.inFade || SSState==SmoothStep.State.justEnd) {
+			if(SSState==SmoothStep.State.justEnd) {
 				if(mFade.Value == 0)
 					state = States.hidden;
 				else

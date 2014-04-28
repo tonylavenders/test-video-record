@@ -1,17 +1,50 @@
 ﻿using UnityEngine;
+using TVR.Utils;
+using TVR;
 
 public abstract class iBlur : MonoBehaviour {
-	protected Texture mTexture;
+	//TODO: Prueba con 2 texturas, una procesada la otra no (fade).
+	public Texture mTexture;
 	public Camera[] Cameras;
 	public Color Tint = Color.white;
+	Color mTint = Color.white;
+	protected SmoothStep mAlpha;
+	bool mEnable;
+	public virtual bool Enable {
+		get { return mEnable; }
+		set {
+			if(mEnable != value) {
+				mEnable = value;
+				if(mEnable)
+					mAlpha.Reset(Tint.r, Globals.ANIMATIONDURATION, true, -2);
+				else
+					mAlpha.Reset(1, Globals.ANIMATIONDURATION, true);
+			}
+		}
+	}
+
+	void Start() {
+		mEnable = false;
+		mAlpha = new SmoothStep(1, Tint.r, Globals.ANIMATIONDURATION, false, 0);
+	}
+
+	void Update() {
+		SmoothStep.State SSState = mAlpha.Update();
+		if(SSState == SmoothStep.State.inFade || SSState == SmoothStep.State.justEnd) {
+			if(SSState == SmoothStep.State.justEnd && mAlpha.Value == 1f) {
+				enableCameras(true);
+				if(mTexture is RenderTexture)
+					((RenderTexture)mTexture).Release();
+				DestroyImmediate(mTexture);
+				mTexture = null;
+			}
+			mTint.r = mAlpha.Value;
+			mTint.g = mAlpha.Value;
+			mTint.b = mAlpha.Value;
+		}
+	}
 
 	public abstract bool isSupported();
-
-	protected void OnDisable() {
-		enableCameras(true);
-		DestroyImmediate(mTexture);
-		mTexture = null;
-	}
 
 	protected void enableCameras(bool value) {
 		if(Cameras != null) {
@@ -20,10 +53,10 @@ public abstract class iBlur : MonoBehaviour {
 		}
 	}
 
-	public void render() {
-		if(mTexture != null) {
+	public void OnGUI() {
+		if(Event.current.type == EventType.Repaint & mTexture != null) {
 			Color current = GUI.color;
-			GUI.color = Tint;
+			GUI.color = mTint;
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mTexture);
 			GUI.color = current;
 		}
