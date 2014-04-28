@@ -170,8 +170,9 @@ public class BasicButton : MonoBehaviour
 			return;
 
 		//Fade
-		if(mFade.Update() == SmoothStep.State.inFade) {
-			if(mFade.Ended) {
+		SmoothStep.State SSState = mFade.Update();
+		if(SSState == SmoothStep.State.inFade || SSState==SmoothStep.State.justEnd) {
+			if(SSState==SmoothStep.State.justEnd) {
 				if(mFade.Value == 0)
 					state = States.hidden;
 				else

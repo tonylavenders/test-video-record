@@ -5,6 +5,7 @@ namespace TVR.Utils {
 		public enum State {
 			inDelay,
 			inFade,
+			justEnd,
 			End,
 			Disable,
 		}
@@ -77,8 +78,12 @@ namespace TVR.Utils {
 			mTime = time;
 			if(mDuration == 0)
 				mValue = mValue0;
-			else
-				mValue = Mathf.SmoothStep(mValue0, mValue1, (mTime - mDelay) / mDuration);
+			else {
+				if(mDelay > 0)
+					mValue = Mathf.SmoothStep(mValue0, mValue1, (mTime - mDelay) / mDuration);
+				else
+					mValue = Mathf.SmoothStep(mValue0, mValue1, mTime / mDuration);
+			}
 			mEnabled = enable;
 		}
 		
@@ -102,17 +107,22 @@ namespace TVR.Utils {
 			if(mEnabled) {
 				State ret;
 				float old = mValue;
-				mTime += Time.deltaTime;
-				if(Ended) {
-					mValue = mValue1;
-					mEnabled = false;
-					ret = State.End;
-				} else if(mTime > mDelay) {
-					mValue = Mathf.SmoothStep(mValue0, mValue1, (mTime - mDelay) / mDuration);
-					ret = State.inFade;
-				} else
+				if(mDelay < 0) {
+					mDelay++;
 					ret = State.inDelay;
-				mDelta = mValue - old;
+				} else {
+					mTime += Time.deltaTime;
+					if(Ended) {
+						mValue = mValue1;
+						mEnabled = false;
+						ret = State.justEnd;
+					} else if(mTime > mDelay) {
+						mValue = Mathf.SmoothStep(mValue0, mValue1, (mTime - mDelay) / mDuration);
+						ret = State.inFade;
+					} else
+						ret = State.inDelay;
+					mDelta = mValue - old;
+				}
 				return ret;
 			} else if(Ended) {
 				mDelta = 0;
