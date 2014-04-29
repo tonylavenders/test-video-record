@@ -12,6 +12,7 @@ public class cBlur : iBlur {
 	/// give better looking blur, but require more iterations to
 	/// get large blurs. Value is usually between 0.5 and 1.0.
 	public float blurSpread = 0.6f;
+	public RenderTexture mRTCameras;
 
 	// --------------------------------------------------------
 	// The blur iteration shader.
@@ -40,6 +41,28 @@ public class cBlur : iBlur {
 		return true;
 	}
 
+	void OnEnable() {
+		if(Cameras != null) {
+			mRTCameras = new RenderTexture(Screen.width, Screen.height, 24);
+			if(QualitySettings.antiAliasing != 0)
+				mRTCameras.antiAliasing = QualitySettings.antiAliasing;
+			mRTCameras.Create();
+			foreach(Camera c in Cameras)
+				c.targetTexture = mRTCameras;
+		}
+	}
+
+	void OnDisable() {
+		if(Cameras != null) {
+			foreach(Camera c in Cameras) {
+				if(c != null)
+					c.targetTexture = null;
+			}
+			mRTCameras.Release();
+			DestroyImmediate(mRTCameras);
+		}
+	}
+
 	// Performs one blur iteration.
 	public void FourTapCone (RenderTexture source, RenderTexture dest, int iteration) {
 		float off = 0.5f + iteration * blurSpread;
@@ -63,7 +86,7 @@ public class cBlur : iBlur {
 	}
 
 	// Called by the camera to apply the image effect
-	void OnRenderImage (RenderTexture source, RenderTexture destination) {
+	/*void OnRenderImage (RenderTexture source, RenderTexture destination) {
 		if(base.Enable && mTextureBlurred == null) {
 			RenderTexture rt = new RenderTexture(source.width, source.height, 16, RenderTextureFormat.RGB565);
 			Graphics.Blit(source, rt);
@@ -92,12 +115,40 @@ public class cBlur : iBlur {
 			Graphics.Blit(buffer, destination);
 			RenderTexture.ReleaseTemporary(buffer);
 			enableCameras(false);
-
-			/*Texture2D tex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-			tex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-			tex.Apply();
-			mTexture = tex;*/
 		} else
 			Graphics.Blit(source, destination);
+	}*/
+
+	void OnPostRender() {
+		if(base.Enable && mTextureBlurred == null) {
+			RenderTexture rt = new RenderTexture(mRTCameras.width, mRTCameras.height, 16, RenderTextureFormat.RGB565);
+			Graphics.Blit(mRTCameras, rt);
+			mTexture = rt;
+
+			int rtW = mRTCameras.width / 4;
+			int rtH = mRTCameras.height / 4;
+			RenderTexture buffer = RenderTexture.GetTemporary(rtW, rtH, 0);
+
+			// Copy source to the 4x4 smaller texture.
+			DownSample4x(mRTCameras, buffer);
+
+			// Blur the small texture
+			for(int i = 0; i < iterations; i++) {
+				RenderTexture buffer2 = RenderTexture.GetTemporary(rtW, rtH, 0);
+				FourTapCone(buffer, buffer2, i);
+				RenderTexture.ReleaseTemporary(buffer);
+				buffer = buffer2;
+			}
+			DestroyImmediate(m_Material);
+
+			rt = new RenderTexture(mRTCameras.width, mRTCameras.height, 16, RenderTextureFormat.RGB565);
+			Graphics.Blit(buffer, rt);
+			mTextureBlurred = rt;
+
+			//Graphics.Blit(buffer, (RenderTexture)null);
+			RenderTexture.ReleaseTemporary(buffer);
+			enableCameras(false);
+		} else
+			Graphics.Blit(mRTCameras, (RenderTexture)null);
 	}
 }

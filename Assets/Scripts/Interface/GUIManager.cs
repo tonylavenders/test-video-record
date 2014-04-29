@@ -46,6 +46,10 @@ public class GUIManager : MonoBehaviour
 
 		InitButtons();
 
+		/*if(GameObject.Find("CameraMain").GetComponent<cBlur>().isSupported())
+			mBlur = GameObject.Find("CameraMain").GetComponent<cBlur>();
+		else
+			mBlur = GameObject.Find("CameraMain").GetComponent<cBlur2>();*/
 		if(transform.GetComponent<cBlur>().isSupported())
 			mBlur = transform.GetComponent<cBlur>();
 		else
