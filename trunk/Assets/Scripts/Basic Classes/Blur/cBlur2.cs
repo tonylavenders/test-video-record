@@ -23,6 +23,7 @@ public class cBlur2 : iBlur {
 	}
 
 	private Texture2D Blur(Texture2D image) {
+		Debug.Log("2");
 		if(mipLevel >= image.mipmapCount)
 			mipLevel = image.mipmapCount - 1;
 

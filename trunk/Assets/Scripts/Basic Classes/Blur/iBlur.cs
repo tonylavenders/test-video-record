@@ -3,8 +3,8 @@ using TVR.Utils;
 using TVR;
 
 public abstract class iBlur : MonoBehaviour {
-	protected Texture mTexture;
-	protected Texture mTextureBlurred;
+	public Texture mTexture;
+	public Texture mTextureBlurred;
 	public Camera[] Cameras;
 	public Color Tint = Color.white;
 	protected SmoothStep mAlpha;
@@ -24,13 +24,13 @@ public abstract class iBlur : MonoBehaviour {
 
 	public abstract bool isSupported();
 
-	void Start() {
+	protected virtual void Start() {
 		mEnable = false;
 		mAlpha = new SmoothStep(0, 1, Globals.ANIMATIONDURATION, false, 0);
 		Tint.a = 0;
 	}
 
-	void Update() {
+	protected virtual void Update() {
 		SmoothStep.State SSState = mAlpha.Update();
 		if(SSState == SmoothStep.State.inFade || SSState == SmoothStep.State.justEnd) {
 			if(SSState == SmoothStep.State.justEnd && mAlpha.Value == 0f) {
@@ -52,10 +52,11 @@ public abstract class iBlur : MonoBehaviour {
 		}
 	}
 
-	protected void enableCameras(bool value) {
+	protected virtual void enableCameras(bool value) {
 		if(Cameras != null) {
-			foreach(Camera c in Cameras)
+			foreach(Camera c in Cameras) {
 				c.enabled = value;
+			}
 		}
 	}
 
