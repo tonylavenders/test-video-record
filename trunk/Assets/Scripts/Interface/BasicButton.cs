@@ -13,15 +13,9 @@ public enum ButtonType{
 	ADD_CHAPTER,
 	CHAPTER,
 	CHAR,
-	BACKGROUND
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-public enum ContentType{
-	MAIN,
-	CHAR_01, CHAR_02, CHAR_03, CHAR_04, CHAR_05, CHAR_06, CHAR_07, CHAR_08, CHAR_09,
-	BACKGROUND_01, BACKGROUND_02, BACKGROUND_03, BACKGROUND_04, BACKGROUND_05, BACKGROUND_06,BACKGROUND_07
+	BACKGROUND,
+	MAIN_EDIT,
+	MAIN_PLAY
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -109,7 +103,6 @@ public class BasicButton : MonoBehaviour
 		}
 	}
 	public ButtonType buttonType;
-	public ContentType contentType;
 
 	public delegate void ButtonCallback(BasicButton sender);
 	public ButtonCallback clickedCallback;
@@ -163,7 +156,11 @@ public class BasicButton : MonoBehaviour
 	void Start()
 	{
 		mButtonBar = transform.parent.GetComponent<ButtonBar>();
-		mGUIManager = mButtonBar.mGUIManager;
+		if(mButtonBar!=null)
+			mGUIManager = mButtonBar.mGUIManager;
+		else
+			mGUIManager =transform.parent.GetComponent<GUIManager>();
+
 		SetCallback();
 	}
 
@@ -231,6 +228,14 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public void Init(Vector3 pos, Vector3 scale)
+	{
+		transform.position = pos;
+		transform.localScale = scale;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	public void GoToPosition(float finalY, float delay=0, float duration=Globals.ANIMATIONDURATION)
 	{
 		mMoveY.Reset(transform.position.y, finalY, duration, true, delay);
@@ -255,7 +260,7 @@ public class BasicButton : MonoBehaviour
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	//Button callbacks
 	void SetCallback()
 	{
 		if(buttonType == ButtonType.MAIN_CHARACTERS) {
@@ -271,7 +276,7 @@ public class BasicButton : MonoBehaviour
 			clickedCallback = mGUIManager.OnButtonSharePressed;
 		}
 		else if(buttonType == ButtonType.MAIN_DELETE) {
-			clickedCallback = mGUIManager.mChaptersButtonBar.GetComponent<ButtonBarChapters>().OnButtonDeleteChapterPressed;
+			clickedCallback = mGUIManager.mChaptersButtonBar.OnButtonDeleteChapterPressed;
 		}
 		else if(buttonType == ButtonType.ADD_CHAPTER) {
 			clickedCallback = transform.parent.GetComponent<ButtonBarChapters>().OnButtonAddChapterPressed;
@@ -281,6 +286,12 @@ public class BasicButton : MonoBehaviour
 		}
 		else if(buttonType == ButtonType.BACKGROUND) {
 			clickedCallback = mGUIManager.OnButtonBackgroundPressed;
+		}
+		else if(buttonType == ButtonType.MAIN_EDIT) {
+			clickedCallback = mGUIManager.OnButtonEditPressed;
+		}
+		else if(buttonType == ButtonType.MAIN_PLAY) {
+			clickedCallback = mGUIManager.OnButtonPlayPressed;
 		}
 	}
 	
