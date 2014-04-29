@@ -26,13 +26,6 @@ public class GUIManager : MonoBehaviour
 					b.Blur = value;
 				}
 				mBlur.Enable = value;
-				/*if(value) {
-					Camera[] c = new Camera[2];
-					c[0] = GameObject.Find("CameraMain").GetComponent<Camera>();
-					c[1] = transform.GetComponent<Camera>();
-					mBlur.proccess(c);
-				} else
-					mBlur.clear();*/
 			}
 		}
 	}
@@ -44,14 +37,10 @@ public class GUIManager : MonoBehaviour
 		SetGUICamera();
 		mMainButtonBar.GetComponent<ButtonBar>().Show();
 		mChaptersButtonBar.GetComponent<ButtonBar>().Show();
-		//mBlur = transform.GetComponent<cBlur>();
-		mBlur = transform.GetComponent<cBlur>();
-		if(!mBlur.isSupported())
+		if(transform.GetComponent<cBlur>().isSupported())
+			mBlur = transform.GetComponent<cBlur>();
+		else
 			mBlur = transform.GetComponent<cBlur2>();
-		Camera[] c = new Camera[2];
-		c[0] = GameObject.Find("CameraMain").GetComponent<Camera>();
-		c[1] = transform.GetComponent<Camera>();
-		mBlur.Cameras = c;
 		mBlur.enabled = true;
 	}
 

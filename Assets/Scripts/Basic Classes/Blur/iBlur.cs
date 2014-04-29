@@ -3,11 +3,10 @@ using TVR.Utils;
 using TVR;
 
 public abstract class iBlur : MonoBehaviour {
-	//TODO: Prueba con 2 texturas, una procesada la otra no (fade).
-	public Texture mTexture;
+	protected Texture mTexture;
+	protected Texture mTextureBlurred;
 	public Camera[] Cameras;
 	public Color Tint = Color.white;
-	Color mTint = Color.white;
 	protected SmoothStep mAlpha;
 	bool mEnable;
 	public virtual bool Enable {
@@ -16,35 +15,42 @@ public abstract class iBlur : MonoBehaviour {
 			if(mEnable != value) {
 				mEnable = value;
 				if(mEnable)
-					mAlpha.Reset(Tint.r, Globals.ANIMATIONDURATION, true, -2);
+					mAlpha.Reset(1, Globals.ANIMATIONDURATION, true, -2);
 				else
-					mAlpha.Reset(1, Globals.ANIMATIONDURATION, true);
+					mAlpha.Reset(0, Globals.ANIMATIONDURATION, true);
 			}
 		}
 	}
 
+	public abstract bool isSupported();
+
 	void Start() {
 		mEnable = false;
-		mAlpha = new SmoothStep(1, Tint.r, Globals.ANIMATIONDURATION, false, 0);
+		mAlpha = new SmoothStep(0, 1, Globals.ANIMATIONDURATION, false, 0);
+		Tint.a = 0;
 	}
 
 	void Update() {
 		SmoothStep.State SSState = mAlpha.Update();
 		if(SSState == SmoothStep.State.inFade || SSState == SmoothStep.State.justEnd) {
-			if(SSState == SmoothStep.State.justEnd && mAlpha.Value == 1f) {
+			if(SSState == SmoothStep.State.justEnd && mAlpha.Value == 0f) {
 				enableCameras(true);
-				if(mTexture is RenderTexture)
-					((RenderTexture)mTexture).Release();
-				DestroyImmediate(mTexture);
-				mTexture = null;
+				if(mTextureBlurred != null) {
+					if(mTextureBlurred is RenderTexture)
+						((RenderTexture)mTextureBlurred).Release();
+					DestroyImmediate(mTextureBlurred);
+					mTextureBlurred = null;
+				}
+				if(mTexture != null) {
+					if(mTextureBlurred is RenderTexture)
+						((RenderTexture)mTextureBlurred).Release();
+					DestroyImmediate(mTexture);
+					mTexture = null;
+				}
 			}
-			mTint.r = mAlpha.Value;
-			mTint.g = mAlpha.Value;
-			mTint.b = mAlpha.Value;
+			Tint.a = mAlpha.Value;
 		}
 	}
-
-	public abstract bool isSupported();
 
 	protected void enableCameras(bool value) {
 		if(Cameras != null) {
@@ -54,11 +60,16 @@ public abstract class iBlur : MonoBehaviour {
 	}
 
 	public void OnGUI() {
-		if(Event.current.type == EventType.Repaint & mTexture != null) {
-			Color current = GUI.color;
-			GUI.color = mTint;
-			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mTexture);
-			GUI.color = current;
+		if(Event.current.type == EventType.Repaint) {
+			if(mTexture != null)
+				GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mTexture);
+
+			if(mTextureBlurred != null) {
+				Color current = GUI.color;
+				GUI.color = Tint;
+				GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mTextureBlurred);
+				GUI.color = current;
+			}
 		}
 	}
 }
