@@ -17,8 +17,8 @@ public class cBlur2 : iBlur {
 			tex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
 			tex.Apply();
 
-			mTexture = Blur(tex);
-			DestroyImmediate(tex);
+			mTexture = tex;
+			mTextureBlurred = Blur(tex);
 		}
 	}
 

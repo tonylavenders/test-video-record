@@ -64,7 +64,11 @@ public class cBlur : iBlur {
 
 	// Called by the camera to apply the image effect
 	void OnRenderImage (RenderTexture source, RenderTexture destination) {
-		if(base.Enable && mTexture == null) {
+		if(base.Enable && mTextureBlurred == null) {
+			RenderTexture rt = new RenderTexture(source.width, source.height, 16, RenderTextureFormat.RGB565);
+			Graphics.Blit(source, rt);
+			mTexture = rt;
+
 			int rtW = source.width / 4;
 			int rtH = source.height / 4;
 			RenderTexture buffer = RenderTexture.GetTemporary(rtW, rtH, 0);
@@ -81,9 +85,9 @@ public class cBlur : iBlur {
 			}
 			DestroyImmediate(m_Material);
 
-			RenderTexture rt = new RenderTexture(source.width, source.height, 16, RenderTextureFormat.RGB565);
+			rt = new RenderTexture(source.width, source.height, 16, RenderTextureFormat.RGB565);
 			Graphics.Blit(buffer, rt);
-			mTexture = rt;
+			mTextureBlurred = rt;
 
 			Graphics.Blit(buffer, destination);
 			RenderTexture.ReleaseTemporary(buffer);
