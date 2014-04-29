@@ -65,8 +65,50 @@ public class ButtonBarChapters : ButtonBar
 			return;
 
 		currentSelected.Hide(0, 0.2f);
-
+		MoveButtonsAfterDelete();
 		stateChapter=StatesChapter.deleting_chapter;
+		mGUIManager.mMainButtonBar.GetComponent<ButtonBar>().DisableButtons();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void MoveButtonsAfterDelete()
+	{
+		float dist_y_above = (buttonSize+buttonMargin)/2.0f;
+		float dist_y_below = (buttonSize+buttonMargin)/2.0f;
+		float first_min_y = Screen.height-buttonMargin-buttonSize/2.0f;
+		float last_max_y = buttonMargin+buttonSize/2.0f;
+
+		//First button y min limit
+		if(listButtons[1].transform.position.y-dist_y_above <= first_min_y){
+			dist_y_above = listButtons[1].transform.position.y - first_min_y;
+			dist_y_below += (buttonSize+buttonMargin)/2.0f - dist_y_above;
+		}
+		//Last button y max limit
+		else if(listButtons[0].transform.position.y+dist_y_below >= last_max_y){
+			dist_y_below = last_max_y - listButtons[0].transform.position.y;
+			dist_y_above += (buttonSize+buttonMargin)/2.0f - dist_y_below;
+
+			//Check don't break the previous calculation for the first button
+			if(listButtons[1].transform.position.y - dist_y_above <= first_min_y){
+				dist_y_above = (buttonSize+buttonMargin)/2.0f;
+				dist_y_below = (buttonSize+buttonMargin)/2.0f;
+			}
+		}
+		//Move buttons above selected chapter
+		for(int i=currentSelected.mID-1;i>=1;i--){
+			float new_y = listButtons[i].transform.position.y - dist_y_above;
+			listButtons[i].GetComponent<BasicButton>().GoToPosition(new_y, 0.2f);
+		}
+		//Move buttons below selected chapter
+		for(int i=currentSelected.mID+1;i<=numChapters;i++){
+			float new_y = listButtons[i].transform.position.y + dist_y_below;
+			listButtons[i].GetComponent<BasicButton>().GoToPosition(new_y, 0.2f);
+			listButtons[i].GetComponent<BasicButton>().ChangeID(i-1);
+		}
+		//Move add button
+		float new_y_0 = listButtons[0].transform.position.y + dist_y_below;
+		listButtons[0].GetComponent<BasicButton>().GoToPosition(new_y_0, 0.2f);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +117,7 @@ public class ButtonBarChapters : ButtonBar
 	{
 		base.Update();
 
-		//Adding chapter
+		//Adding chapter (show add chapter button)
 		if(stateChapter==StatesChapter.adding_chapter && listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.hidden){
 			listButtons[0].transform.position = listButtons[numChapters].transform.position - new Vector3(0, buttonMargin+buttonSize, 0);
 			listButtons[0].GetComponent<BasicButton>().Show(0, 0.2f);
@@ -83,63 +125,17 @@ public class ButtonBarChapters : ButtonBar
 			ResizeButtonBarAfterAdd();
 			stateChapter=StatesChapter.idle;
 		}
-		//Deleting chapter
-		else if(stateChapter==StatesChapter.deleting_chapter){
-			mGUIManager.mMainButtonBar.GetComponent<ButtonBar>().DisableButtons();
-			if(currentSelected.state == BasicButton.States.hidden){
-				MoveOtherButtons();
-			}
-		}
-		//Moving buttons after delete chapter
-		else if((stateChapter==StatesChapter.moving_buttons_up && listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.idle) ||
-		        (stateChapter==StatesChapter.moving_buttons_down && listButtons[1].GetComponent<BasicButton>().state == BasicButton.States.idle)){
+		//Deleting chapter (destroy button object)
+		else if(stateChapter==StatesChapter.deleting_chapter && 
+		        listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.idle &&
+		        (listButtons[1].GetComponent<BasicButton>().state == BasicButton.States.idle || 
+		         listButtons[1].GetComponent<BasicButton>().state == BasicButton.States.hidden)){
 			listButtons.RemoveAt(currentSelected.mID);
-			numChapters--;
-			ResizeButtonBarAfterDelete();
-			if(stateChapter!=StatesChapter.button_adjusment){
-				Destroy(currentSelected.gameObject);
-				currentSelected=null;
-				stateChapter=StatesChapter.idle;
-			}
-		}
-		//special case deleting chapter
-		else if(stateChapter==StatesChapter.button_adjusment && listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.idle){
-			//Attach buttons
-			foreach(GameObject button in listButtons){
-				button.transform.parent=transform;
-			}
 			Destroy(currentSelected.gameObject);
+			numChapters--;
 			currentSelected=null;
 			stateChapter=StatesChapter.idle;
-		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Move buttons after delete chapter
-	void MoveOtherButtons()
-	{
-		//Move buttons up
-		if(transform.position.y<=Screen.height/2){
-			if(currentSelected.mID<numChapters){
-				for(int i=currentSelected.mID+1;i<=numChapters;i++){
-					listButtons[i].GetComponent<BasicButton>().GoToPosition(listButtons[i-1].transform.position.y);
-					listButtons[i].GetComponent<BasicButton>().ChangeID(i-1);
-				}
-			}
-			listButtons[0].GetComponent<BasicButton>().GoToPosition(listButtons[numChapters].transform.position.y);
-			stateChapter=StatesChapter.moving_buttons_up;
-		}
-		//Move buttons down
-		else{
-			if(currentSelected.mID>1){
-				for(int i=currentSelected.mID+1;i<=numChapters;i++){
-					listButtons[i].GetComponent<BasicButton>().ChangeID(i-1);
-				}
-				for(int i=currentSelected.mID-1;i>=1;i--){
-					listButtons[i].GetComponent<BasicButton>().GoToPosition(listButtons[i+1].transform.position.y);
-				}
-			}
-			stateChapter=StatesChapter.moving_buttons_down;
+			ResizeButtonBarAfterDelete();
 		}
 	}
 
@@ -172,66 +168,29 @@ public class ButtonBarChapters : ButtonBar
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	void ResizeButtonBarAfterDelete()
 	{
+		//Detach buttons
+		foreach(GameObject button in listButtons){
+			button.transform.parent=null;
+		}
+		//Resize button bar
 		float buttonsTotalHeight = buttonSize*listButtons.Count + buttonMargin*(listButtons.Count+1);
-
-		//button bar is still longer than screen height
-		if(buttonsTotalHeight > Screen.height)
-		{
-			//Detach buttons
-			foreach(GameObject button in listButtons){
-				button.transform.parent=null;
-			}
-			//Resize button bar
-			scale_y = buttonsTotalHeight;
-			transform.localScale = new Vector3(scale_x, scale_y, 1);
+		scale_y = Mathf.Max(Screen.height, buttonsTotalHeight);
+		transform.localScale = new Vector3(scale_x, scale_y, 1);
 			
-			//Move buttonbar to the correct position
-			float correct_y = (listButtons[1].transform.position.y+listButtons[0].transform.position.y)/2.0f;
-			transform.position = new Vector3(transform.position.x, correct_y, transform.position.z);
-			
-			//Attach buttons
-			foreach(GameObject button in listButtons){
-				button.transform.parent=transform; 
-			}
-		}
-		//button bar is shorter than screen height just after delete one button
-		else if(buttonsTotalHeight+buttonSize+buttonMargin > Screen.height)
-		{
-			//Detach buttons
-			foreach(GameObject button in listButtons){
-				button.transform.parent=null;
-			}
-			//Resize button bar
-			scale_y = Screen.height;
-			transform.localScale = new Vector3(scale_x, scale_y, 1);
-
-			//Move buttonbar to the correct position
-			float correct_y = (listButtons[1].transform.position.y+listButtons[0].transform.position.y)/2.0f;
-			transform.position = new Vector3(transform.position.x, correct_y, transform.position.z);
-
-			AlignButtonsTop();
-
-			//Center button bar
+		//Move buttonbar to the correct position
+		if(buttonsTotalHeight<=Screen.height){
 			transform.position = new Vector3(transform.position.x, Screen.height/2.0f, transform.position.z);
+		}else{
+			float correct_y = (listButtons[1].transform.position.y+listButtons[0].transform.position.y)/2.0f;
+			transform.position = new Vector3(transform.position.x, correct_y, transform.position.z);
 		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Align buttons on top screen after delete chapter (only special case)
-	void AlignButtonsTop()
-	{
-		float init_y = Screen.height-buttonMargin-buttonSize/2.0f;
-		listButtons[1].GetComponent<BasicButton>().GoToPosition(init_y);
-
-		for(int i=2;i<=numChapters;i++){
-			listButtons[i].GetComponent<BasicButton>().GoToPosition(init_y-(buttonMargin+buttonSize)*(i-1));
+		//Attach buttons
+		foreach(GameObject button in listButtons){
+			button.transform.parent=transform;
 		}
-		listButtons[0].GetComponent<BasicButton>().GoToPosition(init_y-(buttonMargin+buttonSize)*numChapters);
-
-		stateChapter=StatesChapter.button_adjusment;
 	}
 }
 
