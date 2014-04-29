@@ -183,6 +183,7 @@ public class GUIManager : MonoBehaviour
 	//Play button
 	public void OnButtonPlayPressed(BasicButton sender)
 	{
+		Debug.Log("play");
 	}
 }
 
