@@ -115,8 +115,9 @@ public class BasicButton : MonoBehaviour
 	public ButtonCallback enabledCallback;
 
 	SmoothStep mFade;
+	SmoothStep mMoveY;
 
-	int mID;
+	public int mID;
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
 	Transform mGUIText;
@@ -130,6 +131,7 @@ public class BasicButton : MonoBehaviour
 		hidden,
 		fade_in,
 		idle,
+		moving,
 	}
 	public States state;
 
@@ -151,6 +153,7 @@ public class BasicButton : MonoBehaviour
 		renderer.material.color = new Color(c.r, c.g, c.b, 0.0f);
 
 		mFade = new SmoothStep(0.0f, 0.0f, 1.0f, false);
+		mMoveY = new SmoothStep(0.0f,0.0f,1.0f,false);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,8 +172,17 @@ public class BasicButton : MonoBehaviour
 		if(state == States.hidden || Camera.main == null)
 			return;
 
+		//MoveY
+		SmoothStep.State SSState = mMoveY.Update();
+		if(SSState == SmoothStep.State.inFade || SSState==SmoothStep.State.justEnd) {
+			transform.position = new Vector3(transform.position.x, mMoveY.Value, transform.position.z);
+			if(SSState==SmoothStep.State.justEnd)
+				state=States.idle;
+			else
+				return;
+		}
 		//Fade
-		SmoothStep.State SSState = mFade.Update();
+		SSState = mFade.Update();
 		if(SSState == SmoothStep.State.inFade || SSState==SmoothStep.State.justEnd) {
 			if(SSState==SmoothStep.State.justEnd) {
 				if(mFade.Value == 0)
@@ -181,9 +193,8 @@ public class BasicButton : MonoBehaviour
 			Color c = renderer.material.color;
 			renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 		}
-
+		//Check if user is touching the button
 		if(bEnabled && state == States.idle && mSharedTime != Time.time) {
-			//Check if user is touching the button
 			RaycastHit hit;
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -208,7 +219,6 @@ public class BasicButton : MonoBehaviour
 						Checked = !Checked || bUnselectable;
 					else
 						renderer.sharedMaterial.mainTexture = texUnchecked;
-					//mButtonBar.ButtonPressed(this);
 					if(clickedCallback != null)
 						clickedCallback(this);
 					bClicked = false;
@@ -219,11 +229,21 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/*public void Enable() {
-		bEnabled = true;
-		mFade.Reset(1.0f, Globals.ANIMATIONDURATION);
-		state = States.fade_in;
-	}*/
+	public void GoToPosition(float finalY)
+	{
+		mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION);
+		state = States.moving;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void ChangeID(int new_id)
+	{
+		mID = new_id;
+		Text = "sc"+new_id.ToString("00");
+
+		//TODO:Reasign chapter data
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
