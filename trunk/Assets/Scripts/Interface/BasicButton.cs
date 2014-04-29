@@ -104,6 +104,8 @@ public class BasicButton : MonoBehaviour
 				mGUIText.gameObject.SetActive(!value);
 			if(mText3D != null)
 				mText3D.gameObject.SetActive(value);
+			if(value && mGUIText != null && mText3D != null)
+				mText3D.color = mGUIText.guiText.color;
 		}
 	}
 	public ButtonType buttonType;

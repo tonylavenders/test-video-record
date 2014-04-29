@@ -7,6 +7,7 @@ public class Main : MonoBehaviour {
 
 	void Start() {
 		click = false;
+
 	}
 
 	void Update() {
@@ -17,6 +18,8 @@ public class Main : MonoBehaviour {
 	}
 
 	void OnGUI() {
-		GUI.Label(new Rect(Screen.width/2, Screen.height/2, 200, 50), "Touch the screen");
+		GUIStyle style = new GUIStyle(GUI.skin.label);
+		style.alignment = TextAnchor.MiddleCenter;
+		GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Touch the screen", style);
 	}
 }

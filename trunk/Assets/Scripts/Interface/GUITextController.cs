@@ -6,7 +6,7 @@ using TVR.Utils;
 public class GUITextController : MonoBehaviour
 {
 	Transform mParent;
-	int font_size;
+	//int font_size;
 
 	SmoothStep mFade;
 
@@ -23,17 +23,19 @@ public class GUITextController : MonoBehaviour
 	{
 		mParent = transform.parent;
 		guiText.fontSize = (int)(mParent.lossyScale.x*(26.0f/90.0f)); //para button.scale=90 ==> font_size=26
+		Color c = guiText.color;
+		guiText.color = new Color(c.r, c.g, c.b, mFade.Value);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	void Update()
 	{
-		if(mFade.Enable)
-			mFade.Update();
-
-		Color c = guiText.color;
-		guiText.color = new Color(c.r, c.g, c.b, mFade.Value);
+		SmoothStep.State state = mFade.Update();
+		if(state == SmoothStep.State.inFade || state == SmoothStep.State.justEnd) {
+			Color c = guiText.color;
+			guiText.color = new Color(c.r, c.g, c.b, mFade.Value);
+		}
 
 		//position
 		float pos_x = mParent.position.x/Screen.width;
