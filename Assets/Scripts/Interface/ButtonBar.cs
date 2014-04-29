@@ -179,9 +179,9 @@ public class ButtonBar : MonoBehaviour
 
 		//MoveY
 		SmoothStep.State SSState = mMoveY.Update();
-		if(SSState == SmoothStep.State.inFade || SSState==SmoothStep.State.justEnd) {
+		if(SSState == SmoothStep.State.inFade || SSState == SmoothStep.State.justEnd) {
 			transform.position = new Vector3(transform.position.x, mMoveY.Value, transform.position.z);
-			if(!mMoveY.Ended)
+			if(SSState != SmoothStep.State.justEnd) //if(!mMoveY.Ended)
 				return;
 		}
 		//Fade
