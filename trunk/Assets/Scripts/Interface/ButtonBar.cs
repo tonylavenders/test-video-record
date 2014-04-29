@@ -46,7 +46,17 @@ public class ButtonBar : MonoBehaviour
 
 	const int MAX_BUTTONS=5;
 
-	BasicButton currentSelected=null;
+	BasicButton mCurrentSelected=null;
+	protected BasicButton currentSelected{
+		get { return mCurrentSelected; }
+		set {
+			if(mCurrentSelected==null && value!=null)
+				mGUIManager.mMainButtonBar.GetComponent<ButtonBar>().EnableButtons();
+			mCurrentSelected=value;
+			if(mCurrentSelected==null)
+				mGUIManager.mMainButtonBar.GetComponent<ButtonBar>().DisableButtons();
+		}
+	}
 
 	float[] mSpeedsY;
 	int mSpeedPos;
@@ -137,7 +147,7 @@ public class ButtonBar : MonoBehaviour
 		listButtons[0].transform.position = new Vector3(scale_x/2.0f, (mButtons.Length-1)*(buttonSize/2+buttonMargin/2) + Screen.height/2, buttonZDepth);
 		listButtons[0].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
 		listButtons[0].transform.parent = transform;
-		listButtons[0].GetComponent<BasicButton>().SetID(1);
+		listButtons[0].GetComponent<BasicButton>().SetID(0);
 
 		if(mButtons.Length>1){
 			for(int i=1;i<mButtons.Length;i++){
@@ -145,7 +155,7 @@ public class ButtonBar : MonoBehaviour
 				listButtons[i].transform.position = new Vector3(scale_x/2.0f, listButtons[0].transform.position.y-(buttonSize+buttonMargin)*i, buttonZDepth);
 				listButtons[i].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
 				listButtons[i].transform.parent = transform;
-				listButtons[i].GetComponent<BasicButton>().SetID(i+1);
+				listButtons[i].GetComponent<BasicButton>().SetID(i);
 			}
 		}
 	}
@@ -166,6 +176,7 @@ public class ButtonBar : MonoBehaviour
 	{
 		if(state==States.hidden || Camera.main == null)
 			return;
+
 		//MoveY
 		SmoothStep.State SSState = mMoveY.Update();
 		if(SSState == SmoothStep.State.inFade || SSState==SmoothStep.State.justEnd) {
@@ -173,9 +184,8 @@ public class ButtonBar : MonoBehaviour
 			if(!mMoveY.Ended)
 				return;
 		}
-
 		//Fade
-		 SSState = mFade.Update();
+		SSState = mFade.Update();
 		if(SSState == SmoothStep.State.inFade || SSState==SmoothStep.State.justEnd) {
 			if(SSState==SmoothStep.State.justEnd) {
 				if(mFade.Value == 0)
@@ -186,7 +196,6 @@ public class ButtonBar : MonoBehaviour
 			Color c = renderer.material.color;
 			renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 		}
-
 		//Check if user is touching the button bar
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -249,6 +258,15 @@ public class ButtonBar : MonoBehaviour
 	{
 		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Enable = true;
+		}
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void DisableButtons()
+	{
+		foreach(GameObject button in listButtons){
+			button.GetComponent<BasicButton>().Enable = false;
 		}
 	}
 
