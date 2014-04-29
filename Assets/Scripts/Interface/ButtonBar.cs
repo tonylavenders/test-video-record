@@ -14,7 +14,7 @@ public class ButtonBar : MonoBehaviour
 	public float depth_x = 0;
 	bool bInit=false;
 
-	protected float pos_x, pos_y, scale_x, scale_y;
+	protected float pos_x, pos_y, scale_y;
 
 	SmoothStep mFade;
 	SmoothStep mMoveY;
@@ -34,14 +34,6 @@ public class ButtonBar : MonoBehaviour
 	}
 	States state;
 
-	protected const float buttonZDepth = 10;
-	const float buttonBarZDepth = 20;
-	const float buttonBarRatio = 0.1f;
-	const float buttonMarginRatio = 0.0125f;
-	const float buttonRatio = 0.088f;
-	protected float buttonSize;
-	protected float buttonMargin;
-
 	public GUIManager mGUIManager;
 
 	const int MAX_BUTTONS=5;
@@ -51,10 +43,10 @@ public class ButtonBar : MonoBehaviour
 		get { return mCurrentSelected; }
 		set {
 			if(mCurrentSelected==null && value!=null)
-				mGUIManager.mMainButtonBar.GetComponent<ButtonBar>().EnableButtons();
+				mGUIManager.EnableButtons();
 			mCurrentSelected=value;
 			if(mCurrentSelected==null)
-				mGUIManager.mMainButtonBar.GetComponent<ButtonBar>().DisableButtons();
+				mGUIManager.DisableButtons();
 		}
 	}
 
@@ -95,23 +87,10 @@ public class ButtonBar : MonoBehaviour
 	//This happens with very large ratios -> 2:1
 	void SetScale()
 	{
-		float totalHeight = 5*buttonRatio*Screen.width+6*buttonMarginRatio*Screen.width;
+		float buttonsTotalHeight = ButtonProperties.buttonSize*mButtons.Length + ButtonProperties.buttonMargin*(mButtons.Length+1);
+		float scale_y = Mathf.Max(buttonsTotalHeight, Screen.height);
 
-		if(totalHeight > Screen.height){
-			//The relation between buttons and margins is 7-1
-			buttonMargin = Screen.height/41;
-			buttonSize = 7*buttonMargin;
-			scale_x = 1.13f*buttonSize;
-		}
-		else{
-			buttonMargin = Screen.width*buttonMarginRatio;
-			buttonSize = Screen.width*buttonRatio;
-			scale_x = Screen.width*buttonBarRatio;
-		}
-		float buttonsTotalHeight = buttonSize*mButtons.Length + buttonMargin*(mButtons.Length+1);
-		scale_y = Mathf.Max(buttonsTotalHeight, Screen.height);
-
-		transform.localScale = new Vector3(scale_x, scale_y, 1);
+		transform.localScale = new Vector3(ButtonProperties.buttonBarScaleX, scale_y, 1);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,15 +98,15 @@ public class ButtonBar : MonoBehaviour
 	void SetPosition()
 	{
 		//Set the button bar in the initial position and set the buttons
-		transform.position = new Vector3(scale_x/2.0f, Screen.height/2.0f, buttonBarZDepth);
+		transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, Screen.height/2.0f, ButtonProperties.buttonBarZDepth);
 		SetButtons();
 
 		//Move the button bar to the correct position (buttons are moved with the button bar)
 		if(align==Aligns.left){
-			pos_x = (scale_x/2.0f) + scale_x*depth_x + depth_x;
+			pos_x = (ButtonProperties.buttonBarScaleX/2.0f) + ButtonProperties.buttonBarScaleX*depth_x + depth_x;
 		}
 		else if(align==Aligns.right){
-			pos_x = Screen.width - (scale_x/2.0f) + scale_x*depth_x + depth_x;
+			pos_x = Screen.width - (ButtonProperties.buttonBarScaleX/2.0f) + ButtonProperties.buttonBarScaleX*depth_x + depth_x;
 		}
 
 		//If more than 5 buttons, then the first button is top aligned
@@ -136,7 +115,7 @@ public class ButtonBar : MonoBehaviour
 		else
 			pos_y = Screen.height/2.0f;
 
-		transform.position = new Vector3(pos_x, pos_y, buttonBarZDepth);
+		transform.position = new Vector3(pos_x, pos_y, ButtonProperties.buttonBarZDepth);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,16 +123,16 @@ public class ButtonBar : MonoBehaviour
 	protected virtual void SetButtons()
 	{
 		listButtons.Add(Instantiate(mButtons[0]) as GameObject);
-		listButtons[0].transform.position = new Vector3(scale_x/2.0f, (mButtons.Length-1)*(buttonSize/2+buttonMargin/2) + Screen.height/2, buttonZDepth);
-		listButtons[0].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
+		listButtons[0].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, (mButtons.Length-1)*(ButtonProperties.buttonSize/2+ButtonProperties.buttonMargin/2) + Screen.height/2, ButtonProperties.buttonZDepth);
+		listButtons[0].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 		listButtons[0].transform.parent = transform;
 		listButtons[0].GetComponent<BasicButton>().SetID(0);
 
 		if(mButtons.Length>1){
 			for(int i=1;i<mButtons.Length;i++){
 				listButtons.Add(Instantiate(mButtons[i]) as GameObject);
-				listButtons[i].transform.position = new Vector3(scale_x/2.0f, listButtons[0].transform.position.y-(buttonSize+buttonMargin)*i, buttonZDepth);
-				listButtons[i].transform.localScale = new Vector3(buttonSize, buttonSize, 1);
+				listButtons[i].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, listButtons[0].transform.position.y-(ButtonProperties.buttonSize+ButtonProperties.buttonMargin)*i, ButtonProperties.buttonZDepth);
+				listButtons[i].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 				listButtons[i].transform.parent = transform;
 				listButtons[i].GetComponent<BasicButton>().SetID(i);
 			}
@@ -166,7 +145,7 @@ public class ButtonBar : MonoBehaviour
 	{
 		if(Separator!=null){
 			Separator.transform.localScale = new Vector3(1/Separator.transform.lossyScale.x, 1, 1);
-			Separator.transform.position = new Vector3(scale_x+0.5f, Screen.height/2, buttonBarZDepth);
+			Separator.transform.position = new Vector3(ButtonProperties.buttonBarScaleX+0.5f, Screen.height/2, ButtonProperties.buttonBarZDepth);
 		}
 	}
 
@@ -275,14 +254,14 @@ public class ButtonBar : MonoBehaviour
 	protected void GoToButtonPosition(Transform button)
 	{
 		//Button outside top screen
-		if(button.position.y+buttonSize/2 > Screen.height){
-			float finalYbutton = Screen.height-buttonMargin-buttonSize/2;
+		if(button.position.y+ButtonProperties.buttonSize/2 > Screen.height){
+			float finalYbutton = Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2;
 			float finalY = transform.position.y-(button.position.y-finalYbutton);
 			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION);
 		}
 		//Button outside bottom screen
-		else if(button.position.y-buttonSize/2 < 0){
-			float finalYbutton = buttonMargin+buttonSize/2;
+		else if(button.position.y-ButtonProperties.buttonSize/2 < 0){
+			float finalYbutton = ButtonProperties.buttonMargin+ButtonProperties.buttonSize/2;
 			float finalY = transform.position.y+(finalYbutton-button.position.y);
 			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION);
 		}

@@ -8,10 +8,13 @@ using TVR.Helpers;
 //Script attached to the GUICamera object
 public class GUIManager : MonoBehaviour
 {
-	public GameObject mMainButtonBar;
-	public GameObject mCharactersButtonBar;
-	public GameObject mBackgroundsButtonBar;
-	public GameObject mChaptersButtonBar;
+	public ButtonBar mMainButtonBar;
+	public ButtonBar mCharactersButtonBar;
+	public ButtonBar mBackgroundsButtonBar;
+	public ButtonBarChapters mChaptersButtonBar;
+
+	public BasicButton mEditButton;
+	public BasicButton mPlayButton;
 
 	const float cameraZDepth = 0;
 	public int Counter = 0;
@@ -34,9 +37,15 @@ public class GUIManager : MonoBehaviour
 
 	void Start()
 	{
+		ButtonProperties.Init();
+
 		SetGUICamera();
-		mMainButtonBar.GetComponent<ButtonBar>().Show();
-		mChaptersButtonBar.GetComponent<ButtonBar>().Show();
+
+		mMainButtonBar.Show();
+		mChaptersButtonBar.Show();
+
+		InitButtons();
+
 		if(transform.GetComponent<cBlur>().isSupported())
 			mBlur = transform.GetComponent<cBlur>();
 		else
@@ -44,6 +53,47 @@ public class GUIManager : MonoBehaviour
 		mBlur.enabled = true;
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void InitButtons()
+	{
+		//Edit button
+		float pos_x = Screen.width-ButtonProperties.buttonBarScaleX-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2.0f;
+		float pos_y = ButtonProperties.buttonMargin+ButtonProperties.buttonSize/2.0f;
+		Vector3 pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+		Vector3 scale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
+
+		mEditButton.Init(pos, scale);
+		mEditButton.Enable=false;
+		mEditButton.Show();
+
+		//Play button
+		pos_x = Screen.width-ButtonProperties.buttonBarScaleX-ButtonProperties.buttonMargin*2-ButtonProperties.buttonSize*1.5f;
+		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+
+		mPlayButton.Init(pos, scale);
+		mPlayButton.Enable=false;
+		mPlayButton.Show();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void EnableButtons()
+	{
+		mMainButtonBar.EnableButtons();
+		mEditButton.Enable=true;
+		mPlayButton.Enable=true;
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void DisableButtons()
+	{
+		mMainButtonBar.DisableButtons();
+		mEditButton.Enable=false;
+		mPlayButton.Enable=false;
+	}
+	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void SetGUICamera()
@@ -70,69 +120,69 @@ public class GUIManager : MonoBehaviour
 	void OnApplicationPause() {
 		Application.Quit();
 	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	void Count(bool bCount)
+	{
+		if(bCount) Counter++;
+		else Counter--;
+		mMainButtonBar.Separator.SetActive(Counter!=0);
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	//Characters button bar
 	public void OnButtonCharactersPressed(BasicButton sender)
 	{
-		if(sender.Checked)
-			mCharactersButtonBar.GetComponent<ButtonBar>().Show();
-		else
-			mCharactersButtonBar.GetComponent<ButtonBar>().Hide();
-
+		if(sender.Checked) mCharactersButtonBar.Show();
+		else mCharactersButtonBar.Hide();
 		Count(sender.Checked);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	//Backgrounds button bar
 	public void OnButtonBackgroundsPressed(BasicButton sender)
 	{
-		if(sender.Checked)
-			mBackgroundsButtonBar.GetComponent<ButtonBar>().Show();
-		else
-			mBackgroundsButtonBar.GetComponent<ButtonBar>().Hide();
-
-		Count (sender.Checked);
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void Count(bool bCount)
-	{
-		if(bCount)
-			Counter++;
-		else
-			Counter--;
-
-		mMainButtonBar.GetComponent<ButtonBar>().Separator.SetActive(Counter!=0);
+		if(sender.Checked) mBackgroundsButtonBar.Show();
+		else mBackgroundsButtonBar.Hide();
+		Count(sender.Checked);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	//Music button bar
 	public void OnButtonMusicPressed(BasicButton sender)
 	{
-		//Debug.Log(contentType + " - music pressed");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	//Share
 	public void OnButtonSharePressed(BasicButton sender)
 	{
-		//Debug.Log(contentType + " - share pressed");
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	//Character button
 	public void OnButtonCharacterPressed(BasicButton sender)
 	{
-		//Debug.Log(contentType + " pressed");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	//Background button
 	public void OnButtonBackgroundPressed(BasicButton sender)
 	{
-		//Debug.Log(contentType + " pressed");
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Edit button
+	public void OnButtonEditPressed(BasicButton sender)
+	{
+		Debug.Log("edit");
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Play button
+	public void OnButtonPlayPressed(BasicButton sender)
+	{
 	}
 }
 
