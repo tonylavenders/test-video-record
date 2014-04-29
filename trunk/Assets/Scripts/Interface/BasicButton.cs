@@ -231,9 +231,9 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void GoToPosition(float finalY)
+	public void GoToPosition(float finalY, float delay=0, float duration=Globals.ANIMATIONDURATION)
 	{
-		mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION);
+		mMoveY.Reset(transform.position.y, finalY, duration, true, delay);
 		state = States.moving;
 	}
 
