@@ -5,17 +5,11 @@ using TVR.Utils;
 using TVR.Helpers;
 
 public enum ButtonType{
-	MAIN_CHARACTERS,
-	MAIN_BACKGROUNDS,
-	MAIN_MUSIC,
-	MAIN_SHARE,
-	MAIN_DELETE,
-	ADD_CHAPTER,
-	CHAPTER,
-	CHAR,
-	BACKGROUND,
-	MAIN_EDIT,
-	MAIN_PLAY
+	MAIN_CHARACTERS, MAIN_BACKGROUNDS, MAIN_MUSIC, MAIN_SHARE, MAIN_DEL_ELEM,
+	ADD_ELEM, CHAPTER,
+	CHAR, BACKGROUND,
+	MAIN_EDIT, MAIN_PLAY,
+	EDIT_TIME, EDIT_EXPR, EDIT_ANIM, EDIT_CAM
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,7 +153,7 @@ public class BasicButton : MonoBehaviour
 		if(mButtonBar!=null)
 			mGUIManager = mButtonBar.mGUIManager;
 		else
-			mGUIManager =transform.parent.GetComponent<GUIManager>();
+			mGUIManager = transform.parent.GetComponent<GUIManager>();
 
 		SetCallback();
 	}
@@ -263,29 +257,30 @@ public class BasicButton : MonoBehaviour
 	//Button callbacks
 	void SetCallback()
 	{
+		//CHAPTERS
 		if(buttonType == ButtonType.MAIN_CHARACTERS) {
-			checkedCallback = mGUIManager.OnButtonCharactersPressed;
+			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonCharactersPressed;
 		}
 		else if(buttonType == ButtonType.MAIN_BACKGROUNDS) {
-			checkedCallback = mGUIManager.OnButtonBackgroundsPressed;
+			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonBackgroundsPressed;
 		}
 		else if(buttonType == ButtonType.MAIN_MUSIC) {
-			checkedCallback = mGUIManager.OnButtonMusicPressed;
+			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonMusicPressed;
 		}
 		else if(buttonType == ButtonType.MAIN_SHARE) {
-			clickedCallback = mGUIManager.OnButtonSharePressed;
+			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonSharePressed;
 		}
-		else if(buttonType == ButtonType.MAIN_DELETE) {
-			clickedCallback = mGUIManager.mChaptersButtonBar.OnButtonDeleteChapterPressed;
+		else if(buttonType == ButtonType.MAIN_DEL_ELEM) {
+			clickedCallback = mGUIManager.mRightButtonBar.OnButtonDeleteElementPressed;
 		}
-		else if(buttonType == ButtonType.ADD_CHAPTER) {
-			clickedCallback = transform.parent.GetComponent<ButtonBarChapters>().OnButtonAddChapterPressed;
+		else if(buttonType == ButtonType.ADD_ELEM) {
+			clickedCallback = ((ButtonBarElements)mButtonBar).OnButtonAddElementPressed;
 		}
 		else if(buttonType == ButtonType.CHAR) {
-			clickedCallback = mGUIManager.OnButtonCharacterPressed;
+			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonCharacterPressed;
 		}
 		else if(buttonType == ButtonType.BACKGROUND) {
-			clickedCallback = mGUIManager.OnButtonBackgroundPressed;
+			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonBackgroundPressed;
 		}
 		else if(buttonType == ButtonType.MAIN_EDIT) {
 			clickedCallback = mGUIManager.OnButtonEditPressed;
