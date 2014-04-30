@@ -8,10 +8,8 @@ using TVR.Helpers;
 //Script attached to the GUICamera object
 public class GUIManager : MonoBehaviour
 {
-	public ButtonBar mMainButtonBar;
-	public ButtonBar mCharactersButtonBar;
-	public ButtonBar mBackgroundsButtonBar;
-	public ButtonBarChapters mChaptersButtonBar;
+	public ButtonBar mLeftButtonBar;
+	public ButtonBarElements mRightButtonBar;
 
 	public BasicButton mEditButton;
 	public BasicButton mPlayButton;
@@ -41,8 +39,8 @@ public class GUIManager : MonoBehaviour
 
 		SetGUICamera();
 
-		mMainButtonBar.Show();
-		mChaptersButtonBar.Show();
+		mLeftButtonBar.Show();
+		mRightButtonBar.Show();
 
 		InitButtons();
 
@@ -84,7 +82,7 @@ public class GUIManager : MonoBehaviour
 
 	public void EnableButtons()
 	{
-		mMainButtonBar.EnableButtons();
+		mLeftButtonBar.EnableButtons();
 		mEditButton.Enable=true;
 		mPlayButton.Enable=true;
 	}
@@ -93,7 +91,7 @@ public class GUIManager : MonoBehaviour
 	
 	public void DisableButtons()
 	{
-		mMainButtonBar.DisableButtons();
+		mLeftButtonBar.DisableButtons();
 		mEditButton.Enable=false;
 		mPlayButton.Enable=false;
 	}
@@ -127,67 +125,23 @@ public class GUIManager : MonoBehaviour
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	void Count(bool bCount)
+	protected void Count(bool bCount)
 	{
 		if(bCount) Counter++;
 		else Counter--;
-		mMainButtonBar.Separator.SetActive(Counter!=0);
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Characters button bar
-	public void OnButtonCharactersPressed(BasicButton sender)
-	{
-		if(sender.Checked) mCharactersButtonBar.Show();
-		else mCharactersButtonBar.Hide();
-		Count(sender.Checked);
+		mLeftButtonBar.Separator.SetActive(Counter!=0);
 	}
 	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Backgrounds button bar
-	public void OnButtonBackgroundsPressed(BasicButton sender)
-	{
-		if(sender.Checked) mBackgroundsButtonBar.Show();
-		else mBackgroundsButtonBar.Hide();
-		Count(sender.Checked);
-	}
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Music button bar
-	public void OnButtonMusicPressed(BasicButton sender)
-	{
-	}
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Share
-	public void OnButtonSharePressed(BasicButton sender)
-	{
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Character button
-	public void OnButtonCharacterPressed(BasicButton sender)
-	{
-	}
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Background button
-	public void OnButtonBackgroundPressed(BasicButton sender)
-	{
-	}
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Edit button
-	public void OnButtonEditPressed(BasicButton sender)
+	public virtual void OnButtonEditPressed(BasicButton sender)
 	{
-		Debug.Log("edit");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Play button
-	public void OnButtonPlayPressed(BasicButton sender)
+	public virtual void OnButtonPlayPressed(BasicButton sender)
 	{
-		Debug.Log("play");
 	}
 }
 
