@@ -105,7 +105,7 @@ namespace TVR {
 				return newRecordedSound(mFolderVoices.Content[mFolderVoices.Content.Count-1].Number+1, name, audioClip, FrequencyPlayback);
 		}*/
 
-		public class Scene : System.IComparable<Scene> {
+	public class Scene : System.IComparable<Scene>, iObject {
 			private int mIdScene;
 			private int mNumber;
 			private string mTitle;
@@ -126,6 +126,9 @@ namespace TVR {
 
 			public int IdScene {
 				get { return mIdScene; }
+			}
+			public int Id() {
+				return mIdScene;
 			}
 			public int Number {
 				get { return mNumber; }
@@ -171,13 +174,14 @@ namespace TVR {
 				mIdMusic = idMusic;
 			}
 
-			public void save() {
+			public void Save() {
 				/*if (mIdEpisode == -1) {
 					db.ExecuteNonQuery ("INSERT INTO Episodes (CVSNew) VALUES (" + Data.Version + ")");
 					mIdEpisode = (int)db.ExecuteQuery ("SELECT MAX(IdEpisode) as ID FROM Episodes") [0] ["ID"];
 					db.ExecuteNonQuery ("UPDATE EpisodesInfo SET Number = " + mNumber + ", Title = '" + Title.Replace ("'", "''").Trim () + "', Information = '" + Information.Replace ("'", "''").Trim () + "' WHERE IdEpisode = " + mIdEpisode + " AND CVSNew = -1");
 					CVS.CVSEvent evt = new CVS.CVSEvent (CVS.CVSTypes.Create, this);
 					OnChange (evt);
+					//Informar al padre, método privado.
 				} else {
 					if (mOldInformation == Information && mOldTitle == Title)
 						return;
@@ -189,6 +193,10 @@ namespace TVR {
 					mOldTitle = Title;
 					mOldInformation = Information;
 				}*/
+			}
+			
+			public void Delete() {
+				//Informar al padre, método privado.
 			}
 
 			public int CompareTo(Scene other) {		
@@ -3386,5 +3394,11 @@ namespace TVR {
 				else return 0;
 			}
 		}*/
+	}
+
+	public interface iObject {
+	int Id();
+	void Save();
+	void Delete();
 	}
 }
