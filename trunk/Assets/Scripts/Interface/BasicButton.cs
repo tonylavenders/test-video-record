@@ -54,11 +54,11 @@ public class BasicButton : MonoBehaviour
 				if(checkedCallback!=null)
 					checkedCallback(this);
 				if(value) {
-					renderer.sharedMaterial.mainTexture = texChecked;
+					renderer.material.mainTexture = texChecked;
 					if(mButtonBar != null)
 						mButtonBar.ButtonPressed(this);
 				} else
-					renderer.sharedMaterial.mainTexture = texUnchecked;
+					renderer.material.mainTexture = texUnchecked;
 			}
 		}
 	}
@@ -132,7 +132,8 @@ public class BasicButton : MonoBehaviour
  
 	void Awake()
 	{
-		renderer.sharedMaterial.mainTexture = texUnchecked;
+		renderer.material.mainTexture = texUnchecked;
+
 		mGUIText = transform.FindChild("GUI Text");
 		Transform t = transform.FindChild("New Text");
 		if(t != null)
@@ -197,21 +198,21 @@ public class BasicButton : MonoBehaviour
 					mSharedTime = Time.time;
 					bClicked = true;
 					if(!bKeepSt)
-						renderer.sharedMaterial.mainTexture = texChecked;
+						renderer.material.mainTexture = texChecked;
 				}
 			} else if(bClicked) {
 				if(InputHelp.GetMouseButton(0)) {
 					Vector2 mMovement = InputHelp.mousePosition - mMouseInitPos;
 					if(mMovement.sqrMagnitude > MAXDISABLEBUTTONS) {
 						if(!bKeepSt)
-							renderer.sharedMaterial.mainTexture = texUnchecked;
+							renderer.material.mainTexture = texUnchecked;
 						bClicked = false;
 					}
 				} else if(InputHelp.GetMouseButtonUp(0)) {
 					if(bKeepSt)
 						Checked = !Checked || bUnselectable;
 					else
-						renderer.sharedMaterial.mainTexture = texUnchecked;
+						renderer.material.mainTexture = texUnchecked;
 					if(clickedCallback != null)
 						clickedCallback(this);
 					bClicked = false;
