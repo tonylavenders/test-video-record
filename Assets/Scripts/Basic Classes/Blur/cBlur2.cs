@@ -6,6 +6,8 @@ public class cBlur2 : iBlur {
 	public bool softwareBlur = true;
 	public int mipLevel = 1;
 	public int iterations = 1;
+	public int brushSizeHorizontal = 1;
+	public int brushSizeVertical = 1;
 	public override bool isSupported() {
 		return true;
 	}
@@ -23,7 +25,6 @@ public class cBlur2 : iBlur {
 	}
 
 	private Texture2D Blur(Texture2D image) {
-		Debug.Log("2");
 		if(mipLevel >= image.mipmapCount)
 			mipLevel = image.mipmapCount - 1;
 
@@ -38,8 +39,8 @@ public class cBlur2 : iBlur {
 					for(int y = 0; y < mipHeight; ++y) {
 						Color color = new Color(0, 0, 0, 0);
 						int count = 0;
-						for(int i = x - 1; i < x + 2; ++i) {
-							for(int j = y - 1; j < y + 2; ++j) {
+						for(int i = x - 1 * brushSizeHorizontal; i <= x + 1 * brushSizeHorizontal; ++i) {
+							for(int j = y - 1 * brushSizeVertical; j <= y + 1 * brushSizeVertical; ++j) {
 								if(i > 0 && i < mipWidth && j > 0 && j < mipHeight) {
 									color += pixels[i + j * mipWidth];
 									count++;

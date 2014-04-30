@@ -3,8 +3,8 @@ using TVR.Utils;
 using TVR;
 
 public abstract class iBlur : MonoBehaviour {
-	public Texture mTexture;
-	public Texture mTextureBlurred;
+	protected Texture mTexture;
+	protected Texture mTextureBlurred;
 	public Camera[] Cameras;
 	public Color Tint = Color.white;
 	protected SmoothStep mAlpha;
@@ -60,7 +60,7 @@ public abstract class iBlur : MonoBehaviour {
 		}
 	}
 
-	public void OnGUI() {
+	protected virtual void OnGUI() {
 		if(Event.current.type == EventType.Repaint) {
 			if(mTexture != null)
 				GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mTexture);
