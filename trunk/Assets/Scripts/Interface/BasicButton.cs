@@ -9,7 +9,8 @@ public enum ButtonType{
 	ADD_ELEM, CHAPTER,
 	CHAR, BACKGROUND,
 	MAIN_EDIT, MAIN_PLAY,
-	EDIT_TIME, EDIT_EXPR, EDIT_ANIM, EDIT_CAM
+	EDIT_TIME, EDIT_EXPR, EDIT_ANIM, EDIT_CAM,
+	MUSIC
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,6 +107,7 @@ public class BasicButton : MonoBehaviour
 	SmoothStep mFade;
 	SmoothStep mMoveY;
 
+	public GameObject mPrefab;
 	public int mID;
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
@@ -233,7 +235,7 @@ public class BasicButton : MonoBehaviour
 
 	public void GoToPosition(float finalY, float delay=0, float duration=Globals.ANIMATIONDURATION)
 	{
-		mMoveY.Reset(transform.position.y, finalY, duration, true, delay);
+		mMoveY.Reset(transform.position.y, finalY, duration*10, true, delay);
 		state = States.moving;
 	}
 
@@ -266,7 +268,7 @@ public class BasicButton : MonoBehaviour
 			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonBackgroundsPressed;
 		}
 		else if(buttonType == ButtonType.MAIN_MUSIC) {
-			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonMusicPressed;
+			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonMusicsPressed;
 		}
 		else if(buttonType == ButtonType.MAIN_SHARE) {
 			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonSharePressed;
@@ -282,6 +284,9 @@ public class BasicButton : MonoBehaviour
 		}
 		else if(buttonType == ButtonType.BACKGROUND) {
 			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonBackgroundPressed;
+		}
+		else if(buttonType == ButtonType.MUSIC) {
+			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonMusicPressed;
 		}
 		else if(buttonType == ButtonType.MAIN_EDIT) {
 			clickedCallback = mGUIManager.OnButtonEditPressed;

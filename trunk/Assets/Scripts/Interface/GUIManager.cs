@@ -14,6 +14,9 @@ public class GUIManager : MonoBehaviour
 	public BasicButton mEditButton;
 	public BasicButton mPlayButton;
 
+	public GameObject CurrentBackground;
+	public GameObject CurrentCharacter;
+
 	const float cameraZDepth = 0;
 	public int Counter = 0;
 	iBlur mBlur;
@@ -53,7 +56,7 @@ public class GUIManager : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void InitButtons()
+	protected virtual void InitButtons()
 	{
 		//Edit button
 		float pos_x = Screen.width-ButtonProperties.buttonBarScaleX-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2.0f;
@@ -62,7 +65,6 @@ public class GUIManager : MonoBehaviour
 		Vector3 scale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 
 		mEditButton.Init(pos, scale);
-		mEditButton.Enable=false;
 		mEditButton.Show();
 
 		//Play button
@@ -70,25 +72,23 @@ public class GUIManager : MonoBehaviour
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 
 		mPlayButton.Init(pos, scale);
-		mPlayButton.Enable=false;
 		mPlayButton.Show();
+		mPlayButton.Enable=false;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void EnableButtons()
+	public virtual void EnableButtons()
 	{
 		mLeftButtonBar.EnableButtons();
-		mEditButton.Enable=true;
 		mPlayButton.Enable=true;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void DisableButtons()
+	public virtual void DisableButtons()
 	{
 		mLeftButtonBar.DisableButtons();
-		mEditButton.Enable=false;
 		mPlayButton.Enable=false;
 	}
 	

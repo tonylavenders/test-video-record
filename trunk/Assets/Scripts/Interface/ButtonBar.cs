@@ -52,7 +52,7 @@ public class ButtonBar : MonoBehaviour
 
 	float[] mSpeedsY;
 	int mSpeedPos;
-	SmoothStep mSpeed;
+	protected SmoothStep mSpeed;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -160,8 +160,8 @@ public class ButtonBar : MonoBehaviour
 		SmoothStep.State SSState = mMoveY.Update();
 		if(SSState == SmoothStep.State.inFade || SSState == SmoothStep.State.justEnd) {
 			transform.position = new Vector3(transform.position.x, mMoveY.Value, transform.position.z);
-			if(SSState != SmoothStep.State.justEnd) //if(!mMoveY.Ended)
-				return;
+			/*if(SSState != SmoothStep.State.justEnd) //if(!mMoveY.Ended)
+				return;*/
 		}
 		//Fade
 		SSState = mFade.Update();
@@ -185,6 +185,7 @@ public class ButtonBar : MonoBehaviour
 				mSpeedsY[i] = 0.0f;
 			}
 			mSpeed.End();
+			mMoveY.End();
 		}
 
 		if(state == States.touch) {
@@ -257,13 +258,13 @@ public class ButtonBar : MonoBehaviour
 		if(button.position.y+ButtonProperties.buttonSize/2 > Screen.height){
 			float finalYbutton = Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2;
 			float finalY = transform.position.y-(button.position.y-finalYbutton);
-			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION);
+			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION*10);
 		}
 		//Button outside bottom screen
 		else if(button.position.y-ButtonProperties.buttonSize/2 < 0){
 			float finalYbutton = ButtonProperties.buttonMargin+ButtonProperties.buttonSize/2;
 			float finalY = transform.position.y+(finalYbutton-button.position.y);
-			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION);
+			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION*10);
 		}
 	}
 
