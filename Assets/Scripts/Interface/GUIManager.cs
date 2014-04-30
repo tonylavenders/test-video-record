@@ -115,7 +115,7 @@ public class GUIManager : MonoBehaviour
 		}
 	}
 
-	void OnApplicationPause() {
+	void OnApplicationPause(bool pauseStatus) {
 		//Application.Quit();
 	}
 	

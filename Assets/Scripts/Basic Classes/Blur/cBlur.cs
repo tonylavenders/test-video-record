@@ -43,7 +43,7 @@ public class cBlur : iBlur {
 
 	public override bool Enable {
 		set {
-			if(value != base.Enable) {
+			if(value != Enable) {
 				if(value) {
 					foreach(Camera c in Cameras)
 						c.targetTexture = mRTCameras;
@@ -64,8 +64,6 @@ public class cBlur : iBlur {
 			if(QualitySettings.antiAliasing != 0)
 				mRTCameras.antiAliasing = QualitySettings.antiAliasing;
 			mRTCameras.Create();
-			/*foreach(Camera c in Cameras)
-				c.targetTexture = mRTCameras;*/
 		}
 	}
 
@@ -100,6 +98,22 @@ public class cBlur : iBlur {
 			new Vector2(off, off),
 			new Vector2(off, -off)
 		);
+	}
+
+	protected virtual void OnApplicationPause(bool pauseStatus) {
+		if(Enable && !pauseStatus) {
+			((RenderTexture)mTexture).Release();
+			DestroyImmediate(mTexture);
+			mTexture = null;
+
+			((RenderTexture)mTextureBlurred).Release();
+			DestroyImmediate(mTextureBlurred);
+			mTextureBlurred = null;
+
+			foreach(Camera c in Cameras)
+				c.targetTexture = mRTCameras;
+			enableCameras(true);
+		}
 	}
 
 	void OnPostRender() {

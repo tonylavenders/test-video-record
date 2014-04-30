@@ -3,8 +3,8 @@ using TVR.Utils;
 using TVR;
 
 public abstract class iBlur : MonoBehaviour {
-	protected Texture mTexture;
-	protected Texture mTextureBlurred;
+	public Texture mTexture;
+	public Texture mTextureBlurred;
 	public Camera[] Cameras;
 	public Color Tint = Color.white;
 	protected SmoothStep mAlpha;
