@@ -41,23 +41,40 @@ public class cBlur : iBlur {
 		return true;
 	}
 
+	public override bool Enable {
+		set {
+			if(value != base.Enable) {
+				if(value) {
+					foreach(Camera c in Cameras)
+						c.targetTexture = mRTCameras;
+				} else {
+					foreach(Camera c in Cameras) {
+						if(c != null)
+							c.targetTexture = null;
+					}
+				}
+			}
+			base.Enable = value;
+		}
+	}
+
 	void OnEnable() {
 		if(Cameras != null) {
 			mRTCameras = new RenderTexture(Screen.width, Screen.height, 24);
 			if(QualitySettings.antiAliasing != 0)
 				mRTCameras.antiAliasing = QualitySettings.antiAliasing;
 			mRTCameras.Create();
-			foreach(Camera c in Cameras)
-				c.targetTexture = mRTCameras;
+			/*foreach(Camera c in Cameras)
+				c.targetTexture = mRTCameras;*/
 		}
 	}
 
 	void OnDisable() {
 		if(Cameras != null) {
-			foreach(Camera c in Cameras) {
+			/*foreach(Camera c in Cameras) {
 				if(c != null)
 					c.targetTexture = null;
-			}
+			}*/
 			mRTCameras.Release();
 			DestroyImmediate(mRTCameras);
 		}
@@ -85,45 +102,11 @@ public class cBlur : iBlur {
 		);
 	}
 
-	// Called by the camera to apply the image effect
-	/*void OnRenderImage (RenderTexture source, RenderTexture destination) {
-		if(base.Enable && mTextureBlurred == null) {
-			RenderTexture rt = new RenderTexture(source.width, source.height, 16, RenderTextureFormat.RGB565);
-			Graphics.Blit(source, rt);
-			mTexture = rt;
-
-			int rtW = source.width / 4;
-			int rtH = source.height / 4;
-			RenderTexture buffer = RenderTexture.GetTemporary(rtW, rtH, 0);
-
-			// Copy source to the 4x4 smaller texture.
-			DownSample4x(source, buffer);
-
-			// Blur the small texture
-			for(int i = 0; i < iterations; i++) {
-				RenderTexture buffer2 = RenderTexture.GetTemporary(rtW, rtH, 0);
-				FourTapCone(buffer, buffer2, i);
-				RenderTexture.ReleaseTemporary(buffer);
-				buffer = buffer2;
-			}
-			DestroyImmediate(m_Material);
-
-			rt = new RenderTexture(source.width, source.height, 16, RenderTextureFormat.RGB565);
-			Graphics.Blit(buffer, rt);
-			mTextureBlurred = rt;
-
-			Graphics.Blit(buffer, destination);
-			RenderTexture.ReleaseTemporary(buffer);
-			enableCameras(false);
-		} else
-			Graphics.Blit(source, destination);
-	}*/
-
 	void OnPostRender() {
 		if(base.Enable && mTextureBlurred == null) {
-			RenderTexture rt = new RenderTexture(mRTCameras.width, mRTCameras.height, 16, RenderTextureFormat.RGB565);
-			Graphics.Blit(mRTCameras, rt);
-			mTexture = rt;
+			mTexture = new RenderTexture(mRTCameras.width, mRTCameras.height, 0, RenderTextureFormat.RGB565);
+			Graphics.Blit(mRTCameras, (RenderTexture)mTexture);
+			//mTexture = rt;
 
 			int rtW = mRTCameras.width / 4;
 			int rtH = mRTCameras.height / 4;
@@ -141,14 +124,13 @@ public class cBlur : iBlur {
 			}
 			DestroyImmediate(m_Material);
 
-			rt = new RenderTexture(mRTCameras.width, mRTCameras.height, 16, RenderTextureFormat.RGB565);
-			Graphics.Blit(buffer, rt);
-			mTextureBlurred = rt;
+			mTextureBlurred = new RenderTexture(mRTCameras.width, mRTCameras.height, 0, RenderTextureFormat.RGB565);
+			Graphics.Blit(buffer, (RenderTexture)mTextureBlurred);
+			//mTextureBlurred = rt;
 
-			//Graphics.Blit(buffer, (RenderTexture)null);
+			Graphics.Blit(mTexture, (RenderTexture)null);
 			RenderTexture.ReleaseTemporary(buffer);
 			enableCameras(false);
-		} else
-			Graphics.Blit(mRTCameras, (RenderTexture)null);
+		}
 	}
 }
