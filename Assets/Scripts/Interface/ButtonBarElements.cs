@@ -2,68 +2,68 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class ButtonBarChapters : ButtonBar
+public class ButtonBarElements : ButtonBar
 {
-	int numChapters;
-	enum StatesChapter{
+	int numElements;
+	enum StatesElements{
 		idle,
-		adding_chapter,
-		deleting_chapter,
+		adding_element,
+		deleting_element,
 		moving_buttons_up,
 		moving_buttons_down,
 		button_adjusment
 	}
-	StatesChapter stateChapter=StatesChapter.idle;
+	StatesElements stateElements=StatesElements.idle;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	protected override void SetButtons()
 	{
-		//No chapters in DB yet
-		if(/*num. chapters in DB==0*/ true){
+		//No elementss in DB yet
+		if(/*num. elementss in DB==0*/ true){
 			listButtons.Add(Instantiate(mButtons[0]) as GameObject);
 			listButtons[0].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2, ButtonProperties.buttonZDepth);
 			listButtons[0].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 			listButtons[0].transform.parent = transform;
-			numChapters=0;
+			numElements=0;
 		}
-		//Create buttons for chapters in DB
+		//Create buttons for elementss in DB
 		else{
 		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void OnButtonAddChapterPressed(BasicButton sender)
+	public void OnButtonAddElementPressed(BasicButton sender)
 	{
-		numChapters++;
+		numElements++;
 
-		//Add chapter button
+		//Add elements button
 		listButtons.Add(Instantiate(mButtons[1]) as GameObject);
-		listButtons[numChapters].transform.position = listButtons[0].transform.position;
-		listButtons[numChapters].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
-		listButtons[numChapters].transform.parent = transform;
-		listButtons[numChapters].GetComponent<BasicButton>().Show(0.2f, 0.2f);
-		listButtons[numChapters].GetComponent<BasicButton>().Text+=numChapters.ToString("00");
-		listButtons[numChapters].GetComponent<BasicButton>().SetID(numChapters);
+		listButtons[numElements].transform.position = listButtons[0].transform.position;
+		listButtons[numElements].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
+		listButtons[numElements].transform.parent = transform;
+		listButtons[numElements].GetComponent<BasicButton>().Show(0.2f, 0.2f);
+		listButtons[numElements].GetComponent<BasicButton>().Text+=numElements.ToString("00");
+		listButtons[numElements].GetComponent<BasicButton>().SetID(numElements);
 
-		ButtonPressed(listButtons[numChapters].GetComponent<BasicButton>());
+		ButtonPressed(listButtons[numElements].GetComponent<BasicButton>());
 		listButtons[0].GetComponent<BasicButton>().Hide(0 ,0.2f);
 		listButtons[0].GetComponent<BasicButton>().Checked=true;
 
-		stateChapter=StatesChapter.adding_chapter;
+		stateElements=StatesElements.adding_element;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void OnButtonDeleteChapterPressed(BasicButton sender)
+	public void OnButtonDeleteElementPressed(BasicButton sender)
 	{
 		if(currentSelected==null)
 			return;
 
 		currentSelected.Hide(0, 0.2f);
 		MoveButtonsAfterDelete();
-		stateChapter=StatesChapter.deleting_chapter;
+		stateElements=StatesElements.deleting_element;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,13 +91,13 @@ public class ButtonBarChapters : ButtonBar
 				dist_y_below = (ButtonProperties.buttonSize+ButtonProperties.buttonMargin)/2.0f;
 			}
 		}
-		//Move buttons above selected chapter
+		//Move buttons above selected element
 		for(int i=currentSelected.mID-1;i>=1;i--){
 			float new_y = listButtons[i].transform.position.y - dist_y_above;
 			listButtons[i].GetComponent<BasicButton>().GoToPosition(new_y, 0.2f);
 		}
-		//Move buttons below selected chapter
-		for(int i=currentSelected.mID+1;i<=numChapters;i++){
+		//Move buttons below selected element
+		for(int i=currentSelected.mID+1;i<=numElements;i++){
 			float new_y = listButtons[i].transform.position.y + dist_y_below;
 			listButtons[i].GetComponent<BasicButton>().GoToPosition(new_y, 0.2f);
 			listButtons[i].GetComponent<BasicButton>().ChangeID(i-1);
@@ -113,24 +113,24 @@ public class ButtonBarChapters : ButtonBar
 	{
 		base.Update();
 
-		//Adding chapter (show add chapter button)
-		if(stateChapter==StatesChapter.adding_chapter && listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.hidden){
-			listButtons[0].transform.position = listButtons[numChapters].transform.position - new Vector3(0, ButtonProperties.buttonMargin+ButtonProperties.buttonSize, 0);
+		//Adding elements (show add elements button)
+		if(stateElements==StatesElements.adding_element && listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.hidden){
+			listButtons[0].transform.position = listButtons[numElements].transform.position - new Vector3(0, ButtonProperties.buttonMargin+ButtonProperties.buttonSize, 0);
 			listButtons[0].GetComponent<BasicButton>().Show(0, 0.2f);
-			listButtons[numChapters].GetComponent<BasicButton>().Checked=true;
+			listButtons[numElements].GetComponent<BasicButton>().Checked=true;
 			ResizeButtonBarAfterAdd();
-			stateChapter=StatesChapter.idle;
+			stateElements=StatesElements.idle;
 		}
-		//Deleting chapter (destroy button object)
-		else if(stateChapter==StatesChapter.deleting_chapter && 
+		//Deleting elements (destroy button object)
+		else if(stateElements==StatesElements.deleting_element && 
 		        listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.idle &&
 		        (listButtons[1].GetComponent<BasicButton>().state == BasicButton.States.idle || 
 		         listButtons[1].GetComponent<BasicButton>().state == BasicButton.States.hidden)){
 			listButtons.RemoveAt(currentSelected.mID);
 			Destroy(currentSelected.gameObject);
-			numChapters--;
+			numElements--;
 			currentSelected=null;
-			stateChapter=StatesChapter.idle;
+			stateElements=StatesElements.idle;
 			ResizeButtonBarAfterDelete();
 		}
 	}
