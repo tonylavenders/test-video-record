@@ -12,6 +12,18 @@ public class cBlur2 : iBlur {
 		return true;
 	}
 
+	protected virtual void OnApplicationPause(bool pauseStatus) {
+		if(Enable && !pauseStatus) {
+			DestroyImmediate(mTexture);
+			mTexture = null;
+
+			DestroyImmediate(mTextureBlurred);
+			mTextureBlurred = null;
+
+			enableCameras(true);
+		}
+	}
+
 	void OnPostRender() {
 		if(base.Enable) {
 			enableCameras(false);
@@ -56,6 +68,7 @@ public class cBlur2 : iBlur {
 
 		blurred.SetPixels(pixels);
 		blurred.Apply();
+		pixels = null;
 		return blurred;
 	}
 }
