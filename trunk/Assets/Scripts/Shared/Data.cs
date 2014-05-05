@@ -3474,6 +3474,10 @@ namespace TVR {
 		int Id {
 			get;
 		}
+		int Number {
+			get;
+		}
+
 		void Save();
 		void Delete();
 	}
