@@ -45,8 +45,6 @@ public class ButtonBar : MonoBehaviour
 			if(mCurrentSelected==null && value!=null)
 				mGUIManager.EnableButtons();
 			mCurrentSelected=value;
-			if(mCurrentSelected==null)
-				mGUIManager.DisableButtons();
 		}
 	}
 
@@ -160,8 +158,6 @@ public class ButtonBar : MonoBehaviour
 		SmoothStep.State SSState = mMoveY.Update();
 		if(SSState == SmoothStep.State.inFade || SSState == SmoothStep.State.justEnd) {
 			transform.position = new Vector3(transform.position.x, mMoveY.Value, transform.position.z);
-			/*if(SSState != SmoothStep.State.justEnd) //if(!mMoveY.Ended)
-				return;*/
 		}
 		//Fade
 		SSState = mFade.Update();
@@ -176,16 +172,18 @@ public class ButtonBar : MonoBehaviour
 			renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 		}
 		//Check if user is touching the button bar
-		RaycastHit hit;
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		if(state == States.idle && Input.GetMouseButtonDown(0) && collider.Raycast(ray, out hit, 1000.0f)) {
-			state = States.touch;
-			mSpeedPos = 0;
-			for(int i = 0; i < Globals.SPEEDS; i++) {
-				mSpeedsY[i] = 0.0f;
+		if(state == States.idle && Input.GetMouseButtonDown(0)){
+			RaycastHit hit;
+			Ray ray = Camera.main.ScreenPointToRay(InputHelp.mousePositionYDown);
+			if(collider.Raycast(ray, out hit, 1000.0f)){
+				state = States.touch;
+				mSpeedPos = 0;
+				for(int i = 0; i < Globals.SPEEDS; i++) {
+					mSpeedsY[i] = 0.0f;
+				}
+				mSpeed.End();
+				mMoveY.End();
 			}
-			mSpeed.End();
-			mMoveY.End();
 		}
 
 		if(state == States.touch) {
@@ -258,13 +256,13 @@ public class ButtonBar : MonoBehaviour
 		if(button.position.y+ButtonProperties.buttonSize/2 > Screen.height){
 			float finalYbutton = Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2;
 			float finalY = transform.position.y-(button.position.y-finalYbutton);
-			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION*10);
+			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION);
 		}
 		//Button outside bottom screen
 		else if(button.position.y-ButtonProperties.buttonSize/2 < 0){
 			float finalYbutton = ButtonProperties.buttonMargin+ButtonProperties.buttonSize/2;
 			float finalY = transform.position.y+(finalYbutton-button.position.y);
-			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION*10);
+			mMoveY.Reset(transform.position.y, finalY, Globals.ANIMATIONDURATION);
 		}
 	}
 

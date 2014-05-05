@@ -19,7 +19,7 @@ public class ButtonBarElements : ButtonBar
 
 	protected override void SetButtons()
 	{
-		//No elementss in DB yet
+		//No elements in DB yet
 		if(/*num. elementss in DB==0*/ true){
 			listButtons.Add(Instantiate(mButtons[0]) as GameObject);
 			listButtons[0].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2, ButtonProperties.buttonZDepth);
@@ -61,6 +61,7 @@ public class ButtonBarElements : ButtonBar
 		if(currentSelected==null)
 			return;
 
+		mGUIManager.DisableButtons();
 		currentSelected.Hide(0, 0.2f);
 		MoveButtonsAfterDelete();
 		stateElements=StatesElements.deleting_element;
@@ -71,26 +72,20 @@ public class ButtonBarElements : ButtonBar
 
 	void MoveButtonsAfterDelete()
 	{
-		float dist_y_above = (ButtonProperties.buttonSize+ButtonProperties.buttonMargin)/2.0f;
-		float dist_y_below = (ButtonProperties.buttonSize+ButtonProperties.buttonMargin)/2.0f;
-		float first_min_y = Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2.0f;
-		float last_max_y = ButtonProperties.buttonMargin+ButtonProperties.buttonSize/2.0f;
+		float dist_y_above = (ButtonProperties.buttonSize + ButtonProperties.buttonMargin)/2.0f;
+		float dist_y_below = (ButtonProperties.buttonSize + ButtonProperties.buttonMargin)/2.0f;
+		float first_min_y = Screen.height - ButtonProperties.buttonMargin - ButtonProperties.buttonSize/2.0f;
+		float last_max_y = ButtonProperties.buttonMargin + ButtonProperties.buttonSize/2.0f;
 
-		//First button y min limit
-		if(listButtons[1].transform.position.y-dist_y_above <= first_min_y){
-			dist_y_above = listButtons[1].transform.position.y - first_min_y;
-			dist_y_below += (ButtonProperties.buttonSize+ButtonProperties.buttonMargin)/2.0f - dist_y_above;
-		}
 		//Last button y max limit
-		else if(listButtons[0].transform.position.y+dist_y_below >= last_max_y){
+		if(listButtons[0].transform.position.y + dist_y_below >= last_max_y){
 			dist_y_below = last_max_y - listButtons[0].transform.position.y;
 			dist_y_above += (ButtonProperties.buttonSize+ButtonProperties.buttonMargin)/2.0f - dist_y_below;
-
-			//Check don't break the previous calculation for the first button
-			if(listButtons[1].transform.position.y - dist_y_above <= first_min_y){
-				dist_y_above = (ButtonProperties.buttonSize+ButtonProperties.buttonMargin)/2.0f;
-				dist_y_below = (ButtonProperties.buttonSize+ButtonProperties.buttonMargin)/2.0f;
-			}
+		}
+		//First button y min limit (first button has priority over last button)
+		if(listButtons[1].transform.position.y-dist_y_above <= first_min_y){
+			dist_y_above = listButtons[1].transform.position.y - first_min_y;
+			dist_y_below = ButtonProperties.buttonSize+ButtonProperties.buttonMargin - dist_y_above;
 		}
 		//Move buttons above selected element
 		for(int i=currentSelected.mID-1;i>=1;i--){

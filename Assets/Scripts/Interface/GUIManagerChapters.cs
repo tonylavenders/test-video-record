@@ -25,7 +25,6 @@ public class GUIManagerChapters : GUIManager
 	public override void EnableButtons()
 	{
 		base.EnableButtons();
-		mEditButton.Enable=true;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,11 +87,12 @@ public class GUIManagerChapters : GUIManager
 	//Character button
 	public void OnButtonCharacterPressed(BasicButton sender)
 	{
-		if(sender.mPrefab!=null){
+		if(sender.sPrefab!=""){
 			if(CurrentCharacter!=null){
 				Destroy(CurrentCharacter);
 			}
-			CurrentCharacter = Instantiate(sender.mPrefab) as GameObject;
+			CurrentCharacter = Instantiate(ResourcesManager.LoadModel("Characters/Prefabs/"+sender.sPrefab, "ChapterMgr")) as GameObject;
+			SceneMgr.Get.sCurrentCharacter = sender.sPrefab;
 		}
 		else{
 			Debug.Log("El boton no tiene prefab asociado!");
@@ -103,11 +103,12 @@ public class GUIManagerChapters : GUIManager
 	//Background button
 	public void OnButtonBackgroundPressed(BasicButton sender)
 	{
-		if(sender.mPrefab!=null){
+		if(sender.sPrefab!=""){
 			if(CurrentBackground!=null){
 				Destroy(CurrentBackground);
 			}
-			CurrentBackground = Instantiate(sender.mPrefab) as GameObject;
+			CurrentBackground = Instantiate(ResourcesManager.LoadModel("Backgrounds/Prefabs/"+sender.sPrefab, "ChapterMgr")) as GameObject;
+			SceneMgr.Get.sCurrentBackground = sender.sPrefab;
 		}
 		else{
 			Debug.Log("El boton no tiene prefab asociado!");
