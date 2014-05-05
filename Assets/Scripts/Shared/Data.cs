@@ -5,11 +5,11 @@ using System;
 namespace TVR {	
 	public static class Data {
 		private static SqliteDatabase db = new SqliteDatabase();
-		private static List<Scene> mScenes;
-		public static Scene selEpisode;
+		private static List<Chapter> mChapters;
+		public static Chapter selEpisode;
 
-		public static List<Scene> Scenes {
-			get { return mScenes; }
+		public static List<Chapter> Chapters {
+			get { return mChapters; }
 		}
 
 		public static void Init() {
@@ -17,17 +17,17 @@ namespace TVR {
 #if !UNITY_ANDROID
 			db.ExecuteNonQuery("VACUUM");
 #endif
-			mScenes = new List<Scene>();
+			mChapters = new List<Chapter>();
 
-			mScenes = new List<Scene>();
+			mChapters = new List<Chapter>();
 
-			DataTable scenes = db.ExecuteQuery("SELECT IdScene, Number, Title, Information, IdCharacter, IdBackground, IdMusic FROM Scenes ORDER BY Number");
-			Scene scene;
-			foreach(DataRow row in scenes.Rows) {
-				scene = new Scene((int)row["IdScene"], (int)row["Number"], (string)row["Title"], (string)row["Information"], (int)row["IdCharacter"], (int)row["IdBackground"], (int?)row["IdMusic"]);
-				mScenes.Add(scene);
+			DataTable chapters = db.ExecuteQuery("SELECT IdChapter, Number, Title, Information, IdCharacter, IdBackground, IdMusic FROM Chapters ORDER BY Number");
+			Chapter chapter;
+			foreach(DataRow row in chapters.Rows) {
+				chapter = new Chapter((int)row["IdChapter"], (int)row["Number"], (string)row["Title"], (string)row["Information"], (int)row["IdCharacter"], (int)row["IdBackground"], (int?)row["IdMusic"]);
+				mChapters.Add(chapter);
 			}
-			mScenes.Sort();
+			mChapters.Sort();
 		}
 		
 		private static void createDataBase() {
@@ -58,8 +58,8 @@ namespace TVR {
 				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (2, 'Mid Shot')");
 				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (3, 'Long Shot')");
 
-				db.ExecuteNonQuery("CREATE TABLE [Scenes] ([IdScene] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER NOT NULL, [Title] TEXT NOT NULL, [Information] TEXT NOT NULL, [IdCharacter] INTEGER NOT NULL, [IdBackground] INTEGER NOT NULL, [IdMusic] INTEGER)");
-				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdScene] INTEGER NOT NULL REFERENCES [Scenes] ([IdScene]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlocksTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL)");
+				db.ExecuteNonQuery("CREATE TABLE [Chapters] ([IdChapter] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER NOT NULL, [Title] TEXT NOT NULL, [Information] TEXT NOT NULL, [IdCharacter] INTEGER NOT NULL, [IdBackground] INTEGER NOT NULL, [IdMusic] INTEGER)");
+				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdChapter] INTEGER NOT NULL REFERENCES [Chapters] ([IdChapter]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlocksTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL)");
 				db.ExecuteNonQuery("CREATE TABLE [CharacterProps] ([IdCharacterProps] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdBlock] INTEGER NOT NULL REFERENCES [Blocks] ([IdBlock]) ON DELETE CASCADE, [IdResource] INTEGER NOT NULL, [Dummy] TEXT NOT NULL)");
 				db.ExecuteQuery("pragma user_version=1;");
 			}
@@ -78,56 +78,56 @@ namespace TVR {
 			db = null;
 		}
 
-		public static Scene newScene(string title, string information, int idCharacter, int idBackground, int? idMusic) {
-			Scene scene = new Scene(-1, mScenes.Count, title, information, idCharacter, idBackground, idMusic);
-			scene.Save();
-			return scene;
+		public static Chapter newChapter(string title, string information, int idCharacter, int idBackground, int? idMusic) {
+			Chapter chapter = new Chapter(-1, mChapters.Count, title, information, idCharacter, idBackground, idMusic);
+			chapter.Save();
+			return chapter;
 		}
 
-		public static Scene newScene(int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
-			if(number < 0 || number > mScenes.Count)
-				throw new System.Exception("The number must be between 0 and number of Scenes");
-			Scene scene = new Scene(-1, number, title, information, idCharacter, idBackground, idMusic);
-			scene.Save();
-			return scene;
+		public static Chapter newChapter(int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
+			if(number < 0 || number > mChapters.Count)
+				throw new System.Exception("The number must be between 0 and number of Chapters");
+			Chapter chapter = new Chapter(-1, number, title, information, idCharacter, idBackground, idMusic);
+			chapter.Save();
+			return chapter;
 		}
 
-		private static void renumber(Scene scene, int oldNumber, int newNumber) {
+		private static void renumber(Chapter chapter, int oldNumber, int newNumber) {
 			if(oldNumber == -1) {
-				db.ExecuteNonQuery("UPDATE Scenes SET Number = Number + 1 WHERE IdScene <> " + scene.IdScene + " AND Number >= " + newNumber);
-				foreach(Scene s in mScenes) {
-					if(s != scene && s.Number >= newNumber)
+				db.ExecuteNonQuery("UPDATE Chapters SET Number = Number + 1 WHERE IdChapter <> " + chapter.IdChapter + " AND Number >= " + newNumber);
+				foreach(Chapter s in mChapters) {
+					if(s != chapter && s.Number >= newNumber)
 						s.forceNumber(s.Number + 1);
 				}
 			} else if(oldNumber > newNumber) {
-				db.ExecuteNonQuery("UPDATE Scenes SET Number = Number + 1 WHERE IdScene <> " + scene.IdScene + " AND Number >= " + newNumber + " AND Number < " + oldNumber);
-				foreach(Scene s in mScenes) {
-					if(s != scene && s.Number >= newNumber && s.Number < oldNumber)
+				db.ExecuteNonQuery("UPDATE Chapters SET Number = Number + 1 WHERE IdChapter <> " + chapter.IdChapter + " AND Number >= " + newNumber + " AND Number < " + oldNumber);
+				foreach(Chapter s in mChapters) {
+					if(s != chapter && s.Number >= newNumber && s.Number < oldNumber)
 						s.forceNumber(s.Number + 1);
 				}
 			} else if(oldNumber < newNumber) {
-				db.ExecuteNonQuery("UPDATE Scenes SET Number = Number - 1 WHERE IdScene <> " + scene.IdScene + " AND Number <= " + newNumber + " AND Number > " + oldNumber);
-				foreach(Scene s in mScenes) {
-					if(s != scene && s.Number <= newNumber && s.Number > oldNumber)
+				db.ExecuteNonQuery("UPDATE Chapters SET Number = Number - 1 WHERE IdChapter <> " + chapter.IdChapter + " AND Number <= " + newNumber + " AND Number > " + oldNumber);
+				foreach(Chapter s in mChapters) {
+					if(s != chapter && s.Number <= newNumber && s.Number > oldNumber)
 						s.forceNumber(s.Number - 1);
 				}
 			}
 		}
 
-		private static void addScene(Scene scene) {
-			if(!mScenes.Contains(scene)) {
-				if(scene.Number < mScenes.Count)
-					renumber(scene, -1, scene.Number);
-				mScenes.Add(scene);
+		private static void addChapter(Chapter chapter) {
+			if(!mChapters.Contains(chapter)) {
+				if(chapter.Number < mChapters.Count)
+					renumber(chapter, -1, chapter.Number);
+				mChapters.Add(chapter);
 			}
 		}
 
-		private static void removeScene(Scene scene) {
-			if(mScenes.Contains(scene))
-				mScenes.Remove(scene);
-			db.ExecuteNonQuery("UPDATE Scenes SET Number = Number - 1 WHERE IdScene <> " + scene.IdScene + " AND Number > " + scene.Number);
-			foreach(Scene s in mScenes) {
-				if(s != scene && s.Number > scene.Number)
+		private static void removeChapter(Chapter chapter) {
+			if(mChapters.Contains(chapter))
+				mChapters.Remove(chapter);
+			db.ExecuteNonQuery("UPDATE Chapters SET Number = Number - 1 WHERE IdChapter <> " + chapter.IdChapter + " AND Number > " + chapter.Number);
+			foreach(Chapter s in mChapters) {
+				if(s != chapter && s.Number > chapter.Number)
 					s.forceNumber(s.Number - 1);
 			}
 		}
@@ -150,8 +150,8 @@ namespace TVR {
 				return newRecordedSound(mFolderVoices.Content[mFolderVoices.Content.Count-1].Number+1, name, audioClip, FrequencyPlayback);
 		}*/
 
-	public class Scene : System.IComparable<Scene>, iObject {
-			private int mIdScene;
+	public class Chapter : System.IComparable<Chapter>, iObject {
+			private int mIdChapter;
 			private int mNumber;
 			private string mTitle;
 			private string mInformation;
@@ -176,11 +176,11 @@ namespace TVR {
 			/*if(v1.HasValue)
    				v2 = v1.Value;*/
 
-			public int IdScene {
-				get { return mIdScene; }
+			public int IdChapter {
+				get { return mIdChapter; }
 			}
 			public int Id {
-				get { return mIdScene; }
+				get { return mIdChapter; }
 			}
 			public int Number {
 				get { return mNumber; }
@@ -220,8 +220,8 @@ namespace TVR {
 				}
 			}
 
-			public Scene(int idScene, int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
-				mIdScene = idScene;
+			public Chapter(int idChapter, int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
+				mIdChapter = idChapter;
 				mNumber = number;
 				mTitle = title;
 				mInformation = information;
@@ -237,15 +237,15 @@ namespace TVR {
 			}
 
 			public void Save() {
-				if(mIdScene == -1) {
+				if(mIdChapter == -1) {
 					string idMus = mIdMusic == null ? "NULL" : mIdMusic.ToString();
-					db.ExecuteNonQuery("INSERT INTO Scenes (Number, Title, Information, IdCharacter, IdBackground, IdMusic) VALUES (" + mNumber + ", '" + mTitle.Replace("'", "''").Trim() + "', '" + mInformation.Replace("'", "''").Trim() + "', " + mIdCharacter + ", " + mIdBackground + ", " + idMus + ")");
-					mIdScene = (int)db.ExecuteQuery("SELECT MAX(IdScene) as ID FROM Scenes")[0]["ID"];
-					Data.addScene(this);
+					db.ExecuteNonQuery("INSERT INTO Chapters (Number, Title, Information, IdCharacter, IdBackground, IdMusic) VALUES (" + mNumber + ", '" + mTitle.Replace("'", "''").Trim() + "', '" + mInformation.Replace("'", "''").Trim() + "', " + mIdCharacter + ", " + mIdBackground + ", " + idMus + ")");
+					mIdChapter = (int)db.ExecuteQuery("SELECT MAX(IdChapter) as ID FROM Chapters")[0]["ID"];
+					Data.addChapter(this);
 				} else {
 					if(mOldTitle != Title || mOldInformation != Information || mIdBackground != mOldIdBackground || mIdCharacter != mOldIdCharacter || mIdMusic != mOldIdMusic) {
 						string idMus = mIdMusic == null ? "NULL" : mIdMusic.ToString();
-						db.ExecuteNonQuery("UPDATE Scenes SET Title = '" + Title.Replace("'", "''").Trim() + "', Information = '" + Information.Replace("'", "''").Trim() + "', IdCharacter = " + mIdCharacter + ", IdBackground = " + mIdBackground + ", IdMusic = " + idMus + " WHERE IdScene = " + mIdScene);
+						db.ExecuteNonQuery("UPDATE Chapters SET Title = '" + Title.Replace("'", "''").Trim() + "', Information = '" + Information.Replace("'", "''").Trim() + "', IdCharacter = " + mIdCharacter + ", IdBackground = " + mIdBackground + ", IdMusic = " + idMus + " WHERE IdChapter = " + mIdChapter);
 						mOldTitle = Title;
 						mOldInformation = Information;
 						mOldIdBackground = mIdBackground; 
@@ -256,15 +256,15 @@ namespace TVR {
 			}
 			
 			public void Delete() {
-				db.ExecuteNonQuery("DELETE FROM Scenes WHERE IdScene = " + mIdScene);
-				Data.removeScene(this);
+				db.ExecuteNonQuery("DELETE FROM Chapters WHERE IdChapter = " + mIdChapter);
+				Data.removeChapter(this);
 			}
 			
 			public void Renumber(int newNumber) {
 				if(mNumber != newNumber) {
-					if(newNumber < 0 || newNumber >= Data.mScenes.Count)
-						throw new System.Exception("The new number must be between 0 and Data.Scenes.Count");
-					db.ExecuteNonQuery("UPDATE Scenes SET Number = " + newNumber + " WHERE IdScene = " + mIdScene);
+					if(newNumber < 0 || newNumber >= Data.mChapters.Count)
+						throw new System.Exception("The new number must be between 0 and Data.Chapters.Count");
+					db.ExecuteNonQuery("UPDATE Chapters SET Number = " + newNumber + " WHERE IdChapter = " + mIdChapter);
 					Data.renumber(this, mNumber, newNumber);
 					mNumber = newNumber;
 				}
@@ -272,13 +272,13 @@ namespace TVR {
 
 			public void forceNumber(int newNumber) {
 				if(mNumber != newNumber) {
-					if(newNumber < 0 || newNumber > Data.mScenes.Count)
-						throw new System.Exception("The new number must be between 0 and number of Scenes");
+					if(newNumber < 0 || newNumber > Data.mChapters.Count)
+						throw new System.Exception("The new number must be between 0 and number of Chapters");
 					mNumber = newNumber;
 				}
 			}
 
-			public int CompareTo(Scene other) {		
+			public int CompareTo(Chapter other) {		
 				if(this.Number < other.Number)
 					return -1;
 				else if(this.Number > other.Number)
