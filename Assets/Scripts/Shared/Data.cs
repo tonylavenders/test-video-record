@@ -79,13 +79,13 @@ namespace TVR {
 		}
 
 		public static Chapter newChapter(string title, string information, int idCharacter, int idBackground, int? idMusic) {
-			Chapter chapter = new Chapter(-1, mChapters.Count, title, information, idCharacter, idBackground, idMusic);
+			Chapter chapter = new Chapter(-1, mChapters.Count + 1, title, information, idCharacter, idBackground, idMusic);
 			chapter.Save();
 			return chapter;
 		}
 
 		public static Chapter newChapter(int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
-			if(number < 0 || number > mChapters.Count)
+			if(number <= 0 || number > mChapters.Count + 1)
 				throw new System.Exception("The number must be between 0 and number of Chapters");
 			Chapter chapter = new Chapter(-1, number, title, information, idCharacter, idBackground, idMusic);
 			chapter.Save();
@@ -259,7 +259,7 @@ namespace TVR {
 			
 			public void Renumber(int newNumber) {
 				if(mNumber != newNumber) {
-					if(newNumber < 0 || newNumber >= Data.mChapters.Count)
+					if(newNumber <= 0 || newNumber > Data.mChapters.Count)
 						throw new System.Exception("The new number must be between 0 and Data.Chapters.Count");
 					db.ExecuteNonQuery("UPDATE Chapters SET Number = " + newNumber + " WHERE IdChapter = " + mIdChapter);
 					Data.renumber(this, mNumber, newNumber);
@@ -270,7 +270,7 @@ namespace TVR {
 
 			public void forceNumber(int newNumber) {
 				if(mNumber != newNumber) {
-					if(newNumber < 0 || newNumber >= Data.mChapters.Count)
+					if(newNumber <= 0 || newNumber > Data.mChapters.Count)
 						throw new System.Exception("The new number must be between 0 and number of Chapters");
 					mNumber = newNumber;
 				}
