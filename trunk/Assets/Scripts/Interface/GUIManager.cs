@@ -13,9 +13,31 @@ public class GUIManager : MonoBehaviour
 
 	public BasicButton mEditButton;
 	public BasicButton mPlayButton;
-
-	public GameObject CurrentBackground;
-	public GameObject CurrentCharacter;
+	
+	GameObject mCurrentCharacter;
+	public GameObject CurrentCharacter{
+		get{
+			return mCurrentCharacter;
+		}
+		set{
+			mCurrentCharacter=value;
+			if(mCurrentBackground!=null){
+				mEditButton.Enable=true;
+			}
+		}
+	}
+	GameObject mCurrentBackground;
+	public GameObject CurrentBackground{
+		get{
+			return mCurrentBackground;
+		}
+		set{
+			mCurrentBackground=value;
+			if(mCurrentCharacter!=null){
+				mEditButton.Enable=true;
+			}
+		}
+	}
 
 	const float cameraZDepth = 0;
 	public int Counter = 0;
@@ -36,7 +58,7 @@ public class GUIManager : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void Start()
+	protected virtual void Start()
 	{
 		ButtonProperties.Init();
 
@@ -52,6 +74,11 @@ public class GUIManager : MonoBehaviour
 		else
 			mBlur = transform.GetComponent<cBlur2>();
 		mBlur.enabled = true;
+
+		if(SceneMgr.Get.sCurrentCharacter!="")
+			CurrentCharacter = Instantiate(ResourcesManager.LoadModel("Characters/Prefabs/"+SceneMgr.Get.sCurrentCharacter, "ChapterEditor")) as GameObject;
+		if(SceneMgr.Get.sCurrentBackground!="")
+			CurrentBackground = Instantiate(ResourcesManager.LoadModel("Backgrounds/Prefabs/"+SceneMgr.Get.sCurrentBackground, "ChapterEditor")) as GameObject;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

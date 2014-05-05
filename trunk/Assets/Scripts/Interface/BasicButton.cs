@@ -107,7 +107,7 @@ public class BasicButton : MonoBehaviour
 	SmoothStep mFade;
 	SmoothStep mMoveY;
 
-	public GameObject mPrefab;
+	public string sPrefab;
 	public int mID;
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
@@ -192,7 +192,7 @@ public class BasicButton : MonoBehaviour
 		//Check if user is touching the button
 		if(bEnabled && state == States.idle && mSharedTime != Time.time) {
 			RaycastHit hit;
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			Ray ray = Camera.main.ScreenPointToRay(InputHelp.mousePositionYDown);
 
 			if(InputHelp.GetMouseButtonDown(0)) {
 				if(collider.Raycast(ray, out hit, 1000.0f)) {
@@ -205,7 +205,7 @@ public class BasicButton : MonoBehaviour
 			} else if(bClicked) {
 				if(InputHelp.GetMouseButton(0)) {
 					Vector2 mMovement = InputHelp.mousePosition - mMouseInitPos;
-					if(mMovement.sqrMagnitude > MAXDISABLEBUTTONS) {
+					if(mMovement.sqrMagnitude > MAXDISABLEBUTTONS || InputHelp.fingerChange) {
 						if(!bKeepSt)
 							renderer.material.mainTexture = texUnchecked;
 						bClicked = false;
@@ -235,7 +235,7 @@ public class BasicButton : MonoBehaviour
 
 	public void GoToPosition(float finalY, float delay=0, float duration=Globals.ANIMATIONDURATION)
 	{
-		mMoveY.Reset(transform.position.y, finalY, duration*10, true, delay);
+		mMoveY.Reset(transform.position.y, finalY, duration, true, delay);
 		state = States.moving;
 	}
 

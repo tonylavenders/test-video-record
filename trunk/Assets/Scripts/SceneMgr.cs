@@ -18,6 +18,9 @@ public class SceneMgr : MonoBehaviour  {
 	
 	string mCurrentScene;
 	string mNextScene;
+
+	public string sCurrentCharacter;
+	public string sCurrentBackground;
 	
 	static SceneMgr mInstance = null;
 	
