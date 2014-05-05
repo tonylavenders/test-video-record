@@ -116,9 +116,11 @@ namespace TVR {
 
 		private static void addChapter(Chapter chapter) {
 			if(!mChapters.Contains(chapter)) {
-				if(chapter.Number < mChapters.Count)
-					renumber(chapter, -1, chapter.Number);
 				mChapters.Add(chapter);
+				if(chapter.Number < mChapters.Count - 1) {
+					renumber(chapter, -1, chapter.Number);
+					mChapters.Sort();
+				}
 			}
 		}
 
@@ -261,13 +263,14 @@ namespace TVR {
 						throw new System.Exception("The new number must be between 0 and Data.Chapters.Count");
 					db.ExecuteNonQuery("UPDATE Chapters SET Number = " + newNumber + " WHERE IdChapter = " + mIdChapter);
 					Data.renumber(this, mNumber, newNumber);
+					Data.mChapters.Sort();
 					mNumber = newNumber;
 				}
 			}
 
 			public void forceNumber(int newNumber) {
 				if(mNumber != newNumber) {
-					if(newNumber < 0 || newNumber > Data.mChapters.Count)
+					if(newNumber < 0 || newNumber >= Data.mChapters.Count)
 						throw new System.Exception("The new number must be between 0 and number of Chapters");
 					mNumber = newNumber;
 				}
