@@ -240,7 +240,7 @@ namespace TVR {
 					mIdChapter = (int)db.ExecuteQuery("SELECT MAX(IdChapter) as ID FROM Chapters")[0]["ID"];
 					Data.addChapter(this);
 				} else {
-					if(mOldTitle != Title || mOldInformation != Information || mIdBackground != mOldIdBackground || mIdCharacter != mOldIdCharacter || mIdMusic != mOldIdMusic) {
+					if(Change()) {
 						string idMus = mIdMusic == null ? "NULL" : mIdMusic.ToString();
 						db.ExecuteNonQuery("UPDATE Chapters SET Title = '" + Title.Replace("'", "''").Trim() + "', Information = '" + Information.Replace("'", "''").Trim() + "', IdCharacter = " + mIdCharacter + ", IdBackground = " + mIdBackground + ", IdMusic = " + idMus + " WHERE IdChapter = " + mIdChapter);
 						mOldTitle = Title;
@@ -251,7 +251,11 @@ namespace TVR {
 					}
 				}
 			}
-			
+
+			public bool Change() {
+				return mOldTitle != Title || mOldInformation != Information || mIdBackground != mOldIdBackground || mIdCharacter != mOldIdCharacter || mIdMusic != mOldIdMusic;
+			}
+
 			public void Delete() {
 				db.ExecuteNonQuery("DELETE FROM Chapters WHERE IdChapter = " + mIdChapter);
 				Data.removeChapter(this);
@@ -3483,5 +3487,6 @@ namespace TVR {
 
 		void Save();
 		void Delete();
+		bool Change();
 	}
 }
