@@ -6,7 +6,7 @@ namespace TVR {
 	public static class Data {
 		private static SqliteDatabase db = new SqliteDatabase();
 		private static List<Chapter> mChapters;
-		public static Chapter selEpisode;
+		public static Chapter selChapter;
 
 		public static List<Chapter> Chapters {
 			get { return mChapters; }
@@ -184,33 +184,28 @@ namespace TVR {
 			}
 			public int Number {
 				get { return mNumber; }
-				/*set {
-					if(value < 0 || value >= Data.mScenes.Count)
-						throw new System.Exception("The number must be between 0 and Data.Scenes.Count");
-						mNumber = value;
-				}*/
 			}
 			public string Title {
 				get { return mTitle; }
 				set { mTitle = value; }
 			}
-			private string Information {
+			public string Information {
 				get { return mInformation; }
 				set { mInformation = value; }
 			}
-			private int IdCharacter {
+			public int IdCharacter {
 				get { return mIdCharacter; }
 				set { mIdCharacter = value; }
 			}
-			private int IdBackground {
+			public int IdBackground {
 				get { return mIdBackground; }
 				set { mIdBackground = value; }
 			}
-			private int? IdMusic {
+			public int? IdMusic {
 				get { return mIdMusic; }
 				set { mIdMusic = value; }
 			}
-			private int IdMusicNotNullable {
+			public int IdMusicNotNullable {
 				get { return mIdMusic ?? -1; }
 				set {
 					if(value < 0)
