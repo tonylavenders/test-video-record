@@ -7,7 +7,6 @@ public class Main : MonoBehaviour {
 
 	void Start() {
 		click = false;
-
 	}
 
 	void Update() {
