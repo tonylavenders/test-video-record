@@ -47,7 +47,7 @@ namespace TVR {
 		public static string RendersPath = System.IO.Path.Combine(BasePath, "Renders");
 		
 		//Debug
-		public static bool CLEAR_DATA = false;
+		public static bool CLEAR_DATA = true;
 		public static bool INIT_IN_EDITOR = false;
 		public static int DEFAULT_BACKGROUND = -1; //-1 - Cajita / 1 - Solar / 2 - Clase / 3 - Habitacion.
 	}
