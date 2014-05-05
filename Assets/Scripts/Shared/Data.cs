@@ -21,7 +21,7 @@ namespace TVR {
 
 			mScenes = new List<Scene>();
 
-			DataTable scenes = db.ExecuteQuery("SELECT IdScene, Number, Title, Information, IdCharacter, IdBackground, IdMusic FROM Scenes");
+			DataTable scenes = db.ExecuteQuery("SELECT IdScene, Number, Title, Information, IdCharacter, IdBackground, IdMusic FROM Scenes ORDER BY Number");
 			Scene scene;
 			foreach(DataRow row in scenes.Rows) {
 				scene = new Scene((int)row["IdScene"], (int)row["Number"], (string)row["Title"], (string)row["Information"], (int)row["IdCharacter"], (int)row["IdBackground"], (int?)row["IdMusic"]);
@@ -78,14 +78,59 @@ namespace TVR {
 			db = null;
 		}
 
-		/*public static Scene newScene(int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
-			if(number > mScenes.Count + 1)
-				throw new System.Exception("The number is greater than the number of items.");
-			Episode epi = new Episode(-1, number, title, info);
-			epi.save();
-			Episodes.Add(epi.IdEpisode, epi);
-			return epi;
-		}*/
+		public static Scene newScene(string title, string information, int idCharacter, int idBackground, int? idMusic) {
+			Scene scene = new Scene(-1, mScenes.Count, title, information, idCharacter, idBackground, idMusic);
+			scene.Save();
+			return scene;
+		}
+
+		public static Scene newScene(int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
+			if(number < 0 || number > mScenes.Count)
+				throw new System.Exception("The number must be between 0 and number of Scenes");
+			Scene scene = new Scene(-1, number, title, information, idCharacter, idBackground, idMusic);
+			scene.Save();
+			return scene;
+		}
+
+		private static void renumber(Scene scene, int oldNumber, int newNumber) {
+			if(oldNumber == -1) {
+				db.ExecuteNonQuery("UPDATE Scenes SET Number = Number + 1 WHERE IdScene <> " + scene.IdScene + " AND Number >= " + newNumber);
+				foreach(Scene s in mScenes) {
+					if(s != scene && s.Number >= newNumber)
+						s.forceNumber(s.Number + 1);
+				}
+			} else if(oldNumber > newNumber) {
+				db.ExecuteNonQuery("UPDATE Scenes SET Number = Number + 1 WHERE IdScene <> " + scene.IdScene + " AND Number >= " + newNumber + " AND Number < " + oldNumber);
+				foreach(Scene s in mScenes) {
+					if(s != scene && s.Number >= newNumber && s.Number < oldNumber)
+						s.forceNumber(s.Number + 1);
+				}
+			} else if(oldNumber < newNumber) {
+				db.ExecuteNonQuery("UPDATE Scenes SET Number = Number - 1 WHERE IdScene <> " + scene.IdScene + " AND Number <= " + newNumber + " AND Number > " + oldNumber);
+				foreach(Scene s in mScenes) {
+					if(s != scene && s.Number <= newNumber && s.Number > oldNumber)
+						s.forceNumber(s.Number - 1);
+				}
+			}
+		}
+
+		private static void addScene(Scene scene) {
+			if(!mScenes.Contains(scene)) {
+				if(scene.Number < mScenes.Count)
+					renumber(scene, -1, scene.Number);
+				mScenes.Add(scene);
+			}
+		}
+
+		private static void removeScene(Scene scene) {
+			if(mScenes.Contains(scene))
+				mScenes.Remove(scene);
+			db.ExecuteNonQuery("UPDATE Scenes SET Number = Number - 1 WHERE IdScene <> " + scene.IdScene + " AND Number > " + scene.Number);
+			foreach(Scene s in mScenes) {
+				if(s != scene && s.Number > scene.Number)
+					s.forceNumber(s.Number - 1);
+			}
+		}
 
 		/*public static RecordedSound newRecordedSound(int number, string name, AudioClip audioClip, int FrequencyPlayback) {
 			if(number>dicRecordedSounds.Count+1)
@@ -113,6 +158,13 @@ namespace TVR {
 			private int mIdCharacter;
 			private int mIdBackground;
 			private int? mIdMusic;
+
+			//private int mOldNumber;
+			private string mOldTitle;
+			private string mOldInformation;
+			private int mOldIdCharacter;
+			private int mOldIdBackground;
+			private int? mOldIdMusic;
 			//v2 = v1 ?? default(int);
 			//v2 = v1 == null ? default(int) : v1;
 			/*if(v1==null)
@@ -127,12 +179,16 @@ namespace TVR {
 			public int IdScene {
 				get { return mIdScene; }
 			}
-			public int Id() {
-				return mIdScene;
+			public int Id {
+				get { return mIdScene; }
 			}
 			public int Number {
 				get { return mNumber; }
-				set { mNumber = value; }
+				/*set {
+					if(value < 0 || value >= Data.mScenes.Count)
+						throw new System.Exception("The number must be between 0 and Data.Scenes.Count");
+						mNumber = value;
+				}*/
 			}
 			public string Title {
 				get { return mTitle; }
@@ -172,31 +228,54 @@ namespace TVR {
 				mIdCharacter = idCharacter;
 				mIdBackground = idBackground;
 				mIdMusic = idMusic;
+				
+				mOldTitle = title;
+				mOldInformation = information;
+				mOldIdCharacter = idCharacter;
+				mOldIdBackground = idBackground;
+				mOldIdMusic = idMusic;
 			}
 
 			public void Save() {
-				/*if (mIdEpisode == -1) {
-					db.ExecuteNonQuery ("INSERT INTO Episodes (CVSNew) VALUES (" + Data.Version + ")");
-					mIdEpisode = (int)db.ExecuteQuery ("SELECT MAX(IdEpisode) as ID FROM Episodes") [0] ["ID"];
-					db.ExecuteNonQuery ("UPDATE EpisodesInfo SET Number = " + mNumber + ", Title = '" + Title.Replace ("'", "''").Trim () + "', Information = '" + Information.Replace ("'", "''").Trim () + "' WHERE IdEpisode = " + mIdEpisode + " AND CVSNew = -1");
-					CVS.CVSEvent evt = new CVS.CVSEvent (CVS.CVSTypes.Create, this);
-					OnChange (evt);
-					//Informar al padre, método privado.
+				if(mIdScene == -1) {
+					string idMus = mIdMusic == null ? "NULL" : mIdMusic.ToString();
+					db.ExecuteNonQuery("INSERT INTO Scenes (Number, Title, Information, IdCharacter, IdBackground, IdMusic) VALUES (" + mNumber + ", '" + mTitle.Replace("'", "''").Trim() + "', '" + mInformation.Replace("'", "''").Trim() + "', " + mIdCharacter + ", " + mIdBackground + ", " + idMus + ")");
+					mIdScene = (int)db.ExecuteQuery("SELECT MAX(IdScene) as ID FROM Scenes")[0]["ID"];
+					Data.addScene(this);
 				} else {
-					if (mOldInformation == Information && mOldTitle == Title)
-						return;
-					db.ExecuteNonQuery ("UPDATE EpisodesInfo SET CVSDel = " + Data.Version + " WHERE IdEpisode = " + mIdEpisode + " AND CVSDel IS NULL");
-					db.ExecuteNonQuery ("INSERT INTO EpisodesInfo (IdEpisode, CVSNew, Number, Title, Information) VALUES (" + mIdEpisode + ", " + Data.Version + ", " + mNumber + ", '" + Title.Replace ("'", "''").Trim () + "', '" + Information.Replace ("'", "''").Trim () + "')");
-					CVS.CVSEvent evt = new CVS.CVSEvent (CVS.CVSTypes.Info, this);
-					//Si se agregan campos los cambios se tiene que agregar en el undoLocal Renumered.
-					OnChange (evt);
-					mOldTitle = Title;
-					mOldInformation = Information;
-				}*/
+					if(mOldTitle != Title || mOldInformation != Information || mIdBackground != mOldIdBackground || mIdCharacter != mOldIdCharacter || mIdMusic != mOldIdMusic) {
+						string idMus = mIdMusic == null ? "NULL" : mIdMusic.ToString();
+						db.ExecuteNonQuery("UPDATE Scenes SET Title = '" + Title.Replace("'", "''").Trim() + "', Information = '" + Information.Replace("'", "''").Trim() + "', IdCharacter = " + mIdCharacter + ", IdBackground = " + mIdBackground + ", IdMusic = " + idMus + " WHERE IdScene = " + mIdScene);
+						mOldTitle = Title;
+						mOldInformation = Information;
+						mOldIdBackground = mIdBackground; 
+						mOldIdCharacter = mIdCharacter;
+						mOldIdMusic = mIdMusic;
+					}
+				}
 			}
 			
 			public void Delete() {
-				//Informar al padre, método privado.
+				db.ExecuteNonQuery("DELETE FROM Scenes WHERE IdScene = " + mIdScene);
+				Data.removeScene(this);
+			}
+			
+			public void Renumber(int newNumber) {
+				if(mNumber != newNumber) {
+					if(newNumber < 0 || newNumber >= Data.mScenes.Count)
+						throw new System.Exception("The new number must be between 0 and Data.Scenes.Count");
+					db.ExecuteNonQuery("UPDATE Scenes SET Number = " + newNumber + " WHERE IdScene = " + mIdScene);
+					Data.renumber(this, mNumber, newNumber);
+					mNumber = newNumber;
+				}
+			}
+
+			public void forceNumber(int newNumber) {
+				if(mNumber != newNumber) {
+					if(newNumber < 0 || newNumber > Data.mScenes.Count)
+						throw new System.Exception("The new number must be between 0 and number of Scenes");
+					mNumber = newNumber;
+				}
 			}
 
 			public int CompareTo(Scene other) {		
@@ -3397,8 +3476,10 @@ namespace TVR {
 	}
 
 	public interface iObject {
-	int Id();
-	void Save();
-	void Delete();
+		int Id {
+			get;
+		}
+		void Save();
+		void Delete();
 	}
 }
