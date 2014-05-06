@@ -1,0 +1,174 @@
+using UnityEngine;
+using System.Collections.Generic;
+using TVR.Helpers;
+
+namespace TVR
+{
+	public static class ResourcesLibrary
+	{
+		public static Folder Backgrounds;
+		public static Folder Characters;
+		public static Folder Animations;
+		public static Folder Expresions;
+		public static Folder Cameras;
+		public static Folder Music;
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		public static void Init()
+		{
+			initCameras();
+			initBackgrounds();
+			initCharacters();
+			initMusic();
+		}
+		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		public static Resource getCamera(int ID) {
+			return Cameras.getItem(ID);
+		}
+		
+		public static Resource getBackground(int ID) {
+			return Backgrounds.getItem(ID);
+		}
+
+		public static Resource getCharacter(int ID) {
+			return Characters.getItem(ID);
+		}
+		
+		public static Resource getAnimation(int ID){
+			return Animations.getItem(ID);
+		}
+		
+		public static Resource getExpression(int ID){
+			return Expresions.getItem(ID);
+		}
+		
+		public static Resource getMusic(int ID) {
+			return Music.getItem(ID) as Resource;
+		}
+		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//BACKGROUNDS
+		private static void initBackgrounds()
+		{
+			Backgrounds = new Folder(null);
+			
+			Backgrounds.addResource(1, "Solar", "Backgrounds/Prefabs/Solar");
+			Backgrounds.addResource(2, "Room", "Backgrounds/Prefabs/QRoom");
+		}
+		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//CAMERAS
+		private static void initCameras()
+		{
+			Cameras = new Folder(null);
+
+			//Cameras.addResource(1, "Scene/Timeline/Micro shots/timeline_cam_icon", "Scene/Timeline/Micro shots/timeline_cam_icon", "SceneCamera", "Scene/Camera/SceneCamera");
+		}
+		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//CHARACTERS
+		private static void initCharacters()
+		{
+			Characters = new Folder(null);
+			
+			Characters.addResource(1, "q_main", "Characters/Prefabs/q_main");
+			Characters.addResource(2, "liz_cory", "Characters/Prefabs/liz_cory");
+		}
+		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//ANIMATIONS
+		private static void initAnimations()
+		{
+			Animations = new Folder(null);
+			
+			//...
+		}
+		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//EXPRESIONS
+		private static void initExpresions()
+		{
+			Expresions = new Folder(null);
+			
+			//...
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//MUSIC
+		private static void initMusic()
+		{
+			Music = new Folder(null);
+			
+			//...
+		}
+		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//RESOURCE
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		public class Resource : System.IComparable<Resource>
+		{
+			public int ID;					//Identificador único
+			public string Name;				//Nombre
+			public string ResourceName;		//Modelo
+			public int Number;				//Número para poder ordenar la lista
+			
+			////////////////////////////////////////////////////////////////////////////////////////
+			
+			public GameObject getInstance(string Scene)
+			{
+				return MonoBehaviour.Instantiate(ResourcesManager.LoadModel(ResourceName, Scene)) as GameObject;
+			}
+
+			////////////////////////////////////////////////////////////////////////////////////////
+
+			public int CompareTo(Resource other) {		
+				if ( this.Number < other.Number ) return -1;
+				else if ( this.Number > other.Number ) return 1;
+				else return 0;
+			}
+		}
+		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//FOLDER
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		public class Folder : Resource
+		{
+			public List<Resource> Content;
+			private Dictionary<int,Resource> dicContent;
+			
+			////////////////////////////////////////////////////////////////////////////////////////
+			
+			public Folder(Resource parent) : base()
+			{
+				Content = new List<Resource>();
+				dicContent = new Dictionary<int, Resource>();
+			}
+			
+			////////////////////////////////////////////////////////////////////////////////////////
+			
+			public Resource getItem(int ID)
+			{
+				return dicContent[ID];
+			}	
+			
+			////////////////////////////////////////////////////////////////////////////////////////
+			
+			public void addResource(int ID, string sName, string sResourceName, int number=0)
+			{
+				Resource r = new Resource();
+				r.ID = ID;
+				r.Name = sName;
+				r.ResourceName = sResourceName;
+				r.Number=number;
+				Content.Add(r);
+				dicContent.Add(r.ID, r);
+			}
+		}
+	}
+}
+
+
+

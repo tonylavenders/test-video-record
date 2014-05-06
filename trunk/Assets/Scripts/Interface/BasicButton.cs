@@ -10,7 +10,7 @@ public enum ButtonType{
 	CHAR, BACKGROUND,
 	MAIN_EDIT, MAIN_PLAY,
 	EDIT_TIME, EDIT_EXPR, EDIT_ANIM, EDIT_CAM,
-	MUSIC
+	MUSIC,
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,8 +107,10 @@ public class BasicButton : MonoBehaviour
 	SmoothStep mFade;
 	SmoothStep mMoveY;
 
+	public iObject iObj;
+	public int ID;
+
 	public string sPrefab;
-	public int mID;
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
 	Transform mGUIText;
@@ -241,19 +243,9 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void ChangeID(int new_id)
+	public void Refresh()
 	{
-		mID = new_id;
-		Text = "sc"+new_id.ToString("00");
-
-		//TODO:Reasign chapter data
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public void SetID(int _id)
-	{
-		mID = _id;
+		Text = "vid"+iObj.Number.ToString("00");
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,6 +270,9 @@ public class BasicButton : MonoBehaviour
 		}
 		else if(buttonType == ButtonType.ADD_ELEM) {
 			clickedCallback = ((ButtonBarElements)mButtonBar).OnButtonAddElementPressed;
+		}
+		else if(buttonType == ButtonType.CHAPTER) {
+			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonChapterPressed;
 		}
 		else if(buttonType == ButtonType.CHAR) {
 			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonCharacterPressed;

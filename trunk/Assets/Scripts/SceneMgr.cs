@@ -19,9 +19,6 @@ public class SceneMgr : MonoBehaviour  {
 	string mCurrentScene;
 	string mNextScene;
 
-	public string sCurrentCharacter;
-	public string sCurrentBackground;
-	
 	static SceneMgr mInstance = null;
 	
 	private Texture mBlack;
@@ -43,7 +40,7 @@ public class SceneMgr : MonoBehaviour  {
 	void Init() {
 		Application.targetFrameRate = 60;
 		//BRB.Utils.Message.Init(BRBRec.Globals.ANIMATIONDURATION);
-		//BRBRec.ResourcesLibrary.Init();
+		ResourcesLibrary.Init();
 		Data.Init();
 		
 		/*mCurrentScene = "Menus";

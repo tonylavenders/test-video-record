@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TVR;
 
 public class ButtonBarElements : ButtonBar
 {
-	int numElements;
 	enum StatesElements{
 		idle,
 		adding_element,
@@ -25,7 +25,6 @@ public class ButtonBarElements : ButtonBar
 			listButtons[0].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2, ButtonProperties.buttonZDepth);
 			listButtons[0].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 			listButtons[0].transform.parent = transform;
-			numElements=0;
 		}
 		//Create buttons for elementss in DB
 		else{
@@ -36,22 +35,28 @@ public class ButtonBarElements : ButtonBar
 
 	public void OnButtonAddElementPressed(BasicButton sender)
 	{
-		numElements++;
+		if(elementType==ElementTypes.chapters){	
+			iObject newChapter;
+			newChapter = Data.newChapter("", "", -1, -1, null);
+			Data.selChapter = newChapter as Data.Chapter;
+			listButtons.Add(Instantiate(mButtons[1]) as GameObject);
+			listButtons[Data.Chapters.Count].transform.position = listButtons[0].transform.position;
+			listButtons[Data.Chapters.Count].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
+			listButtons[Data.Chapters.Count].transform.parent = transform;
+			listButtons[Data.Chapters.Count].GetComponent<BasicButton>().iObj = newChapter;
+			listButtons[Data.Chapters.Count].GetComponent<BasicButton>().Refresh();
+			listButtons[Data.Chapters.Count].GetComponent<BasicButton>().Show(0.2f, 0.2f);
+			ButtonPressed(listButtons[Data.Chapters.Count].GetComponent<BasicButton>());
+		}
 
-		//Add elements button
-		listButtons.Add(Instantiate(mButtons[1]) as GameObject);
-		listButtons[numElements].transform.position = listButtons[0].transform.position;
-		listButtons[numElements].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
-		listButtons[numElements].transform.parent = transform;
-		listButtons[numElements].GetComponent<BasicButton>().Show(0.2f, 0.2f);
-		listButtons[numElements].GetComponent<BasicButton>().Text+=numElements.ToString("00");
-		listButtons[numElements].GetComponent<BasicButton>().SetID(numElements);
-
-		ButtonPressed(listButtons[numElements].GetComponent<BasicButton>());
 		listButtons[0].GetComponent<BasicButton>().Hide(0 ,0.2f);
 		listButtons[0].GetComponent<BasicButton>().Checked=true;
 
-		stateElements=StatesElements.adding_element;
+		stateElements = StatesElements.adding_element;
+
+		mGUIManager.CurrentCharacter=null;
+		mGUIManager.CurrentBackground=null;
+		mGUIManager.HideAllButtonBars();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,11 +66,16 @@ public class ButtonBarElements : ButtonBar
 		if(currentSelected==null)
 			return;
 
-		mGUIManager.DisableButtons();
 		currentSelected.Hide(0, 0.2f);
+		currentSelected.iObj.Delete();
 		MoveButtonsAfterDelete();
 		stateElements=StatesElements.deleting_element;
 		mSpeed.End();
+
+		mGUIManager.DisableButtons();
+		mGUIManager.HideAllButtonBars();
+		mGUIManager.CurrentCharacter=null;
+		mGUIManager.CurrentBackground=null;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,15 +98,15 @@ public class ButtonBarElements : ButtonBar
 			dist_y_below = ButtonProperties.buttonSize+ButtonProperties.buttonMargin - dist_y_above;
 		}
 		//Move buttons above selected element
-		for(int i=currentSelected.mID-1;i>=1;i--){
+		for(int i=currentSelected.iObj.Number-1;i>=1;i--){
 			float new_y = listButtons[i].transform.position.y - dist_y_above;
 			listButtons[i].GetComponent<BasicButton>().GoToPosition(new_y, 0.2f);
 		}
 		//Move buttons below selected element
-		for(int i=currentSelected.mID+1;i<=numElements;i++){
+		for(int i=currentSelected.iObj.Number+1;i<=Data.Chapters.Count+1;i++){
 			float new_y = listButtons[i].transform.position.y + dist_y_below;
 			listButtons[i].GetComponent<BasicButton>().GoToPosition(new_y, 0.2f);
-			listButtons[i].GetComponent<BasicButton>().ChangeID(i-1);
+			listButtons[i].GetComponent<BasicButton>().Refresh();
 		}
 		//Move add button
 		float new_y_0 = listButtons[0].transform.position.y + dist_y_below;
@@ -111,9 +121,9 @@ public class ButtonBarElements : ButtonBar
 
 		//Adding elements (show add elements button)
 		if(stateElements==StatesElements.adding_element && listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.hidden){
-			listButtons[0].transform.position = listButtons[numElements].transform.position - new Vector3(0, ButtonProperties.buttonMargin+ButtonProperties.buttonSize, 0);
+			listButtons[0].transform.position = listButtons[Data.Chapters.Count].transform.position - new Vector3(0, ButtonProperties.buttonMargin+ButtonProperties.buttonSize, 0);
 			listButtons[0].GetComponent<BasicButton>().Show(0, 0.2f);
-			listButtons[numElements].GetComponent<BasicButton>().Checked=true;
+			listButtons[Data.Chapters.Count].GetComponent<BasicButton>().Checked=true;
 			ResizeButtonBarAfterAdd();
 			stateElements=StatesElements.idle;
 		}
@@ -122,9 +132,8 @@ public class ButtonBarElements : ButtonBar
 		        listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.idle &&
 		        (listButtons[1].GetComponent<BasicButton>().state == BasicButton.States.idle || 
 		         listButtons[1].GetComponent<BasicButton>().state == BasicButton.States.hidden)){
-			listButtons.RemoveAt(currentSelected.mID);
+			listButtons.RemoveAt(currentSelected.iObj.Number);
 			Destroy(currentSelected.gameObject);
-			numElements--;
 			currentSelected=null;
 			stateElements=StatesElements.idle;
 			ResizeButtonBarAfterDelete();

@@ -6,6 +6,9 @@ using System.Collections;
 using TVR.Helpers;
 
 //Script attached to the GUICamera object
+using TVR;
+
+
 public class GUIManagerChapters : GUIManager
 {
 	public ButtonBar mCharactersButtonBar;
@@ -36,11 +39,31 @@ public class GUIManagerChapters : GUIManager
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public override void HideAllButtonBars()
+	{
+		mCharactersButtonBar.Hide();
+		mBackgroundsButtonBar.Hide();
+		mMusicButtonBar.Hide();
+
+		mCharactersButtonBar.UncheckButtons();
+		mBackgroundsButtonBar.UncheckButtons();
+		mMusicButtonBar.UncheckButtons();
+
+		mLeftButtonBar.UncheckButtons();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Characters button
 	public void OnButtonCharactersPressed(BasicButton sender)
 	{
-		if(sender.Checked) mCharactersButtonBar.Show();
-		else mCharactersButtonBar.Hide();
+		if(sender.Checked){
+			mCharactersButtonBar.Show();
+		}
+		else{
+			mCharactersButtonBar.Hide();
+			Data.selChapter.Save();
+		}
 		Count(sender.Checked);
 	}
 	
@@ -48,8 +71,13 @@ public class GUIManagerChapters : GUIManager
 	//Main: Backgrounds button
 	public void OnButtonBackgroundsPressed(BasicButton sender)
 	{
-		if(sender.Checked) mBackgroundsButtonBar.Show();
-		else mBackgroundsButtonBar.Hide();
+		if(sender.Checked){
+			mBackgroundsButtonBar.Show();
+		}
+		else{
+			mBackgroundsButtonBar.Hide();
+			Data.selChapter.Save();
+		}
 		Count(sender.Checked);
 	}
 	
@@ -58,7 +86,10 @@ public class GUIManagerChapters : GUIManager
 	public void OnButtonMusicsPressed(BasicButton sender)
 	{
 		if(sender.Checked) mMusicButtonBar.Show();
-		else mMusicButtonBar.Hide();
+		else{
+			mMusicButtonBar.Hide();
+			Data.selChapter.Save();
+		}
 		Count(sender.Checked);
 	}
 	
@@ -82,17 +113,38 @@ public class GUIManagerChapters : GUIManager
 	{
 		Debug.Log("play chapters");
 	}
-	
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Chapter button
+	public void OnButtonChapterPressed(BasicButton sender)
+	{
+		HideAllButtonBars();
+
+		Data.selChapter = sender.iObj as Data.Chapter;
+
+		if(Data.selChapter.IdCharacter!=-1){
+			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
+			mCharactersButtonBar.SetCurrentButton(Data.selChapter.IdCharacter);
+		}else{
+			CurrentCharacter=null;
+			mCharactersButtonBar.UncheckButtons();
+		}
+		if(Data.selChapter.IdBackground!=-1){
+			CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
+			mBackgroundsButtonBar.SetCurrentButton(Data.selChapter.IdBackground);
+		}else{
+			CurrentBackground=null;
+			mBackgroundsButtonBar.UncheckButtons();
+		}
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Character button
 	public void OnButtonCharacterPressed(BasicButton sender)
 	{
 		if(sender.sPrefab!=""){
-			if(CurrentCharacter!=null){
-				Destroy(CurrentCharacter);
-			}
-			CurrentCharacter = Instantiate(ResourcesManager.LoadModel("Characters/Prefabs/"+sender.sPrefab, "ChapterMgr")) as GameObject;
-			SceneMgr.Get.sCurrentCharacter = sender.sPrefab;
+			Data.selChapter.IdCharacter = sender.ID;
+			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
 		}
 		else{
 			Debug.Log("El boton no tiene prefab asociado!");
@@ -104,11 +156,8 @@ public class GUIManagerChapters : GUIManager
 	public void OnButtonBackgroundPressed(BasicButton sender)
 	{
 		if(sender.sPrefab!=""){
-			if(CurrentBackground!=null){
-				Destroy(CurrentBackground);
-			}
-			CurrentBackground = Instantiate(ResourcesManager.LoadModel("Backgrounds/Prefabs/"+sender.sPrefab, "ChapterMgr")) as GameObject;
-			SceneMgr.Get.sCurrentBackground = sender.sPrefab;
+			Data.selChapter.IdBackground = sender.ID;
+			CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
 		}
 		else{
 			Debug.Log("El boton no tiene prefab asociado!");
@@ -119,7 +168,7 @@ public class GUIManagerChapters : GUIManager
 	//Music button
 	public void OnButtonMusicPressed(BasicButton sender)
 	{
-		Debug.Log("music: " + sender.mID);
+		//Debug.Log("music: " + sender.iObj.Number);
 	}
 }
 
