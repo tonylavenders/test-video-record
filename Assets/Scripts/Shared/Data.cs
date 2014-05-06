@@ -18,9 +18,6 @@ namespace TVR {
 			db.ExecuteNonQuery("VACUUM");
 #endif
 			mChapters = new List<Chapter>();
-
-			mChapters = new List<Chapter>();
-
 			DataTable chapters = db.ExecuteQuery("SELECT IdChapter, Number, Title, Information, IdCharacter, IdBackground, IdMusic FROM Chapters ORDER BY Number");
 			Chapter chapter;
 			foreach(DataRow row in chapters.Rows) {
@@ -296,7 +293,16 @@ namespace TVR {
 			}
 
 			public void loadBlocks() {
-				//TODO:
+				if(mBlocks != null) {
+					mBlocks = new List<Block>();
+					DataTable blocks = db.ExecuteQuery("SELECT IdBlock, IdBlockType, IdShotType, Number, Frames, IdExpression, IdAnimation, IdProp FROM Blocks WHERE IdChapter = " + mIdChapter + " ORDER BY Number");
+					Block block;
+					foreach(DataRow row in blocks.Rows) {
+						block = new Block((int)row["IdBlock"], (Block.blockTypes)row["IdBlockType"], (Block.shotTypes)row["IdShotType"], (int)row["Number"], (int)row["Frames"], (int)row["IdExpression"], (int)row["IdAnimation"], (int?)row["IdProp"], this);
+						mBlocks.Add(block);
+					}
+					mBlocks.Sort();
+				}
 			}
 
 			private void renumberBlocks(Block block, int oldNumber, int newNumber) {
@@ -398,11 +404,11 @@ namespace TVR {
 				public int IdChapter {
 					get { return mParent.mIdChapter; }
 				}
-				public blockTypes IdBlockType {
+				public blockTypes BlockType {
 					get { return mIdBlockType; }
 					set { mIdBlockType = value; }
 				}
-				public shotTypes IdShotType {
+				public shotTypes ShotType {
 					get { return mIdShotType; }
 					set { mIdShotType = value; }
 				}
