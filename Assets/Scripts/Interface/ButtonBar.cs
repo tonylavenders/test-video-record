@@ -34,6 +34,15 @@ public class ButtonBar : MonoBehaviour
 	}
 	States state;
 
+	public enum ElementTypes{
+		main,
+		chapters,
+		blocks,
+		characters,
+		backgrounds
+	}
+	public ElementTypes elementType;
+
 	public GUIManager mGUIManager;
 
 	const int MAX_BUTTONS=5;
@@ -124,7 +133,6 @@ public class ButtonBar : MonoBehaviour
 		listButtons[0].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, (mButtons.Length-1)*(ButtonProperties.buttonSize/2+ButtonProperties.buttonMargin/2) + Screen.height/2, ButtonProperties.buttonZDepth);
 		listButtons[0].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 		listButtons[0].transform.parent = transform;
-		listButtons[0].GetComponent<BasicButton>().SetID(0);
 
 		if(mButtons.Length>1){
 			for(int i=1;i<mButtons.Length;i++){
@@ -132,7 +140,6 @@ public class ButtonBar : MonoBehaviour
 				listButtons[i].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, listButtons[0].transform.position.y-(ButtonProperties.buttonSize+ButtonProperties.buttonMargin)*i, ButtonProperties.buttonZDepth);
 				listButtons[i].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 				listButtons[i].transform.parent = transform;
-				listButtons[i].GetComponent<BasicButton>().SetID(i);
 			}
 		}
 	}
@@ -232,6 +239,21 @@ public class ButtonBar : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public void SetCurrentButton(int id_button)
+	{
+		foreach(GameObject button in listButtons){
+			BasicButton b = button.GetComponent<BasicButton>();
+			if(b.ID==id_button){
+				currentSelected=b;
+				b.Checked=true;
+			}else{
+				b.Checked=false;
+			}
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	public void EnableButtons()
 	{
 		foreach(GameObject button in listButtons){
@@ -245,6 +267,15 @@ public class ButtonBar : MonoBehaviour
 	{
 		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Enable = false;
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void UncheckButtons()
+	{
+		foreach(GameObject button in listButtons){
+			button.GetComponent<BasicButton>().Checked=false;
 		}
 	}
 

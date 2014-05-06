@@ -6,6 +6,9 @@ using System.Collections;
 using TVR.Helpers;
 
 //Script attached to the GUICamera object
+using TVR;
+
+
 public class GUIManager : MonoBehaviour
 {
 	public ButtonBar mLeftButtonBar;
@@ -18,24 +21,20 @@ public class GUIManager : MonoBehaviour
 	public GameObject CurrentCharacter{
 		get{
 			return mCurrentCharacter;
-		}
-		set{
+		}set{
+			Destroy(mCurrentCharacter);
 			mCurrentCharacter=value;
-			if(mCurrentBackground!=null){
-				mEditButton.Enable=true;
-			}
+			mEditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
 		}
 	}
 	GameObject mCurrentBackground;
 	public GameObject CurrentBackground{
 		get{
 			return mCurrentBackground;
-		}
-		set{
+		}set{
+			Destroy(mCurrentBackground);
 			mCurrentBackground=value;
-			if(mCurrentCharacter!=null){
-				mEditButton.Enable=true;
-			}
+			mEditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
 		}
 	}
 
@@ -75,10 +74,12 @@ public class GUIManager : MonoBehaviour
 			mBlur = transform.GetComponent<cBlur2>();
 		mBlur.enabled = true;
 
-		if(SceneMgr.Get.sCurrentCharacter!="")
-			CurrentCharacter = Instantiate(ResourcesManager.LoadModel("Characters/Prefabs/"+SceneMgr.Get.sCurrentCharacter, "ChapterEditor")) as GameObject;
-		if(SceneMgr.Get.sCurrentBackground!="")
-			CurrentBackground = Instantiate(ResourcesManager.LoadModel("Backgrounds/Prefabs/"+SceneMgr.Get.sCurrentBackground, "ChapterEditor")) as GameObject;
+		if(Data.selChapter!=null && Data.selChapter.IdCharacter!=-1){
+			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
+		}
+		if(Data.selChapter!=null && Data.selChapter.IdBackground!=-1){
+			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdBackground).getInstance("ChapterMgr");
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,6 +119,12 @@ public class GUIManager : MonoBehaviour
 		mLeftButtonBar.DisableButtons();
 		mPlayButton.Enable=false;
 	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public virtual void HideAllButtonBars()
+	{
+	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -133,17 +140,21 @@ public class GUIManager : MonoBehaviour
 
 		//This is necessary for the Samsung Galaxy S (Android 2.3)
 		//Pressing HOME button freezes the device
-		//mBlur.render();
-		if(GUI.Button(new Rect(Screen.width / 2 - 50, 10, 100, 50), "QUIT")) {
-			Application.Quit();
+		if(Application.platform == RuntimePlatform.Android){
+			if(GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height-120, 100, 100), "QUIT")){
+				Application.Quit();
+			}
 		}
-		if(GUI.Button(new Rect(Screen.width / 2 - 50, 70, 100, 50), "Blur")) {
-			blur = !blur;
-		}
+		//if(GUI.Button(new Rect(Screen.width / 2 - 50, 70, 100, 50), "Blur")) {
+		//	blur = !blur;
+		//}
 	}
 
-	void OnApplicationPause(bool pauseStatus) {
-		//Application.Quit();
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void OnApplicationPause(bool pauseStatus)
+	{
+		Data.selChapter.Save();
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
