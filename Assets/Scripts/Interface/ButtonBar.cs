@@ -39,7 +39,9 @@ public class ButtonBar : MonoBehaviour
 		chapters,
 		blocks,
 		characters,
-		backgrounds
+		backgrounds,
+		animations,
+		expressions
 	}
 	public ElementTypes elementType;
 
