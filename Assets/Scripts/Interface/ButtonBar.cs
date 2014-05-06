@@ -10,6 +10,7 @@ public class ButtonBar : MonoBehaviour
 	public GameObject[] mButtons;
 	protected List<GameObject> listButtons;
 	public GameObject Separator;
+	public bool bIsMain;
 
 	public float depth_x = 0;
 	bool bInit=false;
@@ -131,8 +132,16 @@ public class ButtonBar : MonoBehaviour
 	//Set the position of the first button, then set the position of the other buttons
 	protected virtual void SetButtons()
 	{
+		float buttonsTotalHeight = ButtonProperties.buttonSize*mButtons.Length + ButtonProperties.buttonMargin*(mButtons.Length+1);
+		float y_pos=0;
+		if(buttonsTotalHeight>=Screen.height || bIsMain){
+			y_pos = (mButtons.Length-1)*(ButtonProperties.buttonSize/2+ButtonProperties.buttonMargin/2) + Screen.height/2;
+		}else{
+			y_pos = Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2.0f;
+		}
+		
 		listButtons.Add(Instantiate(mButtons[0]) as GameObject);
-		listButtons[0].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, (mButtons.Length-1)*(ButtonProperties.buttonSize/2+ButtonProperties.buttonMargin/2) + Screen.height/2, ButtonProperties.buttonZDepth);
+		listButtons[0].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, y_pos, ButtonProperties.buttonZDepth);
 		listButtons[0].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 		listButtons[0].transform.parent = transform;
 
