@@ -49,9 +49,9 @@ namespace TVR {
 				System.IO.Directory.CreateDirectory(Globals.RecordedSoundsPath);
 			
 			if(VersionDB < 1) {
-				db.ExecuteNonQuery("CREATE TABLE [BlocksTypes] ([IdBlockType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [BlockType] TEXT NOT NULL)");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (1, 'Time')");
-				db.ExecuteNonQuery("INSERT INTO BlocksTypes (IdBlockType, BlockType) VALUES (2, 'Voice')");
+				db.ExecuteNonQuery("CREATE TABLE [BlockTypes] ([IdBlockType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [BlockType] TEXT NOT NULL)");
+				db.ExecuteNonQuery("INSERT INTO BlockTypes (IdBlockType, BlockType) VALUES (1, 'Time')");
+				db.ExecuteNonQuery("INSERT INTO BlockTypes (IdBlockType, BlockType) VALUES (2, 'Voice')");
 
 				db.ExecuteNonQuery("CREATE TABLE [ShotTypes] ([IdShotType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [ShotType] TEXT NOT NULL)");
 				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (1, 'Close Up')");
@@ -59,7 +59,7 @@ namespace TVR {
 				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (3, 'Long Shot')");
 
 				db.ExecuteNonQuery("CREATE TABLE [Chapters] ([IdChapter] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER NOT NULL, [Title] TEXT NOT NULL, [Information] TEXT NOT NULL, [IdCharacter] INTEGER NOT NULL, [IdBackground] INTEGER NOT NULL, [IdMusic] INTEGER)");
-				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdChapter] INTEGER NOT NULL REFERENCES [Chapters] ([IdChapter]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlocksTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL)");
+				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdChapter] INTEGER NOT NULL REFERENCES [Chapters] ([IdChapter]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlockTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL)");
 				db.ExecuteNonQuery("CREATE TABLE [CharacterProps] ([IdCharacterProps] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdBlock] INTEGER NOT NULL REFERENCES [Blocks] ([IdBlock]) ON DELETE CASCADE, [IdResource] INTEGER NOT NULL, [Dummy] TEXT NOT NULL)");
 				db.ExecuteQuery("pragma user_version=1;");
 			}
@@ -79,20 +79,18 @@ namespace TVR {
 		}
 
 		public static Chapter newChapter(string title, string information, int idCharacter, int idBackground, int? idMusic) {
-			Chapter chapter = new Chapter(-1, mChapters.Count + 1, title, information, idCharacter, idBackground, idMusic);
-			chapter.Save();
-			return chapter;
+			return newChapter(mChapters.Count + 1, title, information, idCharacter, idBackground, idMusic);
 		}
 
 		public static Chapter newChapter(int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
 			if(number <= 0 || number > mChapters.Count + 1)
-				throw new System.Exception("The number must be between 0 and number of Chapters");
+				throw new System.Exception("The number must be between 0 and number of Chapters.");
 			Chapter chapter = new Chapter(-1, number, title, information, idCharacter, idBackground, idMusic);
 			chapter.Save();
 			return chapter;
 		}
 
-		private static void renumber(Chapter chapter, int oldNumber, int newNumber) {
+		private static void renumberChapters(Chapter chapter, int oldNumber, int newNumber) {
 			if(oldNumber == -1) {
 				db.ExecuteNonQuery("UPDATE Chapters SET Number = Number + 1 WHERE IdChapter <> " + chapter.IdChapter + " AND Number >= " + newNumber);
 				foreach(Chapter s in mChapters) {
@@ -118,7 +116,7 @@ namespace TVR {
 			if(!mChapters.Contains(chapter)) {
 				mChapters.Add(chapter);
 				if(chapter.Number < mChapters.Count - 1) {
-					renumber(chapter, -1, chapter.Number);
+					renumberChapters(chapter, -1, chapter.Number);
 					mChapters.Sort();
 				}
 			}
@@ -153,6 +151,7 @@ namespace TVR {
 		}*/
 
 	public class Chapter : System.IComparable<Chapter>, iObject {
+			private List<Block> mBlocks;
 			private int mIdChapter;
 			private int mNumber;
 			private string mTitle;
@@ -216,6 +215,9 @@ namespace TVR {
 						mIdMusic = value;
 				}
 			}
+			public List<Block> Blocks {
+				get { return mBlocks; }
+			}
 
 			public Chapter(int idChapter, int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
 				mIdChapter = idChapter;
@@ -231,6 +233,7 @@ namespace TVR {
 				mOldIdCharacter = idCharacter;
 				mOldIdBackground = idBackground;
 				mOldIdMusic = idMusic;
+				mBlocks = new List<Block>();
 			}
 
 			public void Save() {
@@ -243,8 +246,8 @@ namespace TVR {
 					if(Change()) {
 						string idMus = mIdMusic == null ? "NULL" : mIdMusic.ToString();
 						db.ExecuteNonQuery("UPDATE Chapters SET Title = '" + Title.Replace("'", "''").Trim() + "', Information = '" + Information.Replace("'", "''").Trim() + "', IdCharacter = " + mIdCharacter + ", IdBackground = " + mIdBackground + ", IdMusic = " + idMus + " WHERE IdChapter = " + mIdChapter);
-						mOldTitle = Title;
-						mOldInformation = Information;
+						mOldTitle = mTitle;
+						mOldInformation = mInformation;
 						mOldIdBackground = mIdBackground; 
 						mOldIdCharacter = mIdCharacter;
 						mOldIdMusic = mIdMusic;
@@ -253,7 +256,7 @@ namespace TVR {
 			}
 
 			public bool Change() {
-				return mOldTitle != Title || mOldInformation != Information || mIdBackground != mOldIdBackground || mIdCharacter != mOldIdCharacter || mIdMusic != mOldIdMusic;
+				return mTitle != mOldTitle || mInformation != mOldInformation || mIdBackground != mOldIdBackground || mIdCharacter != mOldIdCharacter || mIdMusic != mOldIdMusic;
 			}
 
 			public void Delete() {
@@ -264,9 +267,9 @@ namespace TVR {
 			public void Renumber(int newNumber) {
 				if(mNumber != newNumber) {
 					if(newNumber <= 0 || newNumber > Data.mChapters.Count)
-						throw new System.Exception("The new number must be between 0 and Data.Chapters.Count");
+						throw new System.Exception("The new number must be between 0 and Data.Chapters.Count.");
 					db.ExecuteNonQuery("UPDATE Chapters SET Number = " + newNumber + " WHERE IdChapter = " + mIdChapter);
-					Data.renumber(this, mNumber, newNumber);
+					Data.renumberChapters(this, mNumber, newNumber);
 					Data.mChapters.Sort();
 					mNumber = newNumber;
 				}
@@ -275,9 +278,75 @@ namespace TVR {
 			public void forceNumber(int newNumber) {
 				if(mNumber != newNumber) {
 					if(newNumber <= 0 || newNumber > Data.mChapters.Count)
-						throw new System.Exception("The new number must be between 0 and number of Chapters");
+						throw new System.Exception("The new number must be between 0 and number of Chapters.");
 					mNumber = newNumber;
 				}
+			}
+
+			public Block newBlock(Block.blockTypes idBlockType, Block.shotTypes idShotType, int frames, int idExpression, int idAnimation) {
+				return newBlock(mBlocks.Count + 1, idBlockType, idShotType, frames, idExpression, idAnimation);
+			}
+
+			public Block newBlock(int number, Block.blockTypes idBlockType, Block.shotTypes idShotType, int frames, int idExpression, int idAnimation) {
+				if(number <= 0 || number > mBlocks.Count + 1)
+					throw new System.Exception("The number must be between 0 and number of Blocks in this chapter.");
+				Block block = new Block(-1, idBlockType, idShotType, number, frames, idExpression, idAnimation, this);
+				block.Save();
+				return block;
+			}
+
+			public void loadBlocks() {
+				//TODO:
+			}
+
+			private void renumberBlocks(Block block, int oldNumber, int newNumber) {
+				if(oldNumber == -1) {
+					//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Number = Number + 1 WHERE IdChapter <> " + block.IdChapter + " AND Number >= " + newNumber);
+					foreach(Block b in mBlocks) {
+						if(b != block && b.Number >= newNumber)
+							b.forceNumber(b.Number + 1);
+					}
+				} else if(oldNumber > newNumber) {
+					//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Number = Number + 1 WHERE IdChapter <> " + block.IdChapter + " AND Number >= " + newNumber + " AND Number < " + oldNumber);
+					foreach(Block b in mBlocks) {
+						if(b != block && b.Number >= newNumber && b.Number < oldNumber)
+							b.forceNumber(b.Number + 1);
+					}
+				} else if(oldNumber < newNumber) {
+					//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Number = Number - 1 WHERE IdChapter <> " + block.IdChapter + " AND Number <= " + newNumber + " AND Number > " + oldNumber);
+					foreach(Block b in mBlocks) {
+						if(b != block && b.Number <= newNumber && b.Number > oldNumber)
+							b.forceNumber(b.Number - 1);
+					}
+				}
+			}
+
+			private void addBlock(Block block) {
+				if(!mBlocks.Contains(block)) {
+					mBlocks.Add(block);
+					if(block.Number < mBlocks.Count - 1) {
+						renumberBlocks(block, -1, block.Number);
+						mBlocks.Sort();
+					}
+				}
+			}
+
+			private void removeBlock(Block block) {
+				if(mBlocks.Contains(block))
+					mBlocks.Remove(block);
+				//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Number = Number - 1 WHERE IdChapter <> " + chapter.IdChapter + " AND Number > " + chapter.Number);
+				foreach(Block b in mBlocks) {
+					if(b != block && b.Number > block.Number)
+						b.forceNumber(b.Number - 1);
+				}
+			}
+
+			public void Revert() {
+				mTitle = mOldTitle;
+				mInformation = mOldInformation;
+				mIdBackground = mOldIdBackground; 
+				mIdCharacter = mOldIdCharacter;
+				mIdMusic = mOldIdMusic;
 			}
 
 			public int CompareTo(Chapter other) {		
@@ -287,6 +356,148 @@ namespace TVR {
 						return 1;
 					else
 						return 0;
+			}
+
+			public class Block : System.IComparable<Chapter>, iObject {
+				public enum blockTypes {
+					Time = 1,
+					Voice = 2,
+				}
+				public enum shotTypes {
+					CloseUP = 1,
+					MidShot = 2,
+					LongShot = 3,
+				}
+
+				private int mIdBlock;
+				private blockTypes mIdBlockType;
+				private shotTypes mIdShotType;
+				private int mNumber;
+				private int mFrames;
+				private int mIdExpression;
+				private int mIdAnimation;
+				private Chapter mParent;
+
+				private blockTypes mOldIdBlockType;
+				private shotTypes mOldIdShotType;
+				private int mOldFrames;
+				private int mOldIdExpression;
+				private int mOldIdAnimation;
+
+				public int IdBlock {
+					get { return mIdBlock; }
+				}
+				public int Id {
+					get { return mIdBlock; }
+				}
+				public int IdChapter {
+					get { return mParent.mIdChapter; }
+				}
+				public blockTypes IdBlockType {
+					get { return mIdBlockType; }
+					set { mIdBlockType = value; }
+				}
+				public shotTypes IdShotType {
+					get { return mIdShotType; }
+					set { mIdShotType = value; }
+				}
+				public int Number {
+					get { return mNumber; }
+				}
+				public int Frames {
+					get { return mFrames; }
+					set { mFrames = value; }
+				}
+				public int IdExpression {
+					get { return mIdExpression; }
+					set { mIdExpression = value; }
+				}
+				public int IdAnimation {
+					get { return mIdAnimation; }
+					set { mIdAnimation = value; }
+				}
+				public Chapter Parent {
+					get { return mParent; }
+				}
+
+				public Block(int idBlock, blockTypes idBlockType, shotTypes idShotType, int number, int frames, int idExpression, int idAnimation, Chapter parent) {
+					mIdBlock = idBlock;
+					mIdBlockType = idBlockType;
+					mIdShotType = idShotType;
+					mNumber = number;
+					mFrames = frames;
+					mIdExpression = idExpression;
+					mIdAnimation = idAnimation;
+					mParent = parent;
+
+					mOldIdBlockType = idBlockType;
+					mOldIdShotType = idShotType;
+					mOldFrames = frames;
+					mOldIdExpression = idExpression;
+					mOldIdAnimation = idAnimation;
+				}
+
+				public void Save() {
+					if(mIdBlock == -1) {
+						//TODO:db.ExecuteNonQuery("INSERT INTO Chapters (Number, Title, Information, IdCharacter, IdBackground, IdMusic) VALUES (" + mNumber + ", '" + mTitle.Replace("'", "''").Trim() + "', '" + mInformation.Replace("'", "''").Trim() + "', " + mIdCharacter + ", " + mIdBackground + ", " + idMus + ")");
+						//TODO:mIdBlock = (int)db.ExecuteQuery("SELECT MAX(IdChapter) as ID FROM Chapters")[0]["ID"];
+						mParent.addBlock(this);
+					} else {
+						if(Change()) {
+							//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Title = '" + Title.Replace("'", "''").Trim() + "', Information = '" + Information.Replace("'", "''").Trim() + "', IdCharacter = " + mIdCharacter + ", IdBackground = " + mIdBackground + ", IdMusic = " + idMus + " WHERE IdChapter = " + mIdBlock);
+							mIdBlockType = mOldIdBlockType;
+							mIdShotType = mOldIdShotType;
+							mFrames = mOldFrames;
+							mIdExpression = mOldIdExpression;
+							mIdAnimation = mOldIdAnimation;
+						}
+					}
+				}
+
+				public bool Change() {
+					return mIdBlockType != mOldIdBlockType || mIdShotType != mOldIdShotType || mFrames != mOldFrames || mIdExpression != mOldIdExpression || mIdAnimation != mOldIdAnimation;
+				}
+
+				public void Delete() {
+					db.ExecuteNonQuery("DELETE FROM Blocks WHERE IdBlock = " + mIdBlock);
+					mParent.removeBlock(this);
+				}
+
+				public void Renumber(int newNumber) {
+					if(mNumber != newNumber) {
+						if(newNumber <= 0 || newNumber > mParent.mBlocks.Count)
+							throw new System.Exception("The new number must be between 0 and mParent.Blocks.Count.");
+						//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Number = " + newNumber + " WHERE IdChapter = " + mIdBlock);
+						mParent.renumberBlocks(this, mNumber, newNumber);
+						mParent.mBlocks.Sort();
+						mNumber = newNumber;
+					}
+				}
+
+				public void forceNumber(int newNumber) {
+					if(mNumber != newNumber) {
+						if(newNumber <= 0 || newNumber > mParent.mBlocks.Count)
+							throw new System.Exception("The new number must be between 0 and number of Blocks.");
+						mNumber = newNumber;
+					}
+				}
+
+				public void Revert() {
+					mOldIdBlockType = mIdBlockType;
+					mOldIdShotType = mIdShotType;
+					mOldFrames = mFrames;
+					mOldIdExpression = mIdExpression;
+					mOldIdAnimation = mIdAnimation;
+				}
+
+				public int CompareTo(Chapter other) {		
+					if(this.Number < other.Number)
+						return -1;
+					else if(this.Number > other.Number)
+						return 1;
+					else
+						return 0;
+				}
 			}
 		}
 
@@ -3488,5 +3699,6 @@ namespace TVR {
 		void Save();
 		void Delete();
 		bool Change();
+		void Revert();
 	}
 }
