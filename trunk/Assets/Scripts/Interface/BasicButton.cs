@@ -10,7 +10,7 @@ public enum ButtonType{
 	CHAR, BACKGROUND,
 	MAIN_EDIT, MAIN_PLAY,
 	EDIT_TIME, EDIT_EXPR, EDIT_ANIM, EDIT_CAM,
-	MUSIC,
+	MUSIC, ANIM, EXPR, BLOCK
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,14 +245,17 @@ public class BasicButton : MonoBehaviour
 
 	public void Refresh()
 	{
-		Text = "vid"+iObj.Number.ToString("00");
+		if(buttonType==ButtonType.CHAPTER){
+			Text = "vid"+iObj.Number.ToString("00");
+		}else{
+			Text = iObj.Number.ToString("00");
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Button callbacks
 	void SetCallback()
 	{
-		//CHAPTERS
 		if(buttonType == ButtonType.MAIN_CHARACTERS) {
 			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonCharactersPressed;
 		}
@@ -288,6 +291,15 @@ public class BasicButton : MonoBehaviour
 		}
 		else if(buttonType == ButtonType.MAIN_PLAY) {
 			clickedCallback = mGUIManager.OnButtonPlayPressed;
+		}
+		else if(buttonType == ButtonType.BLOCK) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonBlockPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_ANIM) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonAnimationsPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_EXPR) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonExpressionsPressed;
 		}
 	}
 	

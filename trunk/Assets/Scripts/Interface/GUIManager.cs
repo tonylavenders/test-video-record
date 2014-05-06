@@ -78,7 +78,7 @@ public class GUIManager : MonoBehaviour
 			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
 		}
 		if(Data.selChapter!=null && Data.selChapter.IdBackground!=-1){
-			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdBackground).getInstance("ChapterMgr");
+			CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
 		}
 	}
 

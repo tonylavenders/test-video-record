@@ -4,11 +4,9 @@
 using UnityEngine;
 using System.Collections;
 using TVR.Helpers;
-
-//Script attached to the GUICamera object
 using TVR;
 
-
+//Script attached to the GUICamera object
 public class GUIManagerChapters : GUIManager
 {
 	public ButtonBar mCharactersButtonBar;
@@ -59,8 +57,7 @@ public class GUIManagerChapters : GUIManager
 	{
 		if(sender.Checked){
 			mCharactersButtonBar.Show();
-		}
-		else{
+		}else{
 			mCharactersButtonBar.Hide();
 			Data.selChapter.Save();
 		}
@@ -73,8 +70,7 @@ public class GUIManagerChapters : GUIManager
 	{
 		if(sender.Checked){
 			mBackgroundsButtonBar.Show();
-		}
-		else{
+		}else{
 			mBackgroundsButtonBar.Hide();
 			Data.selChapter.Save();
 		}
@@ -85,8 +81,9 @@ public class GUIManagerChapters : GUIManager
 	//Main: Music button
 	public void OnButtonMusicsPressed(BasicButton sender)
 	{
-		if(sender.Checked) mMusicButtonBar.Show();
-		else{
+		if(sender.Checked){
+			mMusicButtonBar.Show();
+		}else{
 			mMusicButtonBar.Hide();
 			Data.selChapter.Save();
 		}

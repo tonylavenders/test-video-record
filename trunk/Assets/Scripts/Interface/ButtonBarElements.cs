@@ -75,27 +75,38 @@ public class ButtonBarElements : ButtonBar
 
 	public void OnButtonAddElementPressed(BasicButton sender)
 	{
+		int counter=0;
+
 		if(elementType==ElementTypes.chapters){	
 			iObject newChapter;
 			newChapter = Data.newChapter("", "", -1, -1, null);
 			Data.selChapter = newChapter as Data.Chapter;
 			listButtons.Add(Instantiate(mButtons[1]) as GameObject);
-			listButtons[Data.Chapters.Count].transform.position = listButtons[0].transform.position;
-			listButtons[Data.Chapters.Count].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
-			listButtons[Data.Chapters.Count].transform.parent = transform;
-			listButtons[Data.Chapters.Count].GetComponent<BasicButton>().iObj = newChapter;
-			listButtons[Data.Chapters.Count].GetComponent<BasicButton>().Refresh();
-			listButtons[Data.Chapters.Count].GetComponent<BasicButton>().Show(0.2f, 0.2f);
-			ButtonPressed(listButtons[Data.Chapters.Count].GetComponent<BasicButton>());
+			counter=Data.Chapters.Count;
+			listButtons[counter].GetComponent<BasicButton>().iObj = newChapter;
+			mGUIManager.CurrentCharacter=null;
+			mGUIManager.CurrentBackground=null;
 		}
+		else if(elementType==ElementTypes.blocks){
+			iObject newBlock;
+			newBlock = Data.selChapter.newBlock(Data.Chapter.Block.blockTypes.Time, Data.Chapter.Block.shotTypes.CloseUP, 25, 1, 1, null);
+			listButtons.Add(Instantiate(mButtons[1]) as GameObject);
+			counter=Data.selChapter.Blocks.Count;
+			listButtons[counter].GetComponent<BasicButton>().iObj = newBlock;
+		}
+
+		listButtons[counter].transform.position = listButtons[0].transform.position;
+		listButtons[counter].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
+		listButtons[counter].transform.parent = transform;
+		listButtons[counter].GetComponent<BasicButton>().Refresh();
+		listButtons[counter].GetComponent<BasicButton>().Show(0.2f, 0.2f);
+		ButtonPressed(listButtons[counter].GetComponent<BasicButton>());
 
 		listButtons[0].GetComponent<BasicButton>().Hide(0 ,0.2f);
 		listButtons[0].GetComponent<BasicButton>().Checked=true;
 
 		stateElements = StatesElements.adding_element;
 
-		mGUIManager.CurrentCharacter=null;
-		mGUIManager.CurrentBackground=null;
 		mGUIManager.HideAllButtonBars();
 	}
 
