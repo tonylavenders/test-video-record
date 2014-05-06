@@ -102,7 +102,7 @@ public class ButtonBar : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void SetPosition()
+	protected virtual void SetPosition()
 	{
 		//Set the button bar in the initial position and set the buttons
 		transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, Screen.height/2.0f, ButtonProperties.buttonBarZDepth);
@@ -241,6 +241,9 @@ public class ButtonBar : MonoBehaviour
 
 	public void SetCurrentButton(int id_button)
 	{
+		if(!bInit)
+			Init();
+
 		foreach(GameObject button in listButtons){
 			BasicButton b = button.GetComponent<BasicButton>();
 			if(b.ID==id_button){
@@ -277,6 +280,7 @@ public class ButtonBar : MonoBehaviour
 		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Checked=false;
 		}
+		currentSelected=null;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

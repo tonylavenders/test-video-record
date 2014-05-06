@@ -136,8 +136,8 @@ public class GUIManager : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void OnGUI() {
-
+	void OnGUI()
+	{
 		//This is necessary for the Samsung Galaxy S (Android 2.3)
 		//Pressing HOME button freezes the device
 		if(Application.platform == RuntimePlatform.Android){
@@ -154,7 +154,9 @@ public class GUIManager : MonoBehaviour
 
 	void OnApplicationPause(bool pauseStatus)
 	{
-		Data.selChapter.Save();
+		if(Data.selChapter!=null){
+			Data.selChapter.Save();
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
