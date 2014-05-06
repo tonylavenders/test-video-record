@@ -136,7 +136,7 @@ public class GUIManager : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void OnGUI()
+	protected virtual void OnGUI()
 	{
 		//This is necessary for the Samsung Galaxy S (Android 2.3)
 		//Pressing HOME button freezes the device

@@ -9,11 +9,47 @@ using TVR;
 //Script attached to the GUICamera object
 public class GUIManagerChapters : GUIManager
 {
+	private const string NEW_CHAPTER_TEXT = "< Video Name >";
 	public ButtonBar mCharactersButtonBar;
 	public ButtonBar mBackgroundsButtonBar;
 	public ButtonBar mMusicButtonBar;
+	private TVR.Button.InputText mInput;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	protected override void Start() {
+		Font fontArial = (Font)ResourcesManager.LoadResource("Interface/Fonts/Futura Oblique", "Chapter");
+		Texture white = (Texture)ResourcesManager.LoadResource("Shared/white_pixel", "Chapter");
+		Rect rectFileName = new Rect(0, 20, Screen.width, 20);
+
+		mInput = new TVR.Button.InputText(rectFileName, null, null, null, null, fontArial, white, NEW_CHAPTER_TEXT, false);
+		mInput.TextSize = 25;
+		mInput.TextPosition = TextAnchor.MiddleCenter;
+		mInput.TextColor = Color.white;
+		mInput.specialCharacters = new char[]{ ' ', '-', '_', '.' };
+		mInput.maxLength = 14;
+		mInput.Alpha = 1;
+		mInput.Text = "";
+		mInput.selectedCallBack = inputSelected;
+		mInput.unSelectedCallBack = inputUnSelected;
+
+		//mInput.enable = false;
+		//mInput.Fade(1, TVR.Globals.ANIMATIONDURATION, false, true, 0);
+		base.Start();
+	}
+
+	protected virtual void Update() {
+		mInput.Update();
+	}
+
+	protected override void OnGUI() {
+		mInput.OnGUIAllEvents();
+
+		if(Event.current.type == EventType.Repaint) {
+			mInput.OnGUI();
+		}
+		base.OnGUI();
+	}
 
 	protected override void InitButtons()
 	{
@@ -166,6 +202,19 @@ public class GUIManagerChapters : GUIManager
 	public void OnButtonMusicPressed(BasicButton sender)
 	{
 		//Debug.Log("music: " + sender.iObj.Number);
+	}
+
+	void OnDestroy() {
+		TVR.Helpers.ResourcesManager.UnloadScene("Chapter");
+	}
+
+	private void inputSelected(TVR.Button.ExtendedButton sender) {
+		blur  = true;
+	}
+	private void inputUnSelected(TVR.Button.ExtendedButton sender) {
+		blur  = false;
+		/*Data.selChapter.Title = sender.Text;
+		Data.selChapter.Save();*/
 	}
 }
 
