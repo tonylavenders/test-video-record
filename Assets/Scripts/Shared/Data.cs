@@ -59,8 +59,8 @@ namespace TVR {
 				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (3, 'Long Shot')");
 
 				db.ExecuteNonQuery("CREATE TABLE [Chapters] ([IdChapter] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER NOT NULL, [Title] TEXT NOT NULL, [Information] TEXT NOT NULL, [IdCharacter] INTEGER NOT NULL, [IdBackground] INTEGER NOT NULL, [IdMusic] INTEGER)");
-				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdChapter] INTEGER NOT NULL REFERENCES [Chapters] ([IdChapter]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlockTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL)");
-				db.ExecuteNonQuery("CREATE TABLE [CharacterProps] ([IdCharacterProps] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdBlock] INTEGER NOT NULL REFERENCES [Blocks] ([IdBlock]) ON DELETE CASCADE, [IdResource] INTEGER NOT NULL, [Dummy] TEXT NOT NULL)");
+				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdChapter] INTEGER NOT NULL REFERENCES [Chapters] ([IdChapter]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlockTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL, [IdProp] INTEGER)");
+				//db.ExecuteNonQuery("CREATE TABLE [CharacterProps] ([IdCharacterProps] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdBlock] INTEGER NOT NULL REFERENCES [Blocks] ([IdBlock]) ON DELETE CASCADE, [IdResource] INTEGER NOT NULL, [Dummy] TEXT NOT NULL)");
 				db.ExecuteQuery("pragma user_version=1;");
 			}
 			/*if(VersionDB < 2) {
@@ -283,14 +283,14 @@ namespace TVR {
 				}
 			}
 
-			public Block newBlock(Block.blockTypes idBlockType, Block.shotTypes idShotType, int frames, int idExpression, int idAnimation) {
-				return newBlock(mBlocks.Count + 1, idBlockType, idShotType, frames, idExpression, idAnimation);
+			public Block newBlock(Block.blockTypes idBlockType, Block.shotTypes idShotType, int frames, int idExpression, int idAnimation, int? idProp) {
+				return newBlock(mBlocks.Count + 1, idBlockType, idShotType, frames, idExpression, idAnimation, idProp);
 			}
 
-			public Block newBlock(int number, Block.blockTypes idBlockType, Block.shotTypes idShotType, int frames, int idExpression, int idAnimation) {
+			public Block newBlock(int number, Block.blockTypes idBlockType, Block.shotTypes idShotType, int frames, int idExpression, int idAnimation, int? idProp) {
 				if(number <= 0 || number > mBlocks.Count + 1)
 					throw new System.Exception("The number must be between 0 and number of Blocks in this chapter.");
-				Block block = new Block(-1, idBlockType, idShotType, number, frames, idExpression, idAnimation, this);
+				Block block = new Block(-1, idBlockType, idShotType, number, frames, idExpression, idAnimation, idProp, this);
 				block.Save();
 				return block;
 			}
@@ -301,19 +301,19 @@ namespace TVR {
 
 			private void renumberBlocks(Block block, int oldNumber, int newNumber) {
 				if(oldNumber == -1) {
-					//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Number = Number + 1 WHERE IdChapter <> " + block.IdChapter + " AND Number >= " + newNumber);
+					db.ExecuteNonQuery("UPDATE Blocks SET Number = Number + 1 WHERE IdBlock <> " + block.IdBlock + " AND IdChapter = " + block.IdChapter + " AND Number >= " + newNumber);
 					foreach(Block b in mBlocks) {
 						if(b != block && b.Number >= newNumber)
 							b.forceNumber(b.Number + 1);
 					}
 				} else if(oldNumber > newNumber) {
-					//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Number = Number + 1 WHERE IdChapter <> " + block.IdChapter + " AND Number >= " + newNumber + " AND Number < " + oldNumber);
+					db.ExecuteNonQuery("UPDATE Blocks SET Number = Number + 1 WHERE IdBlock <> " + block.IdBlock + " AND IdChapter = " + block.IdChapter + " AND Number >= " + newNumber + " AND Number < " + oldNumber);
 					foreach(Block b in mBlocks) {
 						if(b != block && b.Number >= newNumber && b.Number < oldNumber)
 							b.forceNumber(b.Number + 1);
 					}
 				} else if(oldNumber < newNumber) {
-					//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Number = Number - 1 WHERE IdChapter <> " + block.IdChapter + " AND Number <= " + newNumber + " AND Number > " + oldNumber);
+					db.ExecuteNonQuery("UPDATE Blocks SET Number = Number - 1 WHERE IdBlock <> " + block.IdBlock + " AND IdChapter = " + block.IdChapter + " AND Number <= " + newNumber + " AND Number > " + oldNumber);
 					foreach(Block b in mBlocks) {
 						if(b != block && b.Number <= newNumber && b.Number > oldNumber)
 							b.forceNumber(b.Number - 1);
@@ -334,7 +334,7 @@ namespace TVR {
 			private void removeBlock(Block block) {
 				if(mBlocks.Contains(block))
 					mBlocks.Remove(block);
-				//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Number = Number - 1 WHERE IdChapter <> " + chapter.IdChapter + " AND Number > " + chapter.Number);
+				db.ExecuteNonQuery("UPDATE Blocks SET Number = Number - 1 WHERE IdBlock <> " + block.IdBlock + " AND IdChapter = " + block.IdChapter + " AND Number > " + block.Number);
 				foreach(Block b in mBlocks) {
 					if(b != block && b.Number > block.Number)
 						b.forceNumber(b.Number - 1);
@@ -358,7 +358,7 @@ namespace TVR {
 						return 0;
 			}
 
-			public class Block : System.IComparable<Chapter>, iObject {
+			public class Block : System.IComparable<Block>, iObject {
 				public enum blockTypes {
 					Time = 1,
 					Voice = 2,
@@ -369,6 +369,7 @@ namespace TVR {
 					LongShot = 3,
 				}
 
+				private Chapter mParent;
 				private int mIdBlock;
 				private blockTypes mIdBlockType;
 				private shotTypes mIdShotType;
@@ -376,14 +377,18 @@ namespace TVR {
 				private int mFrames;
 				private int mIdExpression;
 				private int mIdAnimation;
-				private Chapter mParent;
+				private int? mIdProp;
 
 				private blockTypes mOldIdBlockType;
 				private shotTypes mOldIdShotType;
 				private int mOldFrames;
 				private int mOldIdExpression;
 				private int mOldIdAnimation;
+				private int? mOldIdProp;
 
+				public Chapter Parent {
+					get { return mParent; }
+				}
 				public int IdBlock {
 					get { return mIdBlock; }
 				}
@@ -416,11 +421,22 @@ namespace TVR {
 					get { return mIdAnimation; }
 					set { mIdAnimation = value; }
 				}
-				public Chapter Parent {
-					get { return mParent; }
+				public int? IdProp {
+					get { return mIdProp; }
+					set { mIdProp = value; }
+				}
+				public int IdPropNotNullable {
+					get { return mIdProp ?? -1; }
+					set {
+						if(value < 0)
+							mIdProp = null;
+						else
+							mIdProp = value;
+					}
 				}
 
-				public Block(int idBlock, blockTypes idBlockType, shotTypes idShotType, int number, int frames, int idExpression, int idAnimation, Chapter parent) {
+				public Block(int idBlock, blockTypes idBlockType, shotTypes idShotType, int number, int frames, int idExpression, int idAnimation, int? idProp, Chapter parent) {
+					mParent = parent;
 					mIdBlock = idBlock;
 					mIdBlockType = idBlockType;
 					mIdShotType = idShotType;
@@ -428,23 +444,26 @@ namespace TVR {
 					mFrames = frames;
 					mIdExpression = idExpression;
 					mIdAnimation = idAnimation;
-					mParent = parent;
+					mIdProp = idProp;
 
 					mOldIdBlockType = idBlockType;
 					mOldIdShotType = idShotType;
 					mOldFrames = frames;
 					mOldIdExpression = idExpression;
 					mOldIdAnimation = idAnimation;
+					mOldIdProp = idProp;
 				}
 
 				public void Save() {
 					if(mIdBlock == -1) {
-						//TODO:db.ExecuteNonQuery("INSERT INTO Chapters (Number, Title, Information, IdCharacter, IdBackground, IdMusic) VALUES (" + mNumber + ", '" + mTitle.Replace("'", "''").Trim() + "', '" + mInformation.Replace("'", "''").Trim() + "', " + mIdCharacter + ", " + mIdBackground + ", " + idMus + ")");
-						//TODO:mIdBlock = (int)db.ExecuteQuery("SELECT MAX(IdChapter) as ID FROM Chapters")[0]["ID"];
+						string idProp = mIdProp == null ? "NULL" : mIdProp.ToString();
+						db.ExecuteNonQuery("INSERT INTO Blocks (IdChapter, IdBlockType, IdShotType, Number, Frames, IdExpression, IdAnimation, IdProp) VALUES (" + mParent.mIdChapter + ", " + (int)mIdBlockType + ", " + (int)mIdShotType + ", " + mNumber + ", " + mFrames + ", " + mIdExpression + ", " + mIdAnimation + ", " + idProp + ")");
+						mIdBlock = (int)db.ExecuteQuery("SELECT MAX(IdBlock) as ID FROM Blocks")[0]["ID"];
 						mParent.addBlock(this);
 					} else {
 						if(Change()) {
-							//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Title = '" + Title.Replace("'", "''").Trim() + "', Information = '" + Information.Replace("'", "''").Trim() + "', IdCharacter = " + mIdCharacter + ", IdBackground = " + mIdBackground + ", IdMusic = " + idMus + " WHERE IdChapter = " + mIdBlock);
+							string idProp = mIdProp == null ? "NULL" : mIdProp.ToString();
+							db.ExecuteNonQuery("UPDATE Blocks SET IdBlockType = " + (int)mIdBlockType + ", IdShotType = " + (int)mIdShotType + ", Frames = " + mFrames + ", IdExpression = " + mIdExpression + ", IdAnimation = " + mIdAnimation + ", IdProp = " + idProp + " WHERE IdBlock = " + mIdBlock);
 							mIdBlockType = mOldIdBlockType;
 							mIdShotType = mOldIdShotType;
 							mFrames = mOldFrames;
@@ -455,7 +474,7 @@ namespace TVR {
 				}
 
 				public bool Change() {
-					return mIdBlockType != mOldIdBlockType || mIdShotType != mOldIdShotType || mFrames != mOldFrames || mIdExpression != mOldIdExpression || mIdAnimation != mOldIdAnimation;
+					return mIdBlockType != mOldIdBlockType || mIdShotType != mOldIdShotType || mFrames != mOldFrames || mIdExpression != mOldIdExpression || mIdAnimation != mOldIdAnimation || mIdProp != mOldIdProp;
 				}
 
 				public void Delete() {
@@ -467,7 +486,7 @@ namespace TVR {
 					if(mNumber != newNumber) {
 						if(newNumber <= 0 || newNumber > mParent.mBlocks.Count)
 							throw new System.Exception("The new number must be between 0 and mParent.Blocks.Count.");
-						//TODO:db.ExecuteNonQuery("UPDATE Chapters SET Number = " + newNumber + " WHERE IdChapter = " + mIdBlock);
+						db.ExecuteNonQuery("UPDATE Blocks SET Number = " + newNumber + " WHERE IdBlock = " + mIdBlock);
 						mParent.renumberBlocks(this, mNumber, newNumber);
 						mParent.mBlocks.Sort();
 						mNumber = newNumber;
@@ -488,9 +507,10 @@ namespace TVR {
 					mOldFrames = mFrames;
 					mOldIdExpression = mIdExpression;
 					mOldIdAnimation = mIdAnimation;
+					mOldIdProp = mIdProp;
 				}
 
-				public int CompareTo(Chapter other) {		
+				public int CompareTo(Block other) {		
 					if(this.Number < other.Number)
 						return -1;
 					else if(this.Number > other.Number)
