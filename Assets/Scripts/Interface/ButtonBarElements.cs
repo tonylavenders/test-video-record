@@ -17,18 +17,58 @@ public class ButtonBarElements : ButtonBar
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	protected override void SetPosition()
+	{
+		//Set the button bar in the initial position and set the buttons
+		transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, Screen.height/2.0f, ButtonProperties.buttonBarZDepth);
+		SetButtons();
+		
+		//Move the button bar to the correct position (buttons are moved with the button bar)
+		if(align==Aligns.left){
+			pos_x = (ButtonProperties.buttonBarScaleX/2.0f) + ButtonProperties.buttonBarScaleX*depth_x + depth_x;
+		}
+		else if(align==Aligns.right){
+			pos_x = Screen.width - (ButtonProperties.buttonBarScaleX/2.0f) + ButtonProperties.buttonBarScaleX*depth_x + depth_x;
+		}
+		
+		transform.position = new Vector3(pos_x, transform.position.y, ButtonProperties.buttonBarZDepth);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	protected override void SetButtons()
 	{
-		//No elements in DB yet
-		if(/*num. elementss in DB==0*/ true){
-			listButtons.Add(Instantiate(mButtons[0]) as GameObject);
-			listButtons[0].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2, ButtonProperties.buttonZDepth);
-			listButtons[0].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
-			listButtons[0].transform.parent = transform;
+		//Init button bar
+		float buttonsTotalHeight = ButtonProperties.buttonSize*((Data.Chapters.Count+1)) + ButtonProperties.buttonMargin*(Data.Chapters.Count+2);
+		if(buttonsTotalHeight > Screen.height){
+			float new_pos_y = Screen.height - buttonsTotalHeight/2.0f;
+			transform.position = new Vector3(transform.position.x, new_pos_y, transform.position.z);
+			transform.localScale = new Vector3(ButtonProperties.buttonBarScaleX, buttonsTotalHeight, 1);
 		}
-		//Create buttons for elementss in DB
-		else{
+
+		Vector3 init_pos = new Vector3(transform.position.x, Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2, ButtonProperties.buttonZDepth);
+		int i=1;
+
+		//Add chapters button
+		listButtons.Add(Instantiate(mButtons[0]) as GameObject);
+
+		//Chapters buttons
+		if(elementType==ElementTypes.chapters){
+			foreach(Data.Chapter chapter in Data.Chapters){
+				listButtons.Add(Instantiate(mButtons[1]) as GameObject);
+				listButtons[i].transform.position = init_pos - new Vector3(0, (ButtonProperties.buttonSize + ButtonProperties.buttonMargin)*(i-1), 0);
+				listButtons[i].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
+				listButtons[i].transform.parent = transform;
+				listButtons[i].GetComponent<BasicButton>().iObj = chapter;
+				listButtons[i].GetComponent<BasicButton>().Refresh();
+				listButtons[i].GetComponent<BasicButton>().Show(0, 0.2f);
+				i++;
+			}
 		}
+
+		listButtons[0].transform.position = init_pos - new Vector3(0, (ButtonProperties.buttonSize + ButtonProperties.buttonMargin)*(i-1), 0);
+		listButtons[0].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
+		listButtons[0].transform.parent = transform;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
