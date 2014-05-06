@@ -10,9 +10,9 @@ public class Updater : MonoBehaviour {
 	}
 
 	void LateUpdate() {
-		/*if(InputBRB.GetMouseButtonUp(0)) {
-			BRB.Button.BasicButton.mouseUp();
+		if(InputHelp.GetMouseButtonUp(0)) {
+			TVR.Button.BasicButton.mouseUp();
 			//System.GC.Collect();
-		}*/
+		}
 	}
 }
