@@ -220,9 +220,9 @@ namespace TVR {
 				get { return mBlocks; }
 			}
 
-			private static Block mSelBlock;
+			private Block mSelBlock;
 
-			public static Block selBlock {
+			public Block selBlock {
 				get { return mSelBlock; }
 				set { mSelBlock = value; }
 			}
