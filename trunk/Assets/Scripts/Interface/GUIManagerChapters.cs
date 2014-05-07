@@ -19,7 +19,7 @@ public class GUIManagerChapters : GUIManager
 
 	public override bool blur {
 		set {
-			mInput.enable = value;
+			mInput.enable = !value;
 			base.blur = value;
 		}
 	}
