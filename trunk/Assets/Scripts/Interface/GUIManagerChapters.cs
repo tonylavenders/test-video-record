@@ -95,7 +95,6 @@ public class GUIManagerChapters : GUIManager
 			mCharactersButtonBar.Show();
 		}else{
 			mCharactersButtonBar.Hide();
-			Data.selChapter.Save();
 		}
 		Count(sender.Checked);
 	}
@@ -108,7 +107,6 @@ public class GUIManagerChapters : GUIManager
 			mBackgroundsButtonBar.Show();
 		}else{
 			mBackgroundsButtonBar.Hide();
-			Data.selChapter.Save();
 		}
 		Count(sender.Checked);
 	}
@@ -121,7 +119,6 @@ public class GUIManagerChapters : GUIManager
 			mMusicButtonBar.Show();
 		}else{
 			mMusicButtonBar.Hide();
-			Data.selChapter.Save();
 		}
 		Count(sender.Checked);
 	}
