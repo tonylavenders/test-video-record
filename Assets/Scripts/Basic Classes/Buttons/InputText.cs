@@ -11,11 +11,10 @@ namespace TVR.Button
 		private Rect mIndicatorRect;
 		private string mEmptyText;
 		private int mMaxLength;
-		//private string mTempText;
-		#if UNITY_IPHONE || UNITY_ANDROID
+		//#if UNITY_IPHONE || UNITY_ANDROID
 		private TouchScreenKeyboard mKeyboard;
 		private string mOldInput;
-		#endif
+		//#endif
 		private int mIndicatorPos;
 		private char[] mSpecialCharacters = new char[0]; //{ ' ', '-', '_', '.' };
 		public DelegateButton selectedCallBack;
@@ -28,15 +27,47 @@ namespace TVR.Button
 		public bool selected {
 			get { return mSelected; }
 			set {
-				if(mSelected != value) {
+				/*if(mSelected != value) {
 					if(value && selectedCallBack != null)
 						selectedCallBack(this);
 					else if(!value && unSelectedCallBack != null)
-						unSelectedCallBack(this);
+							unSelectedCallBack(this);
 					mSelected = value;
 					disableOnMouseMove = !value;
 					mDrawIndicator = value;
-					#if UNITY_IPHONE || UNITY_ANDROID
+				#if UNITY_IPHONE || UNITY_ANDROID
+					if(mSelected) {
+						mIndicatorPos = Text.Length;
+						if(mKeyboard == null) {
+							TouchScreenKeyboard.hideInput = true;
+							mKeyboard = TouchScreenKeyboard.Open(Text, TouchScreenKeyboardType.Default, false);
+							mOldInput = Text;
+						} else {
+							mKeyboard.active = true;
+							mKeyboard.text = Text;
+							mOldInput = Text;
+						}
+
+					} else
+						mKeyboard.active = false;
+				} else if(mSelected == true && mKeyboard != null && mKeyboard.active == false) {
+					mKeyboard.active = true;
+					mKeyboard.text = Text;
+					mOldInput = Text;
+				#else
+					if(mSelected)
+						mIndicatorPos = Text.Length;
+				#endif
+				}*/
+				/*if(mSelected != value) {
+					if(value && selectedCallBack != null)
+						selectedCallBack(this);
+					else if(!value && unSelectedCallBack != null)
+							unSelectedCallBack(this);
+					mSelected = value;
+					disableOnMouseMove = !value;
+					mDrawIndicator = value;
+				#if UNITY_IPHONE || UNITY_ANDROID
 					if(mSelected) {
 						mIndicatorPos = Text.Length;
 						if(Application.platform == RuntimePlatform.IPhonePlayer) {
@@ -58,10 +89,51 @@ namespace TVR.Button
 					mKeyboard.active = true;
 					mKeyboard.text = Text;
 					mOldInput = Text;
-					#else
+				#else
 					if(mSelected)
 						mIndicatorPos = Text.Length;
-					#endif
+				#endif
+				}*/
+				if(Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android) {
+					if(mSelected != value) {
+						if(value && selectedCallBack != null)
+							selectedCallBack(this);
+						else if(!value && unSelectedCallBack != null)
+								unSelectedCallBack(this);
+						mSelected = value;
+						disableOnMouseMove = !value;
+						mDrawIndicator = value;
+						if(mSelected) {
+							mIndicatorPos = Text.Length;
+							if(mKeyboard == null) {
+								TouchScreenKeyboard.hideInput = true;
+								mKeyboard = TouchScreenKeyboard.Open(Text, TouchScreenKeyboardType.Default, false);
+								mOldInput = Text;
+							} else {
+								mKeyboard.active = true;
+								mKeyboard.text = Text;
+								mOldInput = Text;
+							}
+
+						} else
+								mKeyboard.active = false;
+					} else if(mSelected == true && mKeyboard != null && mKeyboard.active == false) {
+							mKeyboard.active = true;
+							mKeyboard.text = Text;
+							mOldInput = Text;
+						}
+				} else {
+					if(mSelected != value) {
+						if(value && selectedCallBack != null)
+							selectedCallBack(this);
+						else if(!value && unSelectedCallBack != null)
+								unSelectedCallBack(this);
+						mSelected = value;
+						disableOnMouseMove = !value;
+						mDrawIndicator = value;
+						if(mSelected)
+							mIndicatorPos = Text.Length;
+					}
 				}
 			}
 		}
@@ -81,9 +153,9 @@ namespace TVR.Button
 			mMaxLength = -1;
 			mStyle.wordWrap = false;
 			mIndicatorPos = 0;
-			#if UNITY_IPHONE || UNITY_ANDROID
+			//#if UNITY_IPHONE || UNITY_ANDROID
 			mOldInput = "";
-			#endif 
+			//#endif 
 		}
 		
 		public InputText(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, DelegateButton delega, Font font, Texture Indicator, string emptyText, bool bKeepSt = false) : base (r,down,up,disableDown,disableUp, delega, font, bKeepSt) {
@@ -97,9 +169,9 @@ namespace TVR.Button
 			mMaxLength = -1;
 			mStyle.wordWrap = false;
 			mIndicatorPos = 0;
-			#if UNITY_IPHONE || UNITY_ANDROID
+			//#if UNITY_IPHONE || UNITY_ANDROID
 			mOldInput = "";
-			#endif 
+			//#endif 
 		}
 		
 		public override void Update() {
@@ -126,31 +198,36 @@ namespace TVR.Button
 						else
 							break;
 					}
-					#if UNITY_IPHONE || UNITY_ANDROID
-					mKeyboard.text = Text.Substring(0, mIndicatorPos);
-					mOldInput = mKeyboard.text;
-					#endif
+					if(Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android) {
+						//#if UNITY_IPHONE || UNITY_ANDROID
+						mKeyboard.text = Text.Substring(0, mIndicatorPos);
+						mOldInput = mKeyboard.text;
+						//#endif
+					}
 				}
 				
 				string input;
-				#if UNITY_IPHONE || UNITY_ANDROID
-				input = "";
-				int count = 0;
-				for(int i = 0; i < Mathf.Min(mOldInput.Length, mKeyboard.text.Length); ++i) {
-					if(mOldInput[i] == mKeyboard.text[i])
-						count++;
-					else
-						break;
+				if(Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android) {
+				//#if UNITY_IPHONE || UNITY_ANDROID
+					input = "";
+					int count = 0;
+					for(int i = 0; i < Mathf.Min(mOldInput.Length, mKeyboard.text.Length); ++i) {
+						if(mOldInput[i] == mKeyboard.text[i])
+							count++;
+						else
+							break;
+					}
+					for(int i = 0; i < mOldInput.Length - count; ++i) {
+						input += '\b';
+					}
+					if(count < mKeyboard.text.Length)
+						input += mKeyboard.text.Substring(count);
+					mOldInput = mKeyboard.text;
+				} else {
+				//#else
+					input = Input.inputString;
+				//#endif
 				}
-				for(int i = 0; i < mOldInput.Length - count; ++i) {
-					input += '\b';
-				}
-				if(count < mKeyboard.text.Length)
-					input += mKeyboard.text.Substring(count);
-				mOldInput = mKeyboard.text;
-				#else
-				input = Input.inputString;
-				#endif
 				
 				string temp = Text.Substring(0, mIndicatorPos);
 				string temp2 = Text.Substring(mIndicatorPos);
@@ -269,9 +346,8 @@ namespace TVR.Button
 		
 		public void OnGUIAllEvents() {
 			if(mSelected) {
-				if(Application.platform == RuntimePlatform.IPhonePlayer) {
-					
-				} else {
+				if(Application.platform != RuntimePlatform.IPhonePlayer && Application.platform != RuntimePlatform.Android) {
+				//#if !UNITY_IPHONE && UNITY_ANDROID
 					Event e = Event.current;
 					if(e.type == EventType.KeyDown) {
 						if(e.isKey) {
@@ -299,6 +375,7 @@ namespace TVR.Button
 							}
 						}
 					}
+				//#endif
 				}
 			}
 		}
