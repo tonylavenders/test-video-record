@@ -347,10 +347,12 @@ public class ButtonBar : MonoBehaviour
 
 	public void Hide()
 	{
+		//If the button of the buttonbar is pressed, then the buttonbar is faded out
 		if(mGUIManager.Counter==1){
 			mFade.Reset(0f, Globals.ANIMATIONDURATION);
 			state=States.fade_out;
 		}
+		//If another button is pressed, then the current buttonbar is hidden and new buttonbar is faded in
 		else{
 			mFade.Value=0f;
 			Color c = renderer.material.color;
@@ -360,6 +362,10 @@ public class ButtonBar : MonoBehaviour
 
 		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Hide(0, 0.2f);
+		}
+
+		if(Data.selChapter!=null){
+			Data.selChapter.Save();
 		}
 	}
 }

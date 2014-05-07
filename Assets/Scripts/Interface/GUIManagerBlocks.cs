@@ -40,7 +40,6 @@ public class GUIManagerBlocks : GUIManager
 			mAnimationsButtonBar.Show();
 		}else{
 			mAnimationsButtonBar.Hide();
-			Data.selChapter.Save();
 		}
 		Count(sender.Checked);
 	}
@@ -53,7 +52,6 @@ public class GUIManagerBlocks : GUIManager
 			mExpressionsButtonBar.Show();
 		}else{
 			mExpressionsButtonBar.Hide();
-			Data.selChapter.Save();
 		}
 		Count(sender.Checked);
 	}
