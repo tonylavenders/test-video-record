@@ -6,8 +6,12 @@ namespace TVR {
 	public static class Data {
 		private static SqliteDatabase db = new SqliteDatabase();
 		private static List<Chapter> mChapters;
-		public static Chapter selChapter;
+		private static Chapter mSelChapter;
 
+		public static Chapter selChapter {
+			get { return mSelChapter; }
+			set { mSelChapter = value; }
+		}
 		public static List<Chapter> Chapters {
 			get { return mChapters; }
 		}
@@ -214,6 +218,13 @@ namespace TVR {
 			}
 			public List<Block> Blocks {
 				get { return mBlocks; }
+			}
+
+			private static Block mSelBlock;
+
+			public static Block selBlock {
+				get { return mSelBlock; }
+				set { mSelBlock = value; }
 			}
 
 			public Chapter(int idChapter, int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
