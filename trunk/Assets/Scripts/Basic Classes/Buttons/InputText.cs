@@ -38,7 +38,7 @@ namespace TVR.Button
 				#if UNITY_IPHONE || UNITY_ANDROID
 					if(mSelected) {
 						mIndicatorPos = Text.Length;
-						if(mKeyboard == null) {
+						if(mKeyboard == null || Application.platform == RuntimePlatform.Android) {
 							TouchScreenKeyboard.hideInput = true;
 							mKeyboard = TouchScreenKeyboard.Open(Text, TouchScreenKeyboardType.Default, false);
 							mOldInput = Text;
@@ -51,8 +51,12 @@ namespace TVR.Button
 					} else
 						mKeyboard.active = false;
 				} else if(mSelected == true && mKeyboard != null && mKeyboard.active == false) {
-					mKeyboard.active = true;
-					mKeyboard.text = Text;
+					if(Application.platform == RuntimePlatform.IPhonePlayer) {
+						mKeyboard.active = true;
+						mKeyboard.text = Text;
+					} else {
+						mKeyboard = TouchScreenKeyboard.Open(Text, TouchScreenKeyboardType.Default, false);
+					}
 					mOldInput = Text;
 				#else
 					if(mSelected)
@@ -71,7 +75,7 @@ namespace TVR.Button
 					if(mSelected) {
 						mIndicatorPos = Text.Length;
 						if(Application.platform == RuntimePlatform.IPhonePlayer) {
-							if(mKeyboard == null) {
+							if(mKeyboard == null || Application.platform == RuntimePlatform.Android) {
 								TouchScreenKeyboard.hideInput = true;
 								mKeyboard = TouchScreenKeyboard.Open(Text, TouchScreenKeyboardType.Default, false);
 								mOldInput = Text;
@@ -86,8 +90,12 @@ namespace TVR.Button
 					} else if(Application.platform == RuntimePlatform.IPhonePlayer)
 						mKeyboard.active = false;
 				} else if(mSelected == true && Application.platform == RuntimePlatform.IPhonePlayer && mKeyboard != null && mKeyboard.active == false) {
-					mKeyboard.active = true;
-					mKeyboard.text = Text;
+					if(Application.platform == RuntimePlatform.IPhonePlayer) {
+						mKeyboard.active = true;
+						mKeyboard.text = Text;
+					} else {
+						mKeyboard = TouchScreenKeyboard.Open(Text, TouchScreenKeyboardType.Default, false);
+					}
 					mOldInput = Text;
 				#else
 					if(mSelected)
@@ -118,10 +126,10 @@ namespace TVR.Button
 						} else
 							mKeyboard.active = false;
 					} else if(mSelected == true && mKeyboard != null && mKeyboard.active == false) {
-						if(Application.platform == RuntimePlatform.IPhonePlayer){
+						if(Application.platform == RuntimePlatform.IPhonePlayer) {
 							mKeyboard.active = true;
 							mKeyboard.text = Text;
-						}else{
+						} else {
 							mKeyboard = TouchScreenKeyboard.Open(Text, TouchScreenKeyboardType.Default, false);
 						}
 						mOldInput = Text;
