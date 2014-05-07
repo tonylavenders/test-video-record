@@ -88,6 +88,17 @@ public class GUIManagerBlocks : GUIManager
 	{
 		Debug.Log("play blocks");
 	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	protected override void OnApplicationPause(bool pauseStatus)
+	{
+		base.OnApplicationPause(pauseStatus);
+		
+		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
+			Data.selChapter.selBlock.Save();
+		}
+	}
 }
 
 

@@ -50,16 +50,17 @@ public class BasicButton : MonoBehaviour
 	public bool Checked {
 		get { return bChecked; }
 		set {
-			if(bChecked!=value) {
+			if(bChecked!=value){
 				bChecked=value;
-				if(checkedCallback!=null)
-					checkedCallback(this);
-				if(value) {
+				if(value){
 					renderer.material.mainTexture = texChecked;
 					if(mButtonBar != null)
 						mButtonBar.ButtonPressed(this);
-				} else
+				}else{
 					renderer.material.mainTexture = texUnchecked;
+				}
+				if(checkedCallback!=null)
+					checkedCallback(this);
 			}
 		}
 	}
