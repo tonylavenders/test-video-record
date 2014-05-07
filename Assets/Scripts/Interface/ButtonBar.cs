@@ -57,7 +57,7 @@ public class ButtonBar : MonoBehaviour
 			if(value!=null){
 				mGUIManager.EnableButtons();
 				if(elementType==ElementTypes.chapters){
-					mGUIManager.mInput.Fade(1, Globals.ANIMATIONDURATION, true, true, -1);
+					mGUIManager.mInput.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
 					Data.selChapter = value.iObj as Data.Chapter;
 					mGUIManager.mInput.Text = Data.selChapter.Title;
 				}
@@ -339,7 +339,7 @@ public class ButtonBar : MonoBehaviour
 				button.GetComponent<BasicButton>().Show(); 
 			}
 			if(mGUIManager.mInput!=null && elementType!=ElementTypes.main && elementType!=ElementTypes.chapters && elementType!=ElementTypes.blocks){
-				mGUIManager.mInput.Fade(0, Globals.ANIMATIONDURATION*5, true, false);
+				mGUIManager.mInput.Fade(0, Globals.ANIMATIONDURATION, true, false);
 			}
 		}
 		else{
@@ -367,7 +367,7 @@ public class ButtonBar : MonoBehaviour
 			mFade.Reset(0f, Globals.ANIMATIONDURATION);
 			state=States.fade_out;
 			if(mGUIManager.mInput!=null){
-				mGUIManager.mInput.Fade(1, Globals.ANIMATIONDURATION*5, true, true, -1);
+				mGUIManager.mInput.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
 			}
 		}
 		//If another button is pressed, then the current buttonbar is hidden and new buttonbar is faded in
