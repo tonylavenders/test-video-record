@@ -41,7 +41,7 @@ public class GUIManager : MonoBehaviour
 	const float cameraZDepth = 0;
 	public int Counter = 0;
 	iBlur mBlur;
-	public bool blur {
+	public virtual bool blur {
 		get {
 			return mBlur.Enable;
 		}
