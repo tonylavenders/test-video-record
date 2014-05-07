@@ -116,18 +116,18 @@ namespace TVR.Button
 							}
 
 						} else
-								mKeyboard.active = false;
+							mKeyboard.active = false;
 					} else if(mSelected == true && mKeyboard != null && mKeyboard.active == false) {
-							mKeyboard.active = true;
-							mKeyboard.text = Text;
-							mOldInput = Text;
-						}
+						mKeyboard.active = true;
+						mKeyboard.text = Text;
+						mOldInput = Text;
+					}
 				} else {
 					if(mSelected != value) {
 						if(value && selectedCallBack != null)
 							selectedCallBack(this);
 						else if(!value && unSelectedCallBack != null)
-								unSelectedCallBack(this);
+							unSelectedCallBack(this);
 						mSelected = value;
 						disableOnMouseMove = !value;
 						mDrawIndicator = value;
