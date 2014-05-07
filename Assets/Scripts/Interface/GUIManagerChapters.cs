@@ -35,19 +35,21 @@ public class GUIManagerChapters : GUIManager
 		Rect rectFileName = new Rect((ButtonProperties.buttonBarScaleX * 2) + MARGIN, heigt, width, heigt);
 
 		mInput = new TVR.Button.InputText(rectFileName, white, white, white, white, fontArial, white, NEW_CHAPTER_TEXT, false);
-		//TODO: Sustituir esta línea.
+		//TODO: Sustituir por esta línea.
 		//mInput = new TVR.Button.InputText(rectFileName, null, null, null, null, fontArial, white, NEW_CHAPTER_TEXT, false);
 		mInput.TextSize = Mathf.RoundToInt(25 * (heigt / STANDARD_HEIGHT));
 		mInput.TextPosition = TextAnchor.MiddleCenter;
 		mInput.TextColor = Color.black;
 		mInput.specialCharacters = new char[]{ ' ', '-', '_', '.' };
 		mInput.maxLength = 14;
-		mInput.Alpha = 1;
 		mInput.Text = "";
 		mInput.selectedCallBack = inputSelected;
 		mInput.unSelectedCallBack = inputUnSelected;
 		mInput.scaleMode = ScaleMode.StretchToFill;
 
+		mInput.Alpha = 1;
+		//TODO: Comprobar si hay alguno seleccionado.
+		//mInput.Alpha = 0;
 		//mInput.enable = false;
 		//mInput.Fade(1, TVR.Globals.ANIMATIONDURATION, false, true, 0);
 	}
@@ -225,7 +227,7 @@ public class GUIManagerChapters : GUIManager
 	}
 	private void inputUnSelected(TVR.Button.ExtendedButton sender) {
 		blur  = false;
-		/*TODO:
+		/*TODO: guardar si hay alguno seleccionado.
 		Data.selChapter.Title = sender.Text;
 		Data.selChapter.Save();*/
 	}
