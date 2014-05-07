@@ -52,7 +52,7 @@ public class GUIManagerChapters : GUIManager
 
 		if(Data.selChapter!=null){
 			mInput.Text = Data.selChapter.Title;
-			mInput.Fade(1, Globals.ANIMATIONDURATION, true, true);
+			mInput.Fade(1, Globals.ANIMATIONDURATION, true, true, -1);
 		}
 
 		base.Start();
