@@ -59,8 +59,6 @@ public class GUIManager : MonoBehaviour
 
 	protected virtual void Start()
 	{
-		ButtonProperties.Init();
-
 		SetGUICamera();
 
 		mLeftButtonBar.Show();
