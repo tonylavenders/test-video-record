@@ -4,10 +4,8 @@
 using UnityEngine;
 using System.Collections;
 using TVR.Helpers;
-
-//Script attached to the GUICamera object
 using TVR;
-
+using TVR.Button;
 
 public class GUIManager : MonoBehaviour
 {
@@ -16,6 +14,8 @@ public class GUIManager : MonoBehaviour
 
 	public BasicButton mEditButton;
 	public BasicButton mPlayButton;
+
+	public InputText mInput;
 	
 	GameObject mCurrentCharacter;
 	public GameObject CurrentCharacter{
@@ -152,10 +152,10 @@ public class GUIManager : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void OnApplicationPause(bool pauseStatus)
+	protected virtual void OnApplicationPause(bool pauseStatus)
 	{
-		if(Data.selChapter!=null){
-			Data.selChapter.Save();
+		if(Application.platform == RuntimePlatform.Android){
+			Application.Quit();
 		}
 	}
 	

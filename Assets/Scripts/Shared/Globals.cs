@@ -31,8 +31,8 @@ namespace TVR {
 		public const int TITLEFONTSIZE = 35;
 		public const int SPEEDS = 5; //Número de velocidades que guardamos para hacer la media de velocidad en frenada.
 		
-		//NewScene
-		
+		public const string NEW_CHAPTER_TEXT = "< Video Name >";
+				
 		//Scene
 		public static Color colorInv = new Color(1,0.5f,0.5f);
 		public static Color colorOut = Color.gray;
@@ -47,7 +47,7 @@ namespace TVR {
 		public static string RendersPath = System.IO.Path.Combine(BasePath, "Renders");
 		
 		//Debug
-		public static bool CLEAR_DATA = true;
+		public static bool CLEAR_DATA = false;
 		public static bool INIT_IN_EDITOR = false;
 		public static int DEFAULT_BACKGROUND = -1; //-1 - Cajita / 1 - Solar / 2 - Clase / 3 - Habitacion.
 	}

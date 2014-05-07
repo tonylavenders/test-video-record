@@ -27,6 +27,7 @@ namespace TVR.Button
 		protected SmoothStep mSizeY;
 		
 		protected DelegateButton mDelegate;
+		public int ShadowDist;
 
 		public float x {
 			get { return rec.x; }
@@ -61,7 +62,7 @@ namespace TVR.Button
 			set { mTimePressed = value; }
 		}
 			
-		public ExtendedButton(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, bool bKeepSt = true) : base (r,down,up,disableDown,disableUp,bKeepSt) {
+		public ExtendedButton(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, bool bKeepSt = true, int shadowDist = 1) : base (r,down,up,disableDown,disableUp,bKeepSt) {
 			mMoveX = new SmoothStep(r.x, r.x, 1.0f, false);
 			mMoveY = new SmoothStep(r.y, r.y, 1.0f, false);
 			//mAlpha=1.0f;
@@ -69,9 +70,10 @@ namespace TVR.Button
 			mSizeX = new SmoothStep(r.width, r.width, 1.0f, false);
 			mSizeY = new SmoothStep(r.height, r.height, 1.0f, false);
 			LimitAlphaUpdate = -1;
+			ShadowDist=shadowDist;
 		}
 		
-		public ExtendedButton(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, DelegateButton delega, bool bKeepSt = true) : base (r,down,up,disableDown,disableUp,bKeepSt) {
+		public ExtendedButton(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, DelegateButton delega, bool bKeepSt = true, int shadowDist = 1) : base (r,down,up,disableDown,disableUp,bKeepSt) {
 			mMoveX = new SmoothStep(r.x, r.x, 1.0f, false);
 			mMoveY = new SmoothStep(r.y, r.y, 1.0f, false);
 			//mAlpha=1.0f;
@@ -80,6 +82,7 @@ namespace TVR.Button
 			mSizeY = new SmoothStep(r.height, r.height, 1.0f, false);
 			mDelegate = delega;
 			LimitAlphaUpdate = -1;
+			ShadowDist=shadowDist;
 		}		
 		
 		public bool containsMouse() {
@@ -161,8 +164,8 @@ namespace TVR.Button
 			float right = left + rec.width;
 			
 			if(shadow) {
-				botton += 10;
-				right += 10;
+				botton += ShadowDist;
+				right += ShadowDist;
 			}
 			
 			if(left < Screen.width && right > 0 && top < Screen.height && botton > 0)
@@ -175,8 +178,8 @@ namespace TVR.Button
 			Vector2 res = Vector2.zero;
 			Rect rect = new Rect(rec);
 			if(shadow) {
-				rect.width += 10;
-				rect.height += 10;
+				rect.width += ShadowDist;
+				rect.height += ShadowDist;
 			}
 			if(rect.x < 0 /*&& rect.xMax>0*/) {
 				res.x = rect.x;
@@ -282,7 +285,9 @@ namespace TVR.Button
 			if(shadow) {
 				Color preColor = GUI.color;
 				GUI.color = preColor * new Color(0, 0, 0, 0.12f * mFade.Value * alpha);
-				GUI.DrawTexture(new Rect(rec.x + 10, rec.y + 10, rec.width, rec.height), TexDown, scaleMode, true);
+				if(TexDown!=null){
+					GUI.DrawTexture(new Rect(rec.x + ShadowDist, rec.y + ShadowDist, rec.width, rec.height), TexDown, scaleMode, true);
+				}
 				GUI.color = preColor;
 			}
 		}

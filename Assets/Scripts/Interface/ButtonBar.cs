@@ -54,8 +54,17 @@ public class ButtonBar : MonoBehaviour
 	protected BasicButton currentSelected{
 		get { return mCurrentSelected; }
 		set {
-			if(mCurrentSelected==null && value!=null)
+			if(value!=null){
 				mGUIManager.EnableButtons();
+				if(elementType==ElementTypes.chapters){
+					mGUIManager.mInput.Fade(1, Globals.ANIMATIONDURATION, true, true);
+					Data.selChapter = value.iObj as Data.Chapter;
+					mGUIManager.mInput.Text = Data.selChapter.Title;
+				}
+			}else if(elementType==ElementTypes.chapters){
+				mGUIManager.mInput.Fade(0, Globals.ANIMATIONDURATION, true, false);
+				Data.selChapter = null;
+			}
 			mCurrentSelected=value;
 		}
 	}
@@ -238,15 +247,18 @@ public class ButtonBar : MonoBehaviour
 	//A button informs to the ButtonBar that is pressed, ButtonBar informs all buttons to get unchecked
 	public void ButtonPressed(BasicButton sender)
 	{
-		currentSelected=sender;
+		if(sender.buttonType!=ButtonType.ADD_ELEM){
+			currentSelected=sender;
 
-		foreach(GameObject button in listButtons){
-			BasicButton b = button.GetComponent<BasicButton>();
-			if(sender!=b)
-				b.Checked=false;
+			foreach(GameObject button in listButtons){
+				BasicButton b = button.GetComponent<BasicButton>();
+				if(sender!=b)
+					b.Checked=false;
+			}
+			mSpeed.End();
 		}
-		mSpeed.End();
 	}
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -291,7 +303,7 @@ public class ButtonBar : MonoBehaviour
 		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Checked=false;
 		}
-		currentSelected=null;
+		//currentSelected=null;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,6 +338,9 @@ public class ButtonBar : MonoBehaviour
 			foreach(GameObject button in listButtons){
 				button.GetComponent<BasicButton>().Show(); 
 			}
+			if(mGUIManager.mInput!=null && elementType!=ElementTypes.main && elementType!=ElementTypes.chapters && elementType!=ElementTypes.blocks){
+				mGUIManager.mInput.Fade(0, Globals.ANIMATIONDURATION*5, true, false);
+			}
 		}
 		else{
 			mFade.Value=1f;
@@ -351,6 +366,9 @@ public class ButtonBar : MonoBehaviour
 		if(mGUIManager.Counter==1){
 			mFade.Reset(0f, Globals.ANIMATIONDURATION);
 			state=States.fade_out;
+			if(mGUIManager.mInput!=null){
+				mGUIManager.mInput.Fade(1, Globals.ANIMATIONDURATION*5, true, true);
+			}
 		}
 		//If another button is pressed, then the current buttonbar is hidden and new buttonbar is faded in
 		else{

@@ -1,21 +1,20 @@
-﻿//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //http://forum.unity3d.com/threads/88485-2D-Quad-In-Camera-Space
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using UnityEngine;
 using System.Collections;
 using TVR.Helpers;
+using TVR.Button;
 using TVR;
 
 //Script attached to the GUICamera object
 public class GUIManagerChapters : GUIManager
 {
-	private const string NEW_CHAPTER_TEXT = "< Video Name >";
-	private const float STANDARD_HEIGHT = 768f / 20f;
+	private const float STANDARD_HEIGHT = 768f / 12;
 	private const int MARGIN = 10;
 	public ButtonBar mCharactersButtonBar;
 	public ButtonBar mBackgroundsButtonBar;
 	public ButtonBar mMusicButtonBar;
-	private TVR.Button.InputText mInput;
 
 	public override bool blur {
 		set {
@@ -26,46 +25,59 @@ public class GUIManagerChapters : GUIManager
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	protected override void Start() {
-		base.Start();
+	protected override void Start()
+	{
 		Font fontArial = (Font)ResourcesManager.LoadResource("Interface/Fonts/Futura Oblique", "Chapter");
 		Texture white = (Texture)ResourcesManager.LoadResource("Shared/white_pixel", "Chapter");
 		float width = (Screen.width - (ButtonProperties.buttonBarScaleX * 4)) - (MARGIN * 2);
-		float heigt = Screen.height / 20; 
-		Rect rectFileName = new Rect((ButtonProperties.buttonBarScaleX * 2) + MARGIN, heigt, width, heigt);
+		float height = Screen.height / 12; 
+		float pos_y = Screen.height / 18; 
+		Rect rectFileName = new Rect((ButtonProperties.buttonBarScaleX * 2) + MARGIN, pos_y, width, height);
 
-		mInput = new TVR.Button.InputText(rectFileName, white, white, white, white, fontArial, white, NEW_CHAPTER_TEXT, false);
-		//TODO: Sustituir por esta línea.
-		//mInput = new TVR.Button.InputText(rectFileName, null, null, null, null, fontArial, white, NEW_CHAPTER_TEXT, false);
-		mInput.TextSize = Mathf.RoundToInt(25 * (heigt / STANDARD_HEIGHT));
+		//mInput = new InputText(rectFileName, white, white, white, white, fontArial, white, Globals.NEW_CHAPTER_TEXT, false, 2);
+		mInput = new InputText(rectFileName, null, null, null, null, fontArial, white, Globals.NEW_CHAPTER_TEXT, false, 2);
+		mInput.TextSize = Mathf.RoundToInt(50 * (height / STANDARD_HEIGHT));
 		mInput.TextPosition = TextAnchor.MiddleCenter;
-		mInput.TextColor = Color.black;
+		mInput.TextColor = Color.white;
 		mInput.specialCharacters = new char[]{ ' ', '-', '_', '.' };
-		mInput.maxLength = 14;
+		mInput.maxLength = 18;
 		mInput.Text = "";
+		mInput.shadow=true;
+		mInput.TextStyle=FontStyle.Bold;
 		mInput.selectedCallBack = inputSelected;
 		mInput.unSelectedCallBack = inputUnSelected;
 		mInput.scaleMode = ScaleMode.StretchToFill;
+		mInput.Alpha = 0;
+		mInput.enable = false;
 
-		mInput.Alpha = 1;
-		//TODO: Comprobar si hay alguno seleccionado.
-		//mInput.Alpha = 0;
-		//mInput.enable = false;
-		//mInput.Fade(1, TVR.Globals.ANIMATIONDURATION, false, true, 0);
+		if(Data.selChapter!=null){
+			mInput.Text = Data.selChapter.Title;
+			mInput.Fade(1, Globals.ANIMATIONDURATION, true, true);
+		}
+
+		base.Start();
 	}
 
-	protected virtual void Update() {
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void Update()
+	{
 		mInput.Update();
 	}
 
-	protected override void OnGUI() {
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	protected override void OnGUI()
+	{
 		mInput.OnGUIAllEvents();
 
-		if(Event.current.type == EventType.Repaint) {
+		if(Event.current.type == EventType.Repaint){
 			mInput.OnGUI();
 		}
 		base.OnGUI();
 	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	protected override void InitButtons()
 	{
@@ -166,7 +178,10 @@ public class GUIManagerChapters : GUIManager
 	{
 		HideAllButtonBars();
 
-		Data.selChapter = sender.iObj as Data.Chapter;
+		//Data.selChapter = sender.iObj as Data.Chapter;
+
+		//mInput.Text = Data.selChapter.Title;
+		//mInput.enable = true;
 
 		if(Data.selChapter.IdCharacter!=-1){
 			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
@@ -217,19 +232,41 @@ public class GUIManagerChapters : GUIManager
 		//Debug.Log("music: " + sender.iObj.Number);
 	}
 
-	void OnDestroy() {
-		TVR.Helpers.ResourcesManager.UnloadScene("Chapter");
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void OnDestroy()
+	{
+		ResourcesManager.UnloadScene("Chapter");
 	}
 
-	private void inputSelected(TVR.Button.ExtendedButton sender) {
-		blur  = true;
-		mInput.enable = true;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	private void inputSelected(ExtendedButton sender)
+	{
+		//blur  = true;
+		//mInput.enable = true;
 	}
-	private void inputUnSelected(TVR.Button.ExtendedButton sender) {
-		blur  = false;
-		/*TODO: guardar si hay alguno seleccionado.
-		Data.selChapter.Title = sender.Text;
-		Data.selChapter.Save();*/
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	 
+	private void inputUnSelected(ExtendedButton sender)
+	{
+		//blur  = false;
+		if(Data.selChapter!=null){
+			Data.selChapter.Title = mInput.Text;
+			Data.selChapter.Save();
+		}
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	protected override void OnApplicationPause(bool pauseStatus)
+	{
+		base.OnApplicationPause(pauseStatus);
+
+		if(Data.selChapter!=null){
+			Data.selChapter.Save();
+		}
 	}
 }
 

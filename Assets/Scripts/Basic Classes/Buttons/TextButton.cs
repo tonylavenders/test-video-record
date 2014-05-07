@@ -59,7 +59,7 @@ namespace TVR.Button
 			set { mStyle.clipping = value; }
 		}
 		
-		public TextButton(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, Font font, bool bKeepSt = true) : base (r,down,up,disableDown,disableUp,bKeepSt) {
+		public TextButton(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, Font font, bool bKeepSt = true, int shadowDist = 1) : base (r,down,up,disableDown,disableUp,bKeepSt, shadowDist) {
 			mStyle = new GUIStyle();
 			mStyle.font = font;
 			mStyle.clipping = TextClipping.Clip;
@@ -74,7 +74,7 @@ namespace TVR.Button
 			mTextOffsetSpaces = 0;
 		}
 		
-		public TextButton(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, DelegateButton delega, Font font, bool bKeepSt = true) : base (r,down,up,disableDown,disableUp, delega, bKeepSt) {
+		public TextButton(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, DelegateButton delega, Font font, bool bKeepSt = true, int shadowDist = 1) : base (r,down,up,disableDown,disableUp, delega, bKeepSt, shadowDist) {
 			mStyle = new GUIStyle();
 			mStyle.font = font;
 			mStyle.clipping = TextClipping.Clip;
@@ -139,8 +139,8 @@ namespace TVR.Button
 			float right = left + Size.x;
 			
 			if(shadow) {
-				botton += 10;
-				right += 10;
+				botton += ShadowDist;
+				right += ShadowDist;
 			}
 			
 			/*if(((top >= 0 && top <= Screen.height) || (botton >= 0 && botton <= Screen.height)) && 
@@ -169,8 +169,8 @@ namespace TVR.Button
 		
 		private void renderShadow(float alpha) {
 			if((shadow || onlyTextShadow) && mFade.Value != 0f && isVisibleText()) {
-				mStyle.normal.textColor = new Color(0, 0, 0, 0.12f * mFade.Value * alpha);
-				Rect recText = new Rect(base.rec.x + mTextOffset.x + 10 + mTextOffsetSpaces, base.rec.y + mTextOffset.y + 10, base.rec.width, base.rec.height);
+				mStyle.normal.textColor = new Color(0, 0, 0, 0.5f * mFade.Value * alpha);
+				Rect recText = new Rect(base.rec.x + mTextOffset.x + ShadowDist + mTextOffsetSpaces, base.rec.y + mTextOffset.y + ShadowDist, base.rec.width, base.rec.height);
 				GUI.Label(recText, mText, mStyle);
 				mStyle.normal.textColor = mTextColor;
 			}
