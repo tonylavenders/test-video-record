@@ -105,7 +105,7 @@ namespace TVR.Button
 						mDrawIndicator = value;
 						if(mSelected) {
 							mIndicatorPos = Text.Length;
-							if(mKeyboard == null) {
+							if(mKeyboard == null || Application.platform == RuntimePlatform.Android) {
 								TouchScreenKeyboard.hideInput = true;
 								mKeyboard = TouchScreenKeyboard.Open(Text, TouchScreenKeyboardType.Default, false);
 								mOldInput = Text;
@@ -118,8 +118,12 @@ namespace TVR.Button
 						} else
 							mKeyboard.active = false;
 					} else if(mSelected == true && mKeyboard != null && mKeyboard.active == false) {
-						mKeyboard.active = true;
-						mKeyboard.text = Text;
+						if(Application.platform == RuntimePlatform.IPhonePlayer){
+							mKeyboard.active = true;
+							mKeyboard.text = Text;
+						}else{
+							mKeyboard = TouchScreenKeyboard.Open(Text, TouchScreenKeyboardType.Default, false);
+						}
 						mOldInput = Text;
 					}
 				} else {
