@@ -1,9 +1,7 @@
 using UnityEngine;
 using TVR.Helpers;
-//TODO: CalcSize input text.
 
-namespace TVR.Button
-{	
+namespace TVR.Button {	
 	public class InputText : TextButton {
 		private bool mSelected;
 		private bool mDrawIndicator;
@@ -404,7 +402,7 @@ namespace TVR.Button
 				Color guiCol = GUI.color;
 				Color color = new Color(0, 0, 0, 0.5f * mFade.Value * colorText.a);
 				GUI.color = color;
-				Rect rec = new Rect(mIndicatorRect.x + mTextOffset.x + ShadowDist + mTextOffsetSpaces, mIndicatorRect.y + mTextOffset.y + ShadowDist, mIndicatorRect.width, mIndicatorRect.height);
+				Rect rec = new Rect(mIndicatorRect.x + ShadowDist, mIndicatorRect.y + ShadowDist, mIndicatorRect.width, mIndicatorRect.height);
 				GUI.DrawTexture(rec, mIndicatorTexture);
 				GUI.color = guiCol;
 			}
