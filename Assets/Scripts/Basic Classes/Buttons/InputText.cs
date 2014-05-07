@@ -404,7 +404,7 @@ namespace TVR.Button
 		public new void OnGUI(Color colorTexture, Color colorText, bool useGUIColor = true) {
 			if(Event.current.type != EventType.Repaint)
 				return;
-		if(Text == "" && !mSelected && (enable || !mFade.Ended)) {
+			if(Text == "" && !mSelected && (enable || !mFade.Ended)) {
 				Text = mEmptyText;
 				base.OnGUI(colorTexture, colorText * 0.7f, useGUIColor);
 				Text = "";

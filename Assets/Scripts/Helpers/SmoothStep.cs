@@ -56,7 +56,7 @@ namespace TVR.Utils {
 		}
 
 		public bool Ended {
-			get { return (Mathf.Approximately(mValue, mValue1)); }
+			get { return (Mathf.Approximately(mValue, mValue1) && mDelay >= 0); }
 		}
 
 		public float Delta {
