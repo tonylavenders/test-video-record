@@ -154,7 +154,7 @@ namespace TVR.Button
 			set { mSpecialCharacters = value; }
 		}
 
-		public InputText(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, Font font, Texture Indicator, string emptyText, bool bKeepSt = false) : base (r,down,up,disableDown,disableUp,font,bKeepSt) {
+		public InputText(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, Font font, Texture Indicator, string emptyText, bool bKeepSt = false, int shadowDist = 1) : base (r,down,up,disableDown,disableUp,font,bKeepSt,shadowDist) {
 			mSelected = false;
 			mDrawIndicator = false;
 			mIndicatorTexture = (Texture2D)Indicator; 
@@ -170,7 +170,7 @@ namespace TVR.Button
 			//#endif 
 		}
 		
-		public InputText(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, DelegateButton delega, Font font, Texture Indicator, string emptyText, bool bKeepSt = false) : base (r,down,up,disableDown,disableUp, delega, font, bKeepSt) {
+		public InputText(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, DelegateButton delega, Font font, Texture Indicator, string emptyText, bool bKeepSt = false, int shadowDist = 1) : base (r,down,up,disableDown,disableUp, delega, font, bKeepSt, shadowDist) {
 			mSelected = false;
 			mDrawIndicator = false;
 			mIndicatorTexture = (Texture2D)Indicator;
