@@ -33,7 +33,7 @@ public class GUIManagerChapters : GUIManager
 		Texture white = (Texture)ResourcesManager.LoadResource("Shared/white_pixel", "Chapter");
 		float width = (Screen.width - (ButtonProperties.buttonBarScaleX * 2)) - (MARGIN * 2);
 		float height = Screen.height / 12; 
-		float pos_y = Screen.height / 18; 
+		float pos_y = Mathf.RoundToInt(Screen.height / 76.8f); //10; //Screen.height / 18; 
 		Rect rectFileName = new Rect((ButtonProperties.buttonBarScaleX) + MARGIN, pos_y, width, height);
 
 		//mInput = new InputText(rectFileName, white, white, white, white, fontArial, white, Globals.NEW_CHAPTER_TEXT, false, 2);
@@ -42,7 +42,7 @@ public class GUIManagerChapters : GUIManager
 		mInput.TextPosition = TextAnchor.MiddleCenter;
 		mInput.TextColor = Color.white;
 		mInput.specialCharacters = new char[]{ ' ', '-', '_', '.' };
-		mInput.maxLength = 24;
+		mInput.maxLength = 20;
 		mInput.Text = "";
 		mInput.shadow=true;
 		mInput.TextStyle=FontStyle.Bold;
@@ -245,7 +245,7 @@ public class GUIManagerChapters : GUIManager
 
 	private void inputSelected(ExtendedButton sender)
 	{
-		//blur  = true;
+		//blur = true;
 		//mInput.enable = true;
 	}
 
@@ -253,7 +253,7 @@ public class GUIManagerChapters : GUIManager
 	 
 	private void inputUnSelected(ExtendedButton sender)
 	{
-		//blur  = false;
+		//blur = false;
 		if(Data.selChapter!=null){
 			Data.selChapter.Title = mInput.Text;
 			Data.selChapter.Save();

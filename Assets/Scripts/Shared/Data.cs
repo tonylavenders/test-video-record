@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using TVR.Helpers;
 
 namespace TVR {	
 	public static class Data {
@@ -487,16 +488,32 @@ namespace TVR {
 							mIdExpression = mOldIdExpression;
 							mIdAnimation = mOldIdAnimation;
 						}
+						SaveSound();
 					}
 				}
 
 				public bool Change() {
+					return ChangeBBDD() || ChangeSound();
+				}
+
+				private bool ChangeBBDD() {
 					return mIdBlockType != mOldIdBlockType || mIdShotType != mOldIdShotType || mFrames != mOldFrames || mIdExpression != mOldIdExpression || mIdAnimation != mOldIdAnimation || mIdProp != mOldIdProp;
 				}
 
 				public void Delete() {
 					db.ExecuteNonQuery("DELETE FROM Blocks WHERE IdBlock = " + mIdBlock);
 					mParent.removeBlock(this);
+					if(mIdBlockType == blockTypes.Voice) {
+						if(mSound != null && mSound == mOldSound)
+							DeleteSound();
+						if(mSound != null)
+							MonoBehaviour.DestroyImmediate(mSound);
+						if(mOldSound != null && mSound != mOldSound)
+							MonoBehaviour.DestroyImmediate(mOldSound);
+						mSound = null;
+						mOldSound = null;
+						mSoundLoaded = false;
+					}
 				}
 
 				public void Renumber(int newNumber) {
@@ -535,6 +552,148 @@ namespace TVR {
 					else
 						return 0;
 				}
+
+				#region Sound
+				public const int FREQUENCY = 44100;  
+				public const string EXTENSION = ".xjc";
+				private AudioClip mSound;
+				private AudioClip mOldSound;
+				private bool mSoundLoaded;
+				private QueueManager.QueueManagerAction mActionLoad1;
+				private QueueManager.QueueManagerAction mActionLoad2;
+
+				public AudioClip Sound {
+					set {
+						if(mOldIdBlockType == blockTypes.Voice) {
+							if(value == null) {
+								if(mSound != null)
+									MonoBehaviour.DestroyImmediate(mSound);
+								mSoundLoaded = false;
+							} else
+								mSoundLoaded = true;
+							mSound = value;
+						} else
+							throw new Exception("Are you trying to load an audioclip into block time?");
+					}
+					get {
+						if(mOldIdBlockType == blockTypes.Voice) {
+							if(mActionLoad1 != null) {
+								System.Threading.Thread t = (System.Threading.Thread)mActionLoad1.function.Target;
+								if(t.IsAlive) {
+									while(t.IsAlive)
+										System.Threading.Thread.Sleep(100);
+								} else {
+									QueueManager.removeAction(mActionLoad1);
+									LoadSound();
+									return mSound;
+								}
+							}
+							if(mActionLoad2 != null) {
+								QueueManager.removeAction(mActionLoad2);
+								mActionLoad2.function.Invoke();
+							}
+
+							if(!mSoundLoaded)
+								LoadSound();
+							return mSound;
+						} else
+							return null;
+					}
+				}
+
+				public void loadResource() {
+					if(mIdBlockType == blockTypes.Voice) {
+						mSoundLoaded = false;
+						mActionLoad2 = null;
+						if(!mSoundLoaded) {
+							System.Threading.Thread t = new System.Threading.Thread(() => LoadSoundAsync1());
+							mActionLoad1 = new QueueManager.QueueManagerAction("LoadAudioClip", t.Start, "RecordedSound.LoadSoundAsync1");
+							QueueManager.add(mActionLoad1, QueueManager.Priorities.Lowest);
+						}
+					}
+				}
+
+				private bool ChangeSound() {
+					return mSound != mOldSound && mSoundLoaded;
+				}
+
+				private void LoadSound() {
+					if(!mSoundLoaded) {
+						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
+						if(System.IO.File.Exists(filePath)) {
+							byte[] byteArray = null;
+							SevenZipHelper.Decompress(filePath, out byteArray);
+							float[] samples = new float[byteArray.Length / sizeof(float)];
+							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
+							mSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
+							mSound.SetData(samples, 0);
+						} else {
+							mSound = AudioClip.Create("user_clip", FREQUENCY, 1, FREQUENCY, false, false);
+						}
+						mOldSound = mSound;
+						mSoundLoaded = true;
+					}
+				}
+
+				private void LoadSoundAsync1() {
+					if(!mSoundLoaded) {
+						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
+						if(System.IO.File.Exists(filePath)) {
+							byte[] byteArray = null;
+							SevenZipHelper.Decompress(filePath, out byteArray);
+							float[] samples = new float[byteArray.Length / sizeof(float)];
+							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
+							mActionLoad2 = new QueueManager.QueueManagerAction("LoadAudioClip", () => LoadSoundAsync2(samples), "RecordedSound.LoadSoundAsync2");
+							QueueManager.add(mActionLoad2, QueueManager.Priorities.Low);
+						} else {
+							mActionLoad2 = new QueueManager.QueueManagerAction("LoadAudioClip", () => LoadSoundAsync2(null), "RecordedSound.LoadSoundAsync2");
+							QueueManager.add(mActionLoad2, QueueManager.Priorities.Low);
+						}
+					}
+					mActionLoad1 = null;
+				}
+
+				private void LoadSoundAsync2(float[] samples) {
+					if(samples != null) {
+						mSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
+						mSound.SetData(samples, 0);
+					} else {
+						mSound = AudioClip.Create("user_clip", FREQUENCY, 1, FREQUENCY, false, false);
+					}
+					mOldSound = mSound;
+					mSoundLoaded = true;
+					mActionLoad2 = null;
+					samples = null;
+				}
+
+				private void SaveSound() {
+					if(mOldIdBlockType == blockTypes.Voice && mIdBlockType != blockTypes.Voice) {
+						if(mSound != null && mSound == mOldSound)
+							DeleteSound();
+						if(mSound != null)
+							MonoBehaviour.DestroyImmediate(mSound);
+						if(mOldSound != null && mSound != mOldSound)
+							MonoBehaviour.DestroyImmediate(mOldSound);
+						mSound = null;
+						mOldSound = null;
+						mSoundLoaded = false;
+						mOldIdBlockType = mIdBlockType;
+					} else if(mIdBlockType == blockTypes.Voice && ChangeSound() && mSoundLoaded) {
+						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
+						float[] samples = new float[mSound.samples * mSound.channels];
+						mSound.GetData(samples, 0);
+						byte[] byteArray = new byte[samples.Length * sizeof(float)];
+						Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
+						SevenZipHelper.Compress(byteArray, filePath, true);
+						mOldSound = mSound;
+					}
+				}
+
+				private void DeleteSound() {
+					if(System.IO.File.Exists(System.IO.Path.Combine(TVR.Globals.RecordedSoundsPath, mIdBlock + EXTENSION)))
+						System.IO.File.Delete(System.IO.Path.Combine(TVR.Globals.RecordedSoundsPath, mIdBlock + EXTENSION));
+				}
+				#endregion
 			}
 		}
 
@@ -3507,220 +3666,6 @@ namespace TVR {
 						}
 					}
 				}
-			}
-		}*/
-		
-		/*public class RecordedSound : System.IComparable<RecordedSound> {
-			public const string EXTENSION = ".xjc";
-			private int mIdRecordedSound;
-			internal int mNumber;
-			private int mOldNumber;
-			public string Name;
-			private string mOldName;
-			private AudioClip mSound;
-			private bool mSoundLoaded;
-			private int mFrequencyPlayback;
-			private QueueManager.QueueManagerAction mActionLoad1;
-			private QueueManager.QueueManagerAction mActionLoad2;
-
-			public int Number {
-				get { return mNumber; }
-			}
-			public int oldNumber {
-				get { return mOldNumber; }
-			}
-			public int IdRecordedSound {
-				get { return mIdRecordedSound * -1; }
-			}
-			public AudioClip Sound {
-				get {
-					if(mActionLoad1 != null) {
-						System.Threading.Thread t = (System.Threading.Thread)mActionLoad1.function.Target;
-						if(t.IsAlive)
-							System.Threading.Thread.Sleep(100);
-						else {
-							QueueManager.removeAction(mActionLoad1);
-							LoadSound();
-							return mSound;
-						}
-					}
-					if(mActionLoad2 != null) {
-						QueueManager.removeAction(mActionLoad2);
-						mActionLoad2.function.Invoke();
-					}
-
-					if(!mSoundLoaded)
-						LoadSound();
-					return mSound;
-				}
-			}
-			public int FrequencyPlayback {
-				get { return mFrequencyPlayback; }
-			}
-			
-			internal RecordedSound(int IdRecordedSound, int number, string name, AudioClip sound, int FrequencyPlayback) {
-				mIdRecordedSound=IdRecordedSound;
-				mNumber=number;
-				mOldNumber=number;
-				Name=name;
-				mOldName=name;
-				mFrequencyPlayback=FrequencyPlayback;
-				mSoundLoaded=false;
-				mActionLoad2 = null;
-				if(IdRecordedSound==-1) {
-					mSound=sound;
-					mSoundLoaded=true;
-				} else {
-					System.Threading.Thread t = new System.Threading.Thread(() => LoadSoundAsync1());
-					mActionLoad1=new QueueManager.QueueManagerAction("LoadAudioClip", t.Start, "RecordedSound.LoadSoundAsync1");
-					QueueManager.add(mActionLoad1, QueueManager.Priorities.Lowest);
-					//LoadSound();
-				}
-			}
-			
-			public void save() {
-				if(mIdRecordedSound==-1) {
-					db.ExecuteNonQuery("INSERT INTO RecordedSounds (CVSNew) VALUES (" + Data.VersionRS + ")");
-					mIdRecordedSound=(int)db.ExecuteQuery("SELECT MAX(IdRecordedSound) as ID FROM RecordedSounds")[0]["ID"];
-					db.ExecuteNonQuery("UPDATE RecordedSoundsInfo SET Number = " + mNumber + ", Name = '" + Name.Replace("'","''").Trim() + "', FrequencyPlayback = " + mFrequencyPlayback + " WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSNew = -1");
-					SaveSound();
-					CVS.CVSEvent evt = new CVS.CVSEvent(CVS.CVSTypes.Create, this);
-					OnChange(evt);
-				} else {
-					if(Name==mOldName)
-						return;
-					db.ExecuteNonQuery("UPDATE RecordedSoundsInfo SET CVSDel = " + Data.VersionRS + " WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSDel IS NULL");
-					db.ExecuteNonQuery("INSERT INTO RecordedSoundsInfo (IdRecordedSound, CVSNew, Number, Name, FrequencyPlayback) VALUES ("+ mIdRecordedSound +", "+ Data.VersionRS +", "+ mNumber +", '"+ Name.Replace("'","''").Trim() +"', " + mFrequencyPlayback + ")");
-					CVS.CVSEvent evt = new CVS.CVSEvent(CVS.CVSTypes.Info, this);
-					OnChange(evt);
-					mOldName=Name;
-				}
-			}
-
-			public void delete() {
-				if(!isSoundInBlock()) {
-					db.ExecuteNonQuery("UPDATE RecordedSounds SET CVSDel = " + Data.VersionRS + " WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSDel IS NULL");
-					CVS.CVSEvent evt = new CVS.CVSEvent(CVS.CVSTypes.Delete, this);
-					OnChange(evt);
-				} else
-					throw new System.Exception("You can't delete a sound that's associated to a block.");
-			}
-			
-			public void Renumber(int number) {
-				if(number>Data.dicRecordedSounds.Count)
-					throw new System.Exception("The number is greater than the number of items.");
-				if(mNumber!=number) {
-					mOldNumber=mNumber;
-					mNumber=number;
-					db.ExecuteNonQuery("UPDATE RecordedSoundsInfo SET CVSDel = " + Data.VersionRS + " WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSDel IS NULL");
-					db.ExecuteNonQuery("INSERT INTO RecordedSoundsInfo (IdRecordedSound, CVSNew, Number, Name, FrequencyPlayback) VALUES ("+ mIdRecordedSound +", "+ Data.Version +", "+ mNumber +", '"+ mOldName.Replace("'","''").Trim() +"', " + mFrequencyPlayback + ")");
-					CVS.CVSEvent evt = new CVS.CVSEvent(CVS.CVSTypes.Renumbered, this);
-					OnChange(evt);
-				}
-			}
-			
-			private void LoadSound() {
-				if(!mSoundLoaded) {
-					string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdRecordedSound + EXTENSION);
-					if(System.IO.File.Exists(filePath)) {
-						byte[] byteArray = null;
-						SevenZipHelper.Decompress(filePath, out byteArray);
-						float[] samples = new float[byteArray.Length / sizeof(float)];
-						Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
-						mSound = AudioClip.Create("user_clip", samples.Length, 1, mFrequencyPlayback, false, false);
-						mSound.SetData(samples, 0);
-					} else {
-						mSound = AudioClip.Create("user_clip", mFrequencyPlayback, 1, mFrequencyPlayback, false, false);
-					}
-					mSoundLoaded = true;
-				}
-			}
-
-			private void LoadSoundAsync1() {
-				if(!mSoundLoaded) {
-					string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdRecordedSound + EXTENSION);
-					if(System.IO.File.Exists(filePath)) {
-						byte[] byteArray = null;
-						SevenZipHelper.Decompress(filePath, out byteArray);
-						float[] samples = new float[byteArray.Length / sizeof(float)];
-						Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
-						mActionLoad2 = new QueueManager.QueueManagerAction("LoadAudioClip", () => LoadSoundAsync2(samples), "RecordedSound.LoadSoundAsync2");
-						QueueManager.add(mActionLoad2, QueueManager.Priorities.Low);
-					} else {
-						mActionLoad2 = new QueueManager.QueueManagerAction("LoadAudioClip", () => LoadSoundAsync2(null), "RecordedSound.LoadSoundAsync2");
-						QueueManager.add(mActionLoad2, QueueManager.Priorities.Low);
-					}
-				}
-				mActionLoad1 = null;
-			}
-
-			private void LoadSoundAsync2(float[] samples) {
-				if(samples != null) {
-					mSound = AudioClip.Create("user_clip", samples.Length, 1, mFrequencyPlayback, false, false);
-					mSound.SetData(samples, 0);
-				} else {
-					mSound = AudioClip.Create("user_clip", mFrequencyPlayback, 1, mFrequencyPlayback, false, false);
-				}
-				mSoundLoaded = true;
-				mActionLoad2 = null;
-				samples = null;
-			}
-			
-			private void SaveSound() {
-				string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdRecordedSound + EXTENSION);
-				float[] samples = new float[mSound.samples * mSound.channels];
-				mSound.GetData(samples, 0);
-				byte[] byteArray = new byte[samples.Length*sizeof(float)];
-				Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
-				SevenZipHelper.Compress(byteArray, filePath, true);
-			}
-			
-			private void DeleteSound() {
-				if(System.IO.File.Exists(System.IO.Path.Combine(BRBRec.Globals.ScreenshotsPath, mIdRecordedSound + EXTENSION)))
-					System.IO.File.Delete(System.IO.Path.Combine(BRBRec.Globals.ScreenshotsPath, mIdRecordedSound + EXTENSION));
-			}
-			
-			public bool isSoundInBlock() {
-				int associatedBlocks = (int)db.ExecuteQuery("SELECT COUNT(*) AS Counter FROM BlocksTimeline INNER JOIN Objects ON BlocksTimeline.IdObject = Objects.IdObject INNER JOIN Stages ON Objects.IdStage = Stages.IdStage " +
-					"INNER JOIN Scenes ON Stages.IdScene = Scenes.IdScene INNER JOIN Episodes ON Scenes.IdEpisode = Episodes.IdEpisode " +
-					"WHERE IdBlockType = 5 AND BlocksTimeline.CVSDel IS NULL AND Objects.CVSDel IS NULL AND Stages.CVSDel IS NULL AND Scenes.CVSDel IS NULL AND Episodes.CVSDel IS NULL AND BlocksTimeline.IdResource = " + IdRecordedSound)[0]["Counter"];
-				return associatedBlocks!=0;
-			}
-			
-			internal override bool undoLocal(CVS cvs) {
-				switch(cvs.Type) {
-				case CVS.CVSTypes.Create:
-					if(!isSoundInBlock()) {
-						db.ExecuteNonQuery("DELETE FROM RecordedSounds WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSNew = " + cvs.Version);
-						DeleteSound();
-					} else
-						throw new System.Exception("You can't delete a sound that's associated to a block.");
-					return true;
-				case CVS.CVSTypes.Delete:
-					db.ExecuteNonQuery("UPDATE RecordedSounds SET CVSDel = NULL WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSDel = " + cvs.Version);
-					return true;
-				case CVS.CVSTypes.Renumbered:
-					int rsNumber = (int)db.ExecuteQuery("SELECT Number FROM RecordedSoundsInfo WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSDel = " + cvs.Version)[0]["Number"];
-					db.ExecuteNonQuery("DELETE FROM RecordedSoundsInfo WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSDel IS NULL");
-					db.ExecuteNonQuery("UPDATE RecordedSoundsInfo SET CVSDel = NULL WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSDel = " + cvs.Version);
-					mOldNumber = mNumber;
-					mNumber = rsNumber;
-					return true;
-				case CVS.CVSTypes.Info:
-					DataRow row = db.ExecuteQuery("SELECT Name FROM RecordedSoundsInfo WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSDel = " + cvs.Version)[0];
-					Name = (string)row["Name"];
-					mOldName = (string)row["Name"];
-					db.ExecuteNonQuery("DELETE FROM RecordedSoundsInfo WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSDel IS NULL");
-					db.ExecuteNonQuery("UPDATE RecordedSoundsInfo SET Number = " + mNumber + ", CVSDel = NULL WHERE IdRecordedSound = " + mIdRecordedSound + " AND CVSDel = " + cvs.Version);
-					return true;
-				}
-				return false;
-			}
-				
-			public int CompareTo(RecordedSound other) {		
-				if ( this.Number < other.Number ) return -1;
-				else if ( this.Number > other.Number ) return 1;
-				else return 0;
 			}
 		}*/
 	}
