@@ -1,10 +1,6 @@
 using UnityEngine;
 using TVR.Helpers;
-/*TODO: CalcSize input text.
-Shadow del marcador.
-Texto predeterminado fade.
-*/
-
+//TODO: CalcSize input text.
 
 namespace TVR.Button
 {	
@@ -402,8 +398,16 @@ namespace TVR.Button
 		}
 		
 		public new void OnGUI(Color colorTexture, Color colorText, bool useGUIColor = true) {
-			if(Event.current.type != EventType.Repaint)
+		if(Event.current.type != EventType.Repaint && mFade.Value != 0f)
 				return;
+			if(mDrawIndicator && (shadow || onlyTextShadow)) {
+				Color guiCol = GUI.color;
+				Color color = new Color(0, 0, 0, 0.5f * mFade.Value * colorText.a);
+				GUI.color = color;
+				Rect rec = new Rect(mIndicatorRect.x + mTextOffset.x + ShadowDist + mTextOffsetSpaces, mIndicatorRect.y + mTextOffset.y + ShadowDist, mIndicatorRect.width, mIndicatorRect.height);
+				GUI.DrawTexture(rec, mIndicatorTexture);
+				GUI.color = guiCol;
+			}
 			if(Text == "" && !mSelected && (enable || !mFade.Ended)) {
 				Text = mEmptyText;
 				base.OnGUI(colorTexture, colorText * 0.7f, useGUIColor);
@@ -412,12 +416,14 @@ namespace TVR.Button
 				base.OnGUI(colorTexture, colorText, useGUIColor);
 			if(mDrawIndicator) {
 				Color guiCol = GUI.color;
-				GUI.color = TextColor;
+				Color color = TextColor;
+				color.a *= mFade.Value * colorText.a;
+				GUI.color = color;
 				GUI.DrawTexture(mIndicatorRect, mIndicatorTexture);
 				GUI.color = guiCol;
 			}
 		}
-		
+
 		public new void OnGUI(Color colorTexture, bool useGUIColor = true) {
 			OnGUI(colorTexture, colorTexture, useGUIColor);
 		}
