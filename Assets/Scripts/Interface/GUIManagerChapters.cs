@@ -10,32 +10,46 @@ using TVR;
 public class GUIManagerChapters : GUIManager
 {
 	private const string NEW_CHAPTER_TEXT = "< Video Name >";
+	private const float STANDARD_HEIGHT = 768f / 20f;
+	private const int MARGIN = 10;
 	public ButtonBar mCharactersButtonBar;
 	public ButtonBar mBackgroundsButtonBar;
 	public ButtonBar mMusicButtonBar;
 	private TVR.Button.InputText mInput;
 
+	public override bool blur {
+		set {
+			mInput.enable = value;
+			base.blur = value;
+		}
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	protected override void Start() {
+		base.Start();
 		Font fontArial = (Font)ResourcesManager.LoadResource("Interface/Fonts/Futura Oblique", "Chapter");
 		Texture white = (Texture)ResourcesManager.LoadResource("Shared/white_pixel", "Chapter");
-		Rect rectFileName = new Rect(0, 20, Screen.width, 20);
+		float width = (Screen.width - (ButtonProperties.buttonBarScaleX * 4)) - (MARGIN * 2);
+		float heigt = Screen.height / 20; 
+		Rect rectFileName = new Rect((ButtonProperties.buttonBarScaleX * 2) + MARGIN, heigt, width, heigt);
 
-		mInput = new TVR.Button.InputText(rectFileName, null, null, null, null, fontArial, white, NEW_CHAPTER_TEXT, false);
-		mInput.TextSize = 25;
+		mInput = new TVR.Button.InputText(rectFileName, white, white, white, white, fontArial, white, NEW_CHAPTER_TEXT, false);
+		//TODO: Sustituir esta línea.
+		//mInput = new TVR.Button.InputText(rectFileName, null, null, null, null, fontArial, white, NEW_CHAPTER_TEXT, false);
+		mInput.TextSize = Mathf.RoundToInt(25 * (heigt / STANDARD_HEIGHT));
 		mInput.TextPosition = TextAnchor.MiddleCenter;
-		mInput.TextColor = Color.white;
+		mInput.TextColor = Color.black;
 		mInput.specialCharacters = new char[]{ ' ', '-', '_', '.' };
 		mInput.maxLength = 14;
 		mInput.Alpha = 1;
 		mInput.Text = "";
 		mInput.selectedCallBack = inputSelected;
 		mInput.unSelectedCallBack = inputUnSelected;
+		mInput.scaleMode = ScaleMode.StretchToFill;
 
 		//mInput.enable = false;
 		//mInput.Fade(1, TVR.Globals.ANIMATIONDURATION, false, true, 0);
-		base.Start();
 	}
 
 	protected virtual void Update() {
@@ -207,10 +221,12 @@ public class GUIManagerChapters : GUIManager
 
 	private void inputSelected(TVR.Button.ExtendedButton sender) {
 		blur  = true;
+		mInput.enable = true;
 	}
 	private void inputUnSelected(TVR.Button.ExtendedButton sender) {
 		blur  = false;
-		/*Data.selChapter.Title = sender.Text;
+		/*TODO:
+		Data.selChapter.Title = sender.Text;
 		Data.selChapter.Save();*/
 	}
 }
