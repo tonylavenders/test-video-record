@@ -99,7 +99,7 @@ namespace TVR.Button
 						if(value && selectedCallBack != null)
 							selectedCallBack(this);
 						else if(!value && unSelectedCallBack != null)
-								unSelectedCallBack(this);
+							unSelectedCallBack(this);
 						mSelected = value;
 						disableOnMouseMove = !value;
 						mDrawIndicator = value;
