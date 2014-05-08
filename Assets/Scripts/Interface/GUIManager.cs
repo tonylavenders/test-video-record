@@ -51,6 +51,7 @@ public class GUIManager : MonoBehaviour
 					b.Blur = value;
 				}
 				mBlur.Enable = value;
+				//TODO: Desactivar animaciones, sistemas de particulas, ...
 			}
 		}
 	}
@@ -133,12 +134,17 @@ public class GUIManager : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	protected virtual void OnGUI()
-	{
+	protected virtual void Update() {
+		TVR.Utils.Message.update();
+	}
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	protected virtual void OnGUI() {
+		TVR.Utils.Message.OnGUI();
 		//This is necessary for the Samsung Galaxy S (Android 2.3)
 		//Pressing HOME button freezes the device
-		if(Application.platform == RuntimePlatform.Android){
-			if(GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height-120, 100, 100), "QUIT")){
+		if(Application.platform == RuntimePlatform.Android) {
+			if(GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height - 120, 100, 100), "QUIT")) {
 				Application.Quit();
 			}
 		}
