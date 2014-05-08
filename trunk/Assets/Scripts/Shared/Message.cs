@@ -31,7 +31,7 @@ namespace TVR.Utils
 		private const int BUTTON_FONT_SIZE = 23 / 2;
 		private const int TEXT_MARGIN = 5 / 2;
 		private const int TEXT_BUTTON_MARGIN = 30 / 2;
-		private const int DIALOG_Y = 284 / 2;
+		private const int DIALOG_Y = 160;
 		private const int DIALOG_W = 890 / 2;
 		private const int DIALOG_H = 278 / 2;
 
@@ -109,7 +109,7 @@ namespace TVR.Utils
 			mStyle1.fontSize = TITLE_FONT_SIZE;
 			mStyle1.alignment = TextAnchor.UpperCenter;
 			mStyle1.fontStyle = FontStyle.Normal;
-			mStyle1.normal.textColor = Color.white;
+			mStyle1.normal.textColor = Color.black;
 		
 			mStyle2 = new GUIStyle();
 			mStyle2.font = font;
@@ -118,7 +118,7 @@ namespace TVR.Utils
 			mStyle2.fontSize = BUTTON_FONT_SIZE;
 			mStyle2.alignment = TextAnchor.UpperCenter;
 			mStyle2.fontStyle = FontStyle.Normal;
-			mStyle2.normal.textColor = new Color(0.33f, 0.33f, 0.33f, 1);
+			mStyle2.normal.textColor = new Color(0f, 0f, 0f, 0.5f);
 		
 			mAnimationDuration = animationDuration;
 		
@@ -127,6 +127,7 @@ namespace TVR.Utils
 			mYesButton.TextStyle = FontStyle.Normal;
 			mYesButton.TextPosition = TextAnchor.MiddleCenter;
 			mYesButton.shadow = true;
+			mYesButton.TextColor = Color.white;
 			mYesButton.scaleMode = ScaleMode.StretchToFill;
 			mYesButton.enable = false;
 
@@ -136,6 +137,7 @@ namespace TVR.Utils
 			mNoButton.TextPosition = TextAnchor.MiddleCenter;
 			mNoButton.Text = "No";
 			mNoButton.shadow = true;
+			mNoButton.TextColor = Color.white;
 			mNoButton.scaleMode = ScaleMode.StretchToFill;
 			mNoButton.enable = false;
 		

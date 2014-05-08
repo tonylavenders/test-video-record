@@ -150,7 +150,7 @@ public class ButtonBarElements : ButtonBar
 		if(currentSelected==null)
 			return;
 
-		TVR.Utils.Message.Show(1, "AVISO", "ASDF", TVR.Utils.Message.Type.YesNo, "Sí", "No", Message_Delete);
+		TVR.Utils.Message.Show(1, "AVISO", "ASDF", TVR.Utils.Message.Type.YesNo, "S\u00ED", "No", Message_Delete);
 		mGUIManager.blur = true;
 	}
 
