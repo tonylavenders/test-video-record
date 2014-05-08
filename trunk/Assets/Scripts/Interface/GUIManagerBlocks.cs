@@ -120,6 +120,15 @@ public class GUIManagerBlocks : GUIManager
 			mTimeButtonBar.Show();
 		}else{
 			mTimeButtonBar.Hide();
+
+			mDecreaseTimeButton.Hide();
+			mIncreaseTimeButton.Hide();
+			mSaveTimeButton.Hide();
+
+			mVoicePlayButton.Hide();
+			mVoiceRecButton.Hide();
+			mVoiceFxButton.Hide();
+			mVoiceSaveButton.Hide();
 		}
 		Count(sender.Checked);
 	}
