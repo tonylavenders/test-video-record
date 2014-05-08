@@ -10,7 +10,8 @@ public enum ButtonType{
 	CHAR, BACKGROUND,
 	MAIN_EDIT, MAIN_PLAY,
 	EDIT_TIME, EDIT_EXPR, EDIT_ANIM, EDIT_CAM,
-	MUSIC, ANIM, EXPR, BLOCK
+	MUSIC, ANIM, EXPR, BLOCK,
+	EDIT_TIME_TIME, EDIT_TIME_VOICE
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,13 +303,22 @@ public class BasicButton : MonoBehaviour
 		else if(buttonType == ButtonType.EDIT_EXPR) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonExpressionsPressed;
 		}
+		else if(buttonType == ButtonType.EDIT_TIME) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimePressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_TIME) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeTimePressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeVoicePressed;
+		}
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
-		mFade.Reset(bEnabled ? 1f : 0.3f, duration, true, delay);
+		mFade.Reset(Enable ? 1f : 0.3f, duration, true, delay);
 
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Show(delay, duration);

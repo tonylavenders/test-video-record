@@ -85,6 +85,7 @@ public class GUIManagerChapters : GUIManager
 	{
 		base.InitButtons();
 		mEditButton.Enable=false;
+		mEditButton.Show();
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,6 +165,9 @@ public class GUIManagerChapters : GUIManager
 	//Edit button
 	public override void OnButtonEditPressed(BasicButton sender)
 	{
+		if(Data.selChapter!=null){
+			Data.selChapter.Save();
+		}
 		SceneMgr.Get.SwitchTo("ChapterEditor");
 	}
 	
@@ -171,6 +175,9 @@ public class GUIManagerChapters : GUIManager
 	//Play button
 	public override void OnButtonPlayPressed(BasicButton sender)
 	{
+		if(Data.selChapter!=null){
+			Data.selChapter.Save();
+		}
 		Debug.Log("play chapters");
 	}
 
@@ -254,10 +261,6 @@ public class GUIManagerChapters : GUIManager
 	private void inputUnSelected(ExtendedButton sender)
 	{
 		//blur = false;
-		if(Data.selChapter!=null){
-			Data.selChapter.Title = mInput.Text;
-			Data.selChapter.Save();
-		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

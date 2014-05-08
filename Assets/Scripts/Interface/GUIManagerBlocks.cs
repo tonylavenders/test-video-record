@@ -11,12 +11,66 @@ public class GUIManagerBlocks : GUIManager
 {
 	public ButtonBar mAnimationsButtonBar;
 	public ButtonBar mExpressionsButtonBar;
+	public ButtonBar mTimeButtonBar;
+
+	public BasicButton mDecreaseTimeButton;
+	public BasicButton mIncreaseTimeButton;
+	public BasicButton mSaveTimeButton;
+
+	public BasicButton mVoicePlayButton;
+	public BasicButton mVoiceRecButton;
+	public BasicButton mVoiceFxButton;
+	public BasicButton mVoiceSaveButton;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	protected override void InitButtons()
 	{
 		base.InitButtons();
+
+		mEditButton.Show();
+
+		//TIME
+
+		//Time: Decrease button
+		float pos_x = ButtonProperties.buttonBarScaleX*2.0f+ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize/2.0f;
+		float pos_y = 4*(ButtonProperties.buttonSize/2+ButtonProperties.buttonMargin/2) + Screen.height/2;
+		Vector3 pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+		Vector3 scale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
+		mDecreaseTimeButton.Init(pos, scale);
+
+		//Time: Increase button
+		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
+		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+		mIncreaseTimeButton.Init(pos, scale);
+
+		//Time: Save button
+		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
+		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+		mSaveTimeButton.Init(pos, scale);
+
+		//VOICE
+
+		//Voice: Play button
+		pos_x = ButtonProperties.buttonBarScaleX*2.0f+ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize/2.0f;
+		pos_y -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize; 
+		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+		mVoicePlayButton.Init(pos, scale);
+
+		//Voice: Rec button
+		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
+		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+		mVoiceRecButton.Init(pos, scale);
+
+		//Voice: Fx button
+		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
+		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+		mVoiceFxButton.Init(pos, scale);
+
+		//Voice: Save button
+		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
+		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+		mVoiceSaveButton.Init(pos, scale);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,9 +79,11 @@ public class GUIManagerBlocks : GUIManager
 	{
 		mAnimationsButtonBar.Hide();
 		mExpressionsButtonBar.Hide();
+		mTimeButtonBar.Hide();
 		
 		mAnimationsButtonBar.UncheckButtons();
 		mExpressionsButtonBar.UncheckButtons();
+		mTimeButtonBar.UncheckButtons();
 		
 		mLeftButtonBar.UncheckButtons();
 	}
@@ -60,6 +116,40 @@ public class GUIManagerBlocks : GUIManager
 	//Main: Time button
 	public void OnButtonTimePressed(BasicButton sender)
 	{
+		if(sender.Checked){
+			mTimeButtonBar.Show();
+		}else{
+			mTimeButtonBar.Hide();
+		}
+		Count(sender.Checked);
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Time-Time button
+	public void OnButtonTimeTimePressed(BasicButton sender)
+	{
+		mDecreaseTimeButton.Show();
+		mIncreaseTimeButton.Show();
+		mSaveTimeButton.Show();
+
+		mVoicePlayButton.Hide();
+		mVoiceRecButton.Hide();
+		mVoiceFxButton.Hide();
+		mVoiceSaveButton.Hide();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Time-Voice button
+	public void OnButtonTimeVoicePressed(BasicButton sender)
+	{
+		mVoicePlayButton.Show();
+		mVoiceRecButton.Show();
+		mVoiceFxButton.Show();
+		mVoiceSaveButton.Show();
+
+		mDecreaseTimeButton.Hide();
+		mIncreaseTimeButton.Hide();
+		mSaveTimeButton.Hide();
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,13 +169,23 @@ public class GUIManagerBlocks : GUIManager
 	//Edit button
 	public override void OnButtonEditPressed(BasicButton sender)
 	{
+		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
+			Data.selChapter.selBlock.Save();
+		}
 		SceneMgr.Get.SwitchTo("ChapterMgr");
+
+		if(Data.selChapter!=null){
+			Data.selChapter.unloadBlocks();
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Play button
 	public override void OnButtonPlayPressed(BasicButton sender)
 	{
+		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
+			Data.selChapter.selBlock.Save();
+		}
 		Debug.Log("play blocks");
 	}
 	
