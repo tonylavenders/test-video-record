@@ -42,7 +42,8 @@ public class ButtonBar : MonoBehaviour
 		characters,
 		backgrounds,
 		animations,
-		expressions
+		expressions,
+		music
 	}
 	public ElementTypes elementType;
 
