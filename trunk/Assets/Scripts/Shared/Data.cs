@@ -222,7 +222,6 @@ namespace TVR {
 			}
 
 			private Block mSelBlock;
-
 			public Block selBlock {
 				get { return mSelBlock; }
 				set { mSelBlock = value; }
@@ -314,7 +313,14 @@ namespace TVR {
 						mBlocks.Add(block);
 					}
 					mBlocks.Sort();
+					foreach(Block b in mBlocks)
+						b.loadResource();
 				}
+			}
+
+			public void unloadBlocks() {
+				foreach(Block b in mBlocks)
+					b.unloadResource();
 			}
 
 			private void renumberBlocks(Block block, int oldNumber, int newNumber) {
@@ -479,16 +485,16 @@ namespace TVR {
 						mIdBlock = (int)db.ExecuteQuery("SELECT MAX(IdBlock) as ID FROM Blocks")[0]["ID"];
 						mParent.addBlock(this);
 					} else {
+						SaveSound();
 						if(Change()) {
 							string idProp = mIdProp == null ? "NULL" : mIdProp.ToString();
 							db.ExecuteNonQuery("UPDATE Blocks SET IdBlockType = " + (int)mIdBlockType + ", IdShotType = " + (int)mIdShotType + ", Frames = " + mFrames + ", IdExpression = " + mIdExpression + ", IdAnimation = " + mIdAnimation + ", IdProp = " + idProp + " WHERE IdBlock = " + mIdBlock);
-							mIdBlockType = mOldIdBlockType;
-							mIdShotType = mOldIdShotType;
-							mFrames = mOldFrames;
-							mIdExpression = mOldIdExpression;
-							mIdAnimation = mOldIdAnimation;
+							mOldIdBlockType = mIdBlockType;
+							mOldIdShotType = mIdShotType;
+							mOldFrames = mFrames;
+							mOldIdExpression = mIdExpression;
+							mOldIdAnimation = mIdAnimation;
 						}
-						SaveSound();
 					}
 				}
 
@@ -542,6 +548,7 @@ namespace TVR {
 					mOldIdExpression = mIdExpression;
 					mOldIdAnimation = mIdAnimation;
 					mOldIdProp = mIdProp;
+					mSound = mOldSound;
 				}
 
 				public int CompareTo(Block other) {		
@@ -566,17 +573,20 @@ namespace TVR {
 					set {
 						if(mOldIdBlockType == blockTypes.Voice) {
 							if(value == null) {
-								if(mSound != null)
+								/*if(mSound != null)
 									MonoBehaviour.DestroyImmediate(mSound);
-								mSoundLoaded = false;
+								mSoundLoaded = false;*/
+								throw new Exception("You can't assign a null sound.");
 							} else
 								mSoundLoaded = true;
+							if(mSound != mOldSound)
+								MonoBehaviour.DestroyImmediate(mSound);
 							mSound = value;
 						} else
 							throw new Exception("Are you trying to load an audioclip into block time?");
 					}
 					get {
-						if(mOldIdBlockType == blockTypes.Voice) {
+						if(mIdBlockType == blockTypes.Voice) {
 							if(mActionLoad1 != null) {
 								System.Threading.Thread t = (System.Threading.Thread)mActionLoad1.function.Target;
 								if(t.IsAlive) {
@@ -613,8 +623,18 @@ namespace TVR {
 					}
 				}
 
+				public void unloadResource() {
+					if(mSound != null)
+						MonoBehaviour.DestroyImmediate(mSound);
+					if(mOldSound != null && mSound != mOldSound)
+						MonoBehaviour.DestroyImmediate(mOldSound);
+					mSound = null;
+					mOldSound = null;
+					mSoundLoaded = false;
+				}
+
 				private bool ChangeSound() {
-					return mSound != mOldSound && mSoundLoaded;
+					return mSound != mOldSound;
 				}
 
 				private void LoadSound() {
@@ -627,9 +647,10 @@ namespace TVR {
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
 							mSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
 							mSound.SetData(samples, 0);
-						} else {
-							mSound = AudioClip.Create("user_clip", FREQUENCY, 1, FREQUENCY, false, false);
-						}
+						} /*else {
+							mSound = AudioClip.Create("user_clip", 0, 1, FREQUENCY, false, false);
+							//mSound = AudioClip.Create("user_clip", FREQUENCY, 1, FREQUENCY, false, false);
+						}*/
 						mOldSound = mSound;
 						mSoundLoaded = true;
 					}
@@ -657,9 +678,10 @@ namespace TVR {
 					if(samples != null) {
 						mSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
 						mSound.SetData(samples, 0);
-					} else {
-						mSound = AudioClip.Create("user_clip", FREQUENCY, 1, FREQUENCY, false, false);
-					}
+					} /*else {
+						mSound = AudioClip.Create("user_clip", 0, 1, FREQUENCY, false, false);
+						//mSound = AudioClip.Create("user_clip", FREQUENCY, 1, FREQUENCY, false, false);
+					}*/
 					mOldSound = mSound;
 					mSoundLoaded = true;
 					mActionLoad2 = null;
@@ -668,25 +690,25 @@ namespace TVR {
 
 				private void SaveSound() {
 					if(mOldIdBlockType == blockTypes.Voice && mIdBlockType != blockTypes.Voice) {
-						if(mSound != null && mSound == mOldSound)
-							DeleteSound();
-						if(mSound != null)
-							MonoBehaviour.DestroyImmediate(mSound);
-						if(mOldSound != null && mSound != mOldSound)
-							MonoBehaviour.DestroyImmediate(mOldSound);
-						mSound = null;
-						mOldSound = null;
-						mSoundLoaded = false;
-						mOldIdBlockType = mIdBlockType;
+						//if(mSound != null && mSound == mOldSound)
+						DeleteSound();
+						unloadResource();
 					} else if(mIdBlockType == blockTypes.Voice && ChangeSound() && mSoundLoaded) {
-						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
 						float[] samples = new float[mSound.samples * mSound.channels];
 						mSound.GetData(samples, 0);
-						byte[] byteArray = new byte[samples.Length * sizeof(float)];
-						Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
-						SevenZipHelper.Compress(byteArray, filePath, true);
+						if(mOldSound != null)
+							MonoBehaviour.DestroyImmediate(mOldSound);
 						mOldSound = mSound;
+						System.Threading.Thread t = new System.Threading.Thread(() => SaveSound(samples));
+						t.Start();
 					}
+				}
+
+				private void SaveSound(float[] samples) {
+					string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
+					byte[] byteArray = new byte[samples.Length * sizeof(float)];
+					Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
+					SevenZipHelper.Compress(byteArray, filePath, true);
 				}
 
 				private void DeleteSound() {
