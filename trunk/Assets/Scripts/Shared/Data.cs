@@ -319,6 +319,7 @@ namespace TVR {
 			}
 
 			public void unloadBlocks() {
+				mSelBlock = null;
 				foreach(Block b in mBlocks)
 					b.unloadResource();
 			}
