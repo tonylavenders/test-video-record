@@ -91,15 +91,14 @@ public class GUIManager : MonoBehaviour
 		Vector3 scale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 
 		mEditButton.Init(pos, scale);
-		mEditButton.Show();
 
 		//Play button
-		pos_x = Screen.width-ButtonProperties.buttonBarScaleX-ButtonProperties.buttonMargin*2-ButtonProperties.buttonSize*1.5f;
+		pos_x -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 
 		mPlayButton.Init(pos, scale);
+		mPlayButton.Enable = false;
 		mPlayButton.Show();
-		mPlayButton.Enable=false;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

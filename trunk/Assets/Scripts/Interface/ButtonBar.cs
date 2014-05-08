@@ -10,7 +10,6 @@ public class ButtonBar : MonoBehaviour
 	public GameObject[] mButtons;
 	protected List<GameObject> listButtons;
 	public GameObject Separator;
-	public bool bIsMain;
 
 	public float depth_x = 0;
 	bool bInit=false;
@@ -43,7 +42,9 @@ public class ButtonBar : MonoBehaviour
 		backgrounds,
 		animations,
 		expressions,
-		music
+		music,
+		time,
+		cameras
 	}
 	public ElementTypes elementType;
 
@@ -57,14 +58,34 @@ public class ButtonBar : MonoBehaviour
 		set {
 			if(value!=null){
 				mGUIManager.EnableButtons();
+
 				if(elementType==ElementTypes.chapters){
-					mGUIManager.mInput.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
+					if(Data.selChapter!=null){
+						Data.selChapter.Title = mGUIManager.mInput.Text;
+						Data.selChapter.Save();
+					}
 					Data.selChapter = value.iObj as Data.Chapter;
+					mGUIManager.mInput.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
 					mGUIManager.mInput.Text = Data.selChapter.Title;
 				}
-			}else if(elementType==ElementTypes.chapters){
-				mGUIManager.mInput.Fade(0, Globals.ANIMATIONDURATION, true, false);
-				Data.selChapter = null;
+				else if(elementType==ElementTypes.blocks){
+					if(Data.selChapter!=null){
+						if(Data.selChapter.selBlock!=null){
+							Data.selChapter.selBlock.Save();
+						}
+						Data.selChapter.selBlock = value.iObj as Data.Chapter.Block;
+					}
+				}
+			}else{
+				if(elementType==ElementTypes.chapters){
+					mGUIManager.mInput.Fade(0, Globals.ANIMATIONDURATION, true, false);
+					Data.selChapter = null;
+				}
+			 	else if(elementType==ElementTypes.blocks){
+					if(Data.selChapter!=null){
+						Data.selChapter.selBlock=null;
+					}
+				}
 			}
 			mCurrentSelected=value;
 		}
@@ -144,12 +165,17 @@ public class ButtonBar : MonoBehaviour
 	{
 		float buttonsTotalHeight = ButtonProperties.buttonSize*mButtons.Length + ButtonProperties.buttonMargin*(mButtons.Length+1);
 		float y_pos=0;
-		if(buttonsTotalHeight>=Screen.height || bIsMain){
+
+		if(buttonsTotalHeight>=Screen.height || elementType==ElementTypes.main){
 			y_pos = (mButtons.Length-1)*(ButtonProperties.buttonSize/2+ButtonProperties.buttonMargin/2) + Screen.height/2;
-		}else{
+		}
+		else if(elementType==ElementTypes.time){
+			y_pos = 4*(ButtonProperties.buttonSize/2+ButtonProperties.buttonMargin/2) + Screen.height/2;
+		}
+		else{
 			y_pos = Screen.height-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2.0f;
 		}
-		
+
 		listButtons.Add(Instantiate(mButtons[0]) as GameObject);
 		listButtons[0].transform.position = new Vector3(ButtonProperties.buttonBarScaleX/2.0f, y_pos, ButtonProperties.buttonZDepth);
 		listButtons[0].transform.localScale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
@@ -381,10 +407,6 @@ public class ButtonBar : MonoBehaviour
 
 		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Hide(0, 0.2f);
-		}
-
-		if(Data.selChapter!=null){
-			Data.selChapter.Save();
 		}
 	}
 }
