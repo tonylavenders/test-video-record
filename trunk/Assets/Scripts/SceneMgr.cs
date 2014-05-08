@@ -36,10 +36,10 @@ public class SceneMgr : MonoBehaviour  {
 	public static SceneMgr Get {
 		get { return mInstance; }
 	}
-	
+
 	void Init() {
 		Application.targetFrameRate = 60;
-		//BRB.Utils.Message.Init(BRBRec.Globals.ANIMATIONDURATION);
+		TVR.Utils.Message.Init(TVR.Globals.ANIMATIONDURATION);
 		ResourcesLibrary.Init();
 		Data.Init();
 		

@@ -150,21 +150,29 @@ public class ButtonBarElements : ButtonBar
 		if(currentSelected==null)
 			return;
 
-		currentSelected.Hide(0, 0.2f);
-		currentSelected.iObj.Delete();
-		MoveButtonsAfterDelete();
-		stateElements=StatesElements.deleting_element;
-		mSpeed.End();
+		TVR.Utils.Message.Show(1, "AVISO", "ASDF", TVR.Utils.Message.Type.YesNo, "Sí", "No", Message_Delete);
+		mGUIManager.blur = true;
+	}
 
-		mGUIManager.DisableButtons();
-		mGUIManager.HideAllButtonBars();
+	private void Message_Delete(TVR.Utils.Message.ButtonClicked buttonClicked, int Identifier) {
+		if(buttonClicked == TVR.Utils.Message.ButtonClicked.Yes) {
+			currentSelected.Hide(0, 0.2f);
+			currentSelected.iObj.Delete();
+			MoveButtonsAfterDelete();
+			stateElements=StatesElements.deleting_element;
+			mSpeed.End();
 
-		if(elementType==ElementTypes.chapters){
-			mGUIManager.CurrentCharacter=null;
-			mGUIManager.CurrentBackground=null;
-			//mGUIManager.mInput.Text="";
-			//mGUIManager.mInput.enable=false;
+			mGUIManager.DisableButtons();
+			mGUIManager.HideAllButtonBars();
+
+			if(elementType==ElementTypes.chapters){
+				mGUIManager.CurrentCharacter=null;
+				mGUIManager.CurrentBackground=null;
+				//mGUIManager.mInput.Text="";
+				//mGUIManager.mInput.enable=false;
+			}
 		}
+		mGUIManager.blur = false;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
