@@ -186,11 +186,6 @@ public class GUIManagerChapters : GUIManager
 	{
 		HideAllButtonBars();
 
-		//Data.selChapter = sender.iObj as Data.Chapter;
-
-		//mInput.Text = Data.selChapter.Title;
-		//mInput.enable = true;
-
 		if(Data.selChapter.IdCharacter!=-1){
 			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
 			mCharactersButtonBar.SetCurrentButton(Data.selChapter.IdCharacter);

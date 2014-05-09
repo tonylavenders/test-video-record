@@ -22,6 +22,20 @@ public class GUIManagerBlocks : GUIManager
 	public BasicButton mVoiceFxButton;
 	public BasicButton mVoiceSaveButton;
 
+	public GUIText mTextTime;
+	public GUIText mTextTimeShadow;
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	protected override void Start()
+	{
+		base.Start();
+
+		float screenRatio = 800.0f/Screen.width;
+		mTextTime.fontSize = Mathf.RoundToInt(110.0f*screenRatio);
+		mTextTimeShadow.fontSize = Mathf.RoundToInt(110.0f*screenRatio);
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	protected override void InitButtons()
@@ -111,6 +125,39 @@ public class GUIManagerBlocks : GUIManager
 		}
 		Count(sender.Checked);
 	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	string TimeToString(int seconds)
+	{
+		return "00:"+seconds.ToString("00");
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	void ChangeButtonState(bool bTime, bool bVoice)
+	{
+		if(bTime){
+			mDecreaseTimeButton.Show();
+			mIncreaseTimeButton.Show();
+			mSaveTimeButton.Show();
+		}else{
+			mDecreaseTimeButton.Hide();
+			mIncreaseTimeButton.Hide();
+			mSaveTimeButton.Hide();
+		}
+		if(bVoice){
+			mVoicePlayButton.Show();
+			mVoiceRecButton.Show();
+			mVoiceFxButton.Show();
+			mVoiceSaveButton.Show();
+		}else{
+			mVoicePlayButton.Hide();
+			mVoiceRecButton.Hide();
+			mVoiceFxButton.Hide();
+			mVoiceSaveButton.Hide();
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Time button
@@ -118,47 +165,94 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(sender.Checked){
 			mTimeButtonBar.Show();
+			if(mTimeButtonBar.listButtons[0].GetComponent<BasicButton>().Checked){
+				ChangeButtonState(true, false);
+			}
+			else if(mTimeButtonBar.listButtons[1].GetComponent<BasicButton>().Checked){
+				ChangeButtonState(false, true);
+			}
+			int seconds = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
+			mTextTime.text = TimeToString(seconds);
+			mTextTimeShadow.text = TimeToString(seconds);
+			mTextTime.GetComponent<GUITextController>().Show();
+			mTextTimeShadow.GetComponent<GUITextController>().Show();
 		}else{
 			mTimeButtonBar.Hide();
-
-			mDecreaseTimeButton.Hide();
-			mIncreaseTimeButton.Hide();
-			mSaveTimeButton.Hide();
-
-			mVoicePlayButton.Hide();
-			mVoiceRecButton.Hide();
-			mVoiceFxButton.Hide();
-			mVoiceSaveButton.Hide();
+			ChangeButtonState(false, false);
+			mTextTime.GetComponent<GUITextController>().Hide();
+			mTextTimeShadow.GetComponent<GUITextController>().Hide();
 		}
 		Count(sender.Checked);
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Time-Time button
 	public void OnButtonTimeTimePressed(BasicButton sender)
 	{
-		mDecreaseTimeButton.Show();
-		mIncreaseTimeButton.Show();
-		mSaveTimeButton.Show();
-
-		mVoicePlayButton.Hide();
-		mVoiceRecButton.Hide();
-		mVoiceFxButton.Hide();
-		mVoiceSaveButton.Hide();
+		ChangeButtonState(true, false);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Time-Voice button
 	public void OnButtonTimeVoicePressed(BasicButton sender)
 	{
-		mVoicePlayButton.Show();
-		mVoiceRecButton.Show();
-		mVoiceFxButton.Show();
-		mVoiceSaveButton.Show();
+		ChangeButtonState(false, true);
+	}
 
-		mDecreaseTimeButton.Hide();
-		mIncreaseTimeButton.Hide();
-		mSaveTimeButton.Hide();
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonTimeTimeDecrPressed(BasicButton sender)
+	{
+		int time = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
+		if(time>Globals.MIN_SEC_BLOCK){
+			time--;
+			Data.selChapter.selBlock.Frames=time*Globals.FRAMESPERSECOND;
+			mTextTime.text = TimeToString(time);
+			mTextTimeShadow.text = TimeToString(time);
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonTimeTimeIncrPressed(BasicButton sender)
+	{
+		int time = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
+		if(time<Globals.MAX_SEC_BLOCK){
+			time++;
+			Data.selChapter.selBlock.Frames = time*Globals.FRAMESPERSECOND;
+			mTextTime.text = TimeToString(time);
+			mTextTimeShadow.text = TimeToString(time);
+		}
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonTimeTimeSavePressed(BasicButton sender)
+	{
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonTimeVoicePlayPressed(BasicButton sender)
+	{
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonTimeVoiceRecPressed(BasicButton sender)
+	{
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonTimeVoiceFxPressed(BasicButton sender)
+	{
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonTimeVoiceSavePressed(BasicButton sender)
+	{
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
