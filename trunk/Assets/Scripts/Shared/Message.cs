@@ -25,22 +25,27 @@ namespace TVR.Utils
 		}
 		
 		private const int BUTTONS_SEPARATION = 28 / 2;
-		private const int TEXT_MARGIN = 5;
-		private const int TEXT_BUTTON_MARGIN = 30;
+		private const int MESSAGE_MARGIN = 10;
+		private const int CAPTION_MARGIN = 112 + (MESSAGE_MARGIN * 2); //Tamaño del triangulo de admiración.
+		//private const int TEXT_BUTTON_MARGIN = 30;
 		private const int DIALOG_W = 890 / 2;
 		private const int DIALOG_H = 278 / 2;
-		private const int TITLE_FONT_SIZE = 30;
+		private const int DIALOG_Y = 320 / 2;
+		private const int CAPTION_FONT_SIZE = 30;
 		private const int BUTTON_FONT_SIZE = 23;
-		private const int DIALOG_Y = 160;
+		private const int CAPTION_Y = DIALOG_Y + (24 / 2);
+		private const int CAPTION_W = DIALOG_W - (CAPTION_MARGIN * 2);
+		private const int MESSAGE_Y = DIALOG_Y + (100 / 2);
+		private const int MESSAGE_W = DIALOG_W - (MESSAGE_MARGIN * 2);
 
 		private static int mBUTTONS_SEPARATION;
-		private static int mTEXT_MARGIN;
-		private static int mTEXT_BUTTON_MARGIN;
-		private static int mDIALOG_W;
-		private static int mDIALOG_H;
-		private static int mTITLE_FONT_SIZE;
-		private static int mBUTTON_FONT_SIZE;
-		private static int mDIALOG_Y;
+		//private static int mTEXT_MARGIN;
+		//private static int mTEXT_BUTTON_MARGIN;
+		//private static int mDIALOG_W;
+		//private static int mDIALOG_H;
+		//private static int mTITLE_FONT_SIZE;
+		//private static int mBUTTON_FONT_SIZE;
+		//private static int mDIALOG_Y;
 		private static int mBUTTONS_Y;
 
 		private static TextButton mYesButton;
@@ -105,14 +110,19 @@ namespace TVR.Utils
 
 		public static void Init(float animationDuration) {
 			mBUTTONS_SEPARATION = Mathf.RoundToInt(BUTTONS_SEPARATION * ButtonProperties.scaleCorrectionX);
-			mTEXT_MARGIN = Mathf.RoundToInt(TEXT_MARGIN  * ButtonProperties.scaleCorrectionX);
-			mTEXT_BUTTON_MARGIN = Mathf.RoundToInt(TEXT_BUTTON_MARGIN * ButtonProperties.scaleCorrectionX);
-			mDIALOG_W = Mathf.RoundToInt(DIALOG_W * ButtonProperties.scaleCorrectionX);
-			mDIALOG_H = Mathf.RoundToInt(DIALOG_H * ButtonProperties.scaleCorrectionX);
-			mTITLE_FONT_SIZE = Mathf.RoundToInt(TITLE_FONT_SIZE * ButtonProperties.scaleCorrectionX);
-			mBUTTON_FONT_SIZE = Mathf.RoundToInt(BUTTON_FONT_SIZE * ButtonProperties.scaleCorrectionX);
-			mDIALOG_Y = Mathf.RoundToInt(DIALOG_Y * ButtonProperties.scaleCorrectionY);
+			//mTEXT_MARGIN = Mathf.RoundToInt(TEXT_MARGIN  * ButtonProperties.scaleCorrectionX);
+			//mTEXT_BUTTON_MARGIN = Mathf.RoundToInt(TEXT_BUTTON_MARGIN * ButtonProperties.scaleCorrectionX);
+			int mDIALOG_W = Mathf.RoundToInt(DIALOG_W * ButtonProperties.scaleCorrectionX);
+			int mDIALOG_H = Mathf.RoundToInt(DIALOG_H * ButtonProperties.scaleCorrectionX);
+			int mTITLE_FONT_SIZE = Mathf.RoundToInt(CAPTION_FONT_SIZE * ButtonProperties.scaleCorrectionX);
+			int mBUTTON_FONT_SIZE = Mathf.RoundToInt(BUTTON_FONT_SIZE * ButtonProperties.scaleCorrectionX);
+			int mDIALOG_Y = Mathf.RoundToInt(DIALOG_Y * ButtonProperties.scaleCorrectionY);
 			mBUTTONS_Y = Mathf.RoundToInt(mDIALOG_H + mDIALOG_Y + ButtonProperties.buttonMargin);
+
+			int mCAPTION_Y = Mathf.RoundToInt(CAPTION_Y * ButtonProperties.scaleCorrectionY);
+			int mCAPTION_W = Mathf.RoundToInt(CAPTION_W * ButtonProperties.scaleCorrectionX);
+			int mMESSAGE_Y = Mathf.RoundToInt(MESSAGE_Y * ButtonProperties.scaleCorrectionY);
+			int mMESSAGE_W = Mathf.RoundToInt(MESSAGE_W * ButtonProperties.scaleCorrectionX);
 
 			Font font = (Font)ResourcesManager.LoadResource("Interface/Fonts/Futura Oblique", "Message");
 			Texture buttonUp = (Texture)ResourcesManager.LoadResource("Interface/Textures/Warning/button", "Message");
@@ -133,7 +143,8 @@ namespace TVR.Utils
 			mStyle2.clipping = TextClipping.Clip;
 			mStyle2.wordWrap = true;
 			mStyle2.fontSize = mBUTTON_FONT_SIZE;
-			mStyle2.alignment = TextAnchor.UpperCenter;
+			//mStyle2.alignment = TextAnchor.UpperCenter;
+			mStyle2.alignment = TextAnchor.MiddleCenter;
 			mStyle2.fontStyle = FontStyle.Normal;
 			mStyle2.normal.textColor = new Color(0f, 0f, 0f, 0.5f);
 		
@@ -167,6 +178,8 @@ namespace TVR.Utils
 			//mRBlack = new Rect(0, 0, Screen.width, Screen.height);
 		
 			mRTexDialog = new Rect((Screen.width - mDIALOG_W) / 2, mDIALOG_Y, mDIALOG_W, mDIALOG_H);
+			mRCaption = new Rect((Screen.width - mCAPTION_W) / 2, mCAPTION_Y, mCAPTION_W, 42 * ButtonProperties.scaleCorrectionY);
+			mRMessage = new Rect((Screen.width - mMESSAGE_W) / 2, mMESSAGE_Y, mMESSAGE_W, 84 * ButtonProperties.scaleCorrectionY);
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -223,10 +236,9 @@ namespace TVR.Utils
 			mMessage = message;
 			mType = type;
 		
-			int caption_h, message_h;
-		
-			CalcContentY(caption, message, out caption_h, out message_h);
-		
+			//int caption_h, message_h;
+			//CalcContentY(caption, message, out caption_h, out message_h);
+
 			if(mType == Type.YesNo) {
 				mYesButton.Position(new Rect(((Screen.width - mBUTTONS_SEPARATION) / 2) - ButtonProperties.buttonSize, mBUTTONS_Y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
 			} else {
@@ -286,7 +298,7 @@ namespace TVR.Utils
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-		static void CalcContentY(string caption, string message, out int caption_h, out int message_h) {
+		/*static void CalcContentY(string caption, string message, out int caption_h, out int message_h) {
 			int contentY;
 			int caption_H;
 			int h;
@@ -317,7 +329,7 @@ namespace TVR.Utils
 
 			mRCaption = new Rect((Screen.width - w) / 2, contentY, w, 35);
 			mRMessage = new Rect((Screen.width - w) / 2, contentY+ mTEXT_MARGIN + caption_H, w, 55);
-		}
+		}*/
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
