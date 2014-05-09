@@ -46,8 +46,8 @@ namespace TVR.Utils
 		private static TextButton mYesButton;
 		private static TextButton mNoButton;
 		private static GUIStyle mStyle1, mStyle2;
-		private static string mMessage1="";
-		private static string mMessage2="";
+		private static string mCaption="";
+		private static string mMessage="";
 		private static float mAnimationDuration;
 		private static int mIdentifier;
 		
@@ -55,8 +55,8 @@ namespace TVR.Utils
 		private static Texture2D mTexDialog;
 		//private static RectScreen.width - 280 * 2 mRBlack;
 		private static Rect mRTexDialog;
-		private static Rect mRMessage1;
-		private static Rect mRMessage2;
+		private static Rect mRCaption;
+		private static Rect mRMessage;
 		
 		private static States mState;
 		private static SmoothStep mAlpha;
@@ -218,14 +218,14 @@ namespace TVR.Utils
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-		public static void Show(int identifier, string message1, string message2, Type type, string button1Text, string button2Text, Clicked clicked) {
-			mMessage1 = message1;
-			mMessage2 = message2;
+		public static void Show(int identifier, string caption, string message, Type type, string button1Text, string button2Text, Clicked clicked) {
+			mCaption = caption;
+			mMessage = message;
 			mType = type;
 		
-			int message1_h, message2_h;
+			int caption_h, message_h;
 		
-			CalcContentY(message1, message2, out message1_h, out message2_h);
+			CalcContentY(caption, message, out caption_h, out message_h);
 		
 			if(mType == Type.YesNo) {
 				mYesButton.Position(new Rect(((Screen.width - mBUTTONS_SEPARATION) / 2) - ButtonProperties.buttonSize, mBUTTONS_Y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
@@ -247,8 +247,8 @@ namespace TVR.Utils
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-		public static void ShowNow(int identifier, string message1, string message2, Type type, string button1Text, string button2Text, Clicked clicked) {
-			Show(identifier, message1, message2, type, button1Text, button2Text, clicked);
+		public static void ShowNow(int identifier, string caption, string message, Type type, string button1Text, string button2Text, Clicked clicked) {
+			Show(identifier, caption, message, type, button1Text, button2Text, clicked);
 			mAlpha.Value = 1;
 			mState = States.Running;
 			mYesButton.enable = true;
@@ -257,8 +257,8 @@ namespace TVR.Utils
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		public static void Show(int identifier, string message1, string message2, Type type, string button1Text, string button2Text, Clicked clicked, ThreadStart tStart, float minTime) {
-			Show(identifier, message1, message2, type, button1Text, button2Text, clicked);
+		public static void Show(int identifier, string caption, string message, Type type, string button1Text, string button2Text, Clicked clicked, ThreadStart tStart, float minTime) {
+			Show(identifier, caption, message, type, button1Text, button2Text, clicked);
 			mMinTime = minTime;
 			mCount = 0;
 			mThread = new Thread(tStart);
@@ -286,23 +286,23 @@ namespace TVR.Utils
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-		static void CalcContentY(string message1, string message2, out int message1_h, out int message2_h) {
+		static void CalcContentY(string caption, string message, out int caption_h, out int message_h) {
 			int contentY;
-			int message1_H;
+			int caption_H;
 			int h;
 			int buttons_h = 0;
 			int text_margin_h = 0;
 			int text_button_margin_h = 0;
 		
-			message1_h = 0;
-			message2_h = 0;
+			caption_h = 0;
+			message_h = 0;
 		
 			float w = mDIALOG_W - (mTEXT_BUTTON_MARGIN * 2);
-			message1_h = (int)(mStyle1.CalcSize(new GUIContent(message1)).y);
-			message1_H = message1_h;
+			caption_h = (int)(mStyle1.CalcSize(new GUIContent(caption)).y);
+			caption_H = caption_h;
 		
-			if(message2.Length > 0) {
-				message2_h = (int)(mStyle2.CalcHeight(new GUIContent(message2), w));
+			if(message.Length > 0) {
+				message_h = (int)(mStyle2.CalcHeight(new GUIContent(message), w));
 				text_margin_h = mTEXT_MARGIN;
 			}
 		
@@ -311,12 +311,12 @@ namespace TVR.Utils
 				text_button_margin_h = mTEXT_BUTTON_MARGIN;
 			}
 		
-			h = message1_h + text_margin_h + message2_h + text_button_margin_h + buttons_h;
+			h = caption_h + text_margin_h + message_h + text_button_margin_h + buttons_h;
 		
 			contentY = mDIALOG_Y + (mDIALOG_H - h) / 2;
 
-			mRMessage1 = new Rect((Screen.width - w) / 2, contentY, w, 35);
-			mRMessage2 = new Rect((Screen.width - w) / 2, contentY+ mTEXT_MARGIN + message1_H, w, 55);
+			mRCaption = new Rect((Screen.width - w) / 2, contentY, w, 35);
+			mRMessage = new Rect((Screen.width - w) / 2, contentY+ mTEXT_MARGIN + caption_H, w, 55);
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -340,11 +340,11 @@ namespace TVR.Utils
 				GUI.DrawTexture(mRTexDialog, mTexDialog);
 			
 				//Texto1
-				GUI.Label(mRMessage1, mMessage1, mStyle1);
+				GUI.Label(mRCaption, mCaption, mStyle1);
 			
 				//Texto2
-				if(mMessage2.Length > 0)
-					GUI.Label(mRMessage2, mMessage2, mStyle2);
+				if(mMessage.Length > 0)
+					GUI.Label(mRMessage, mMessage, mStyle2);
 			
 				//Botones
 				if(mType != Type.NoButtons) {
