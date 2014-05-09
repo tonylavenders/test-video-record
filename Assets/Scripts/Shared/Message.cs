@@ -24,16 +24,24 @@ namespace TVR.Utils
 			Accept
 		}
 		
-		private const int BUTTONS_SEPARATION = 30 / 2;
-		private const int BUTTONS_WIDTH = 182 / 2;
-		private const int BUTTONS_HEIGHT = 182 / 2;
-		private const int TITLE_FONT_SIZE = 30 / 2;
-		private const int BUTTON_FONT_SIZE = 23 / 2;
-		private const int TEXT_MARGIN = 5 / 2;
-		private const int TEXT_BUTTON_MARGIN = 30 / 2;
-		private const int DIALOG_Y = 160;
+		private const int BUTTONS_SEPARATION = 28 / 2;
+		private const int TEXT_MARGIN = 5;
+		private const int TEXT_BUTTON_MARGIN = 30;
 		private const int DIALOG_W = 890 / 2;
 		private const int DIALOG_H = 278 / 2;
+		private const int TITLE_FONT_SIZE = 30;
+		private const int BUTTON_FONT_SIZE = 23;
+		private const int DIALOG_Y = 160;
+
+		private static int mBUTTONS_SEPARATION;
+		private static int mTEXT_MARGIN;
+		private static int mTEXT_BUTTON_MARGIN;
+		private static int mDIALOG_W;
+		private static int mDIALOG_H;
+		private static int mTITLE_FONT_SIZE;
+		private static int mBUTTON_FONT_SIZE;
+		private static int mDIALOG_Y;
+		private static int mBUTTONS_Y;
 
 		private static TextButton mYesButton;
 		private static TextButton mNoButton;
@@ -43,13 +51,12 @@ namespace TVR.Utils
 		private static float mAnimationDuration;
 		private static int mIdentifier;
 		
-		private static int mContentY;
-		private static int mMessage1_H;
-		
 		//private static Texture2D mBlack;
 		private static Texture2D mTexDialog;
-		//private static Rect mRBlack;
+		//private static RectScreen.width - 280 * 2 mRBlack;
 		private static Rect mRTexDialog;
+		private static Rect mRMessage1;
+		private static Rect mRMessage2;
 		
 		private static States mState;
 		private static SmoothStep mAlpha;
@@ -97,6 +104,18 @@ namespace TVR.Utils
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		public static void Init(float animationDuration) {
+			float scaleCorrectionX = Screen.width / 1024f;
+			float scaleCorrectionY = Screen.height / 768f;
+			mBUTTONS_SEPARATION = Mathf.RoundToInt(BUTTONS_SEPARATION * scaleCorrectionX);
+			mTEXT_MARGIN = Mathf.RoundToInt(TEXT_MARGIN  * scaleCorrectionX);
+			mTEXT_BUTTON_MARGIN = Mathf.RoundToInt(TEXT_BUTTON_MARGIN * scaleCorrectionX);
+			mDIALOG_W = Mathf.RoundToInt(DIALOG_W * scaleCorrectionX);
+			mDIALOG_H = Mathf.RoundToInt(DIALOG_H * scaleCorrectionX);
+			mTITLE_FONT_SIZE = Mathf.RoundToInt(TITLE_FONT_SIZE * scaleCorrectionX);
+			mBUTTON_FONT_SIZE = Mathf.RoundToInt(BUTTON_FONT_SIZE * scaleCorrectionX);
+			mDIALOG_Y = Mathf.RoundToInt(DIALOG_Y * scaleCorrectionY);
+			mBUTTONS_Y = Mathf.RoundToInt(mDIALOG_H + mDIALOG_Y + ButtonProperties.buttonMargin);
+
 			Font font = (Font)ResourcesManager.LoadResource("Interface/Fonts/Futura Oblique", "Message");
 			Texture buttonUp = (Texture)ResourcesManager.LoadResource("Interface/Textures/Warning/button", "Message");
 			Texture buttonDown = (Texture)ResourcesManager.LoadResource("Interface/Textures/Warning/button_pressed", "Message");
@@ -106,16 +125,16 @@ namespace TVR.Utils
 			mStyle1.font = font;
 			mStyle1.clipping = TextClipping.Clip;
 			mStyle1.wordWrap = true;
-			mStyle1.fontSize = TITLE_FONT_SIZE;
+			mStyle1.fontSize = mTITLE_FONT_SIZE;
 			mStyle1.alignment = TextAnchor.UpperCenter;
-			mStyle1.fontStyle = FontStyle.Normal;
+			mStyle1.fontStyle = FontStyle.Bold;
 			mStyle1.normal.textColor = Color.black;
 		
 			mStyle2 = new GUIStyle();
 			mStyle2.font = font;
 			mStyle2.clipping = TextClipping.Clip;
 			mStyle2.wordWrap = true;
-			mStyle2.fontSize = BUTTON_FONT_SIZE;
+			mStyle2.fontSize = mBUTTON_FONT_SIZE;
 			mStyle2.alignment = TextAnchor.UpperCenter;
 			mStyle2.fontStyle = FontStyle.Normal;
 			mStyle2.normal.textColor = new Color(0f, 0f, 0f, 0.5f);
@@ -123,7 +142,7 @@ namespace TVR.Utils
 			mAnimationDuration = animationDuration;
 		
 			mYesButton = new TextButton(new Rect(0, 0, 0, 0), buttonDown, buttonUp, buttonDown, buttonUp, font, false);
-			mYesButton.TextSize = BUTTON_FONT_SIZE;
+			mYesButton.TextSize = mBUTTON_FONT_SIZE;
 			mYesButton.TextStyle = FontStyle.Normal;
 			mYesButton.TextPosition = TextAnchor.MiddleCenter;
 			mYesButton.shadow = true;
@@ -132,7 +151,7 @@ namespace TVR.Utils
 			mYesButton.enable = false;
 
 			mNoButton = new TextButton(new Rect(0, 0, 0, 0), buttonDown, buttonUp, buttonDown, buttonUp, font, false);
-			mNoButton.TextSize = BUTTON_FONT_SIZE;
+			mNoButton.TextSize = mBUTTON_FONT_SIZE;
 			mNoButton.TextStyle = FontStyle.Normal;
 			mNoButton.TextPosition = TextAnchor.MiddleCenter;
 			mNoButton.Text = "No";
@@ -147,7 +166,7 @@ namespace TVR.Utils
 			//mBlack = (Texture2D)ResourcesManager.LoadResource("SceneMgr/black_pixel", "Message");
 			//mRBlack = new Rect(0, 0, Screen.width, Screen.height);
 		
-			mRTexDialog = new Rect((Screen.width - DIALOG_W) / 2, DIALOG_Y, DIALOG_W, DIALOG_H);
+			mRTexDialog = new Rect((Screen.width - mDIALOG_W) / 2, mDIALOG_Y, mDIALOG_W, mDIALOG_H);
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,12 +227,12 @@ namespace TVR.Utils
 		
 			CalcContentY(message1, message2, out message1_h, out message2_h);
 		
-			int buttons_pos_y = mContentY + message1_h + TEXT_MARGIN + message2_h + TEXT_BUTTON_MARGIN;
+			float buttons_pos_y = mBUTTONS_Y;
 		
 			if(mType == Type.YesNo) {
-				mYesButton.Position(new Rect((Screen.width / 2) - (BUTTONS_SEPARATION + BUTTONS_WIDTH), buttons_pos_y, BUTTONS_WIDTH, BUTTONS_HEIGHT));
+				mYesButton.Position(new Rect(((Screen.width - mBUTTONS_SEPARATION) / 2) - ButtonProperties.buttonSize, buttons_pos_y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
 			} else {
-				mYesButton.Position(new Rect((Screen.width - BUTTONS_WIDTH) / 2, buttons_pos_y, BUTTONS_WIDTH, BUTTONS_HEIGHT));
+				mYesButton.Position(new Rect((Screen.width - ButtonProperties.buttonSize) / 2, buttons_pos_y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
 			}
 		
 			mYesButton.Text = button1Text;
@@ -221,7 +240,7 @@ namespace TVR.Utils
 			mNoButton.Text = button2Text;
 			mNoButton.enable = false;
 		
-			mNoButton.Position(new Rect((Screen.width / 2) + BUTTONS_SEPARATION, buttons_pos_y, BUTTONS_WIDTH, BUTTONS_HEIGHT));
+			mNoButton.Position(new Rect((Screen.width + mBUTTONS_SEPARATION) / 2, buttons_pos_y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
 		
 			mAlpha.Reset(1, mAnimationDuration, true, 0);
 			mState = States.Showing;
@@ -272,6 +291,8 @@ namespace TVR.Utils
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 		static void CalcContentY(string message1, string message2, out int message1_h, out int message2_h) {
+			int contentY;
+			int message1_H;
 			int h;
 			int buttons_h = 0;
 			int text_margin_h = 0;
@@ -280,23 +301,26 @@ namespace TVR.Utils
 			message1_h = 0;
 			message2_h = 0;
 		
-			float w = Screen.width - 280 * 2;
+			float w = mDIALOG_W - (mTEXT_BUTTON_MARGIN * 2);
 			message1_h = (int)(mStyle1.CalcSize(new GUIContent(message1)).y);
-			mMessage1_H = message1_h;
+			message1_H = message1_h;
 		
 			if(message2.Length > 0) {
 				message2_h = (int)(mStyle2.CalcHeight(new GUIContent(message2), w));
-				text_margin_h = TEXT_MARGIN;
+				text_margin_h = mTEXT_MARGIN;
 			}
 		
 			if(mType != Type.NoButtons) {
-				buttons_h = BUTTONS_HEIGHT;
-				text_button_margin_h = TEXT_BUTTON_MARGIN;
+				buttons_h = Mathf.RoundToInt(ButtonProperties.buttonSize);
+				text_button_margin_h = mTEXT_BUTTON_MARGIN;
 			}
 		
 			h = message1_h + text_margin_h + message2_h + text_button_margin_h + buttons_h;
 		
-			mContentY = DIALOG_Y + (DIALOG_H - h) / 2;
+			contentY = mDIALOG_Y + (mDIALOG_H - h) / 2;
+
+			mRMessage1 = new Rect((Screen.width - w) / 2, contentY, w, 35);
+			mRMessage2 = new Rect((Screen.width - w) / 2, contentY+ mTEXT_MARGIN + message1_H, w, 55);
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -320,11 +344,11 @@ namespace TVR.Utils
 				GUI.DrawTexture(mRTexDialog, mTexDialog);
 			
 				//Texto1
-				GUI.Label(new Rect(280, mContentY, Screen.width - 280 * 2, 35), mMessage1, mStyle1);
+				GUI.Label(mRMessage1, mMessage1, mStyle1);
 			
 				//Texto2
 				if(mMessage2.Length > 0)
-					GUI.Label(new Rect(280, mContentY + TEXT_MARGIN + mMessage1_H, Screen.width - 280 * 2, 55), mMessage2, mStyle2);
+					GUI.Label(mRMessage2, mMessage2, mStyle2);
 			
 				//Botones
 				if(mType != Type.NoButtons) {
