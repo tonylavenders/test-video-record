@@ -8,16 +8,24 @@ public abstract class iBlur : MonoBehaviour {
 	public Camera[] Cameras;
 	public Color Tint = Color.white;
 	protected SmoothStep mAlpha;
+	private static bool mBlurred;
+	public static bool Blurred {
+		get { return mBlurred; }
+	}
 	bool mEnable;
 	public virtual bool Enable {
 		get { return mEnable; }
 		set {
 			if(mEnable != value) {
 				mEnable = value;
-				if(mEnable)
+				if(mEnable) {
 					mAlpha.Reset(1, Globals.ANIMATIONDURATION, true, -2);
-				else
+					mBlurred = true;
+				} else {
 					mAlpha.Reset(0, Globals.ANIMATIONDURATION, true);
+					mTexture = null;
+					enableCameras(true);
+				}
 			}
 		}
 	}
@@ -34,7 +42,8 @@ public abstract class iBlur : MonoBehaviour {
 		SmoothStep.State SSState = mAlpha.Update();
 		if(SSState == SmoothStep.State.inFade || SSState == SmoothStep.State.justEnd) {
 			if(SSState == SmoothStep.State.justEnd && mAlpha.Value == 0f) {
-				enableCameras(true);
+				//enableCameras(true);
+				mBlurred = false;
 				if(mTextureBlurred != null) {
 					if(mTextureBlurred is RenderTexture)
 						((RenderTexture)mTextureBlurred).Release();
