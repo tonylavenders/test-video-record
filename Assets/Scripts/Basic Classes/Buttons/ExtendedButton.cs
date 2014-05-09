@@ -6,7 +6,7 @@ namespace TVR.Button
 {	
 	public delegate void DelegateButton(ExtendedButton sender);
 
-	public class ExtendedButton : BasicButton {
+	public class ExtendedButton : BasicButtonGUI {
 		private const float TIMEDOUBLECLICK = 0.5f;
 		public int Identifier = -1;
 		public bool shadow = false;

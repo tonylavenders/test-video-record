@@ -3,7 +3,7 @@ using TVR.Helpers;
 
 namespace TVR.Button
 {	
-	public class BasicButton {	
+	public class BasicButtonGUI {	
 		private const int MAXDISABLEBUTTONS = 450; //((15^2)*2) Máximo desplazamiento antes de desactivar los botones 15 pixeles.
 
 		public Texture TexDown { get; set; }  
@@ -25,7 +25,7 @@ namespace TVR.Button
 		public bool disableOnMouseMove;
 
 		private static float mSharedTime;
-		private static BasicButton mSharedAnyPressed = null;
+		private static BasicButtonGUI mSharedAnyPressed = null;
 
 		public bool enable {
 			get {
@@ -73,7 +73,7 @@ namespace TVR.Button
 			get { return mSharedTime == Time.time; }
 		}
 
-		public BasicButton(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, bool bKeepSt = true) {
+		public BasicButtonGUI(Rect r, Texture down, Texture up, Texture disableDown, Texture disableUp, bool bKeepSt = true) {
 			TexDown = down;
 			TexUp = up;
 			TexDownDisable = disableDown;

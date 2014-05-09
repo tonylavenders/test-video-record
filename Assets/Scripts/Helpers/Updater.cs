@@ -11,7 +11,7 @@ public class Updater : MonoBehaviour {
 
 	void LateUpdate() {
 		if(InputHelp.GetMouseButtonUp(0)) {
-			TVR.Button.BasicButton.mouseUp();
+			TVR.Button.BasicButtonGUI.mouseUp();
 			//System.GC.Collect();
 		}
 	}
