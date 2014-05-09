@@ -15,22 +15,26 @@ public class ButtonProperties
 	const float buttonBarRatio = 0.1f;
 	public static float buttonBarScaleX;
 
+	//Screen
+	public static float scaleCorrectionX;
+	public static float scaleCorrectionY;
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public static void Init()
-	{
-		float totalHeight = 5*buttonRatio*Screen.width+6*buttonMarginRatio*Screen.width;
+	public static void Init() {
+		float totalHeight = 5 * buttonRatio * Screen.width + 6 * buttonMarginRatio * Screen.width;
 		
-		if(totalHeight > Screen.height){
+		if(totalHeight > Screen.height) {
 			//The relation between buttons and margins is 7-1
-			buttonMargin = Screen.height/41;
-			buttonSize = 7*buttonMargin;
-			buttonBarScaleX = 1.13f*buttonSize;
+			buttonMargin = Screen.height / 41;
+			buttonSize = 7 * buttonMargin;
+			buttonBarScaleX = 1.13f * buttonSize;
+		} else {
+			buttonMargin = Screen.width * buttonMarginRatio;
+			buttonSize = Screen.width * buttonRatio;
+			buttonBarScaleX = Screen.width * buttonBarRatio;
 		}
-		else{
-			buttonMargin = Screen.width*buttonMarginRatio;
-			buttonSize = Screen.width*buttonRatio;
-			buttonBarScaleX = Screen.width*buttonBarRatio;
-		}
+		scaleCorrectionX = Screen.width / 1024f;
+		scaleCorrectionY = Screen.height / 768f;
 	}
 }

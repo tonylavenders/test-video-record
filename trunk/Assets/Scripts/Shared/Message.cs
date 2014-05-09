@@ -104,16 +104,14 @@ namespace TVR.Utils
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		public static void Init(float animationDuration) {
-			float scaleCorrectionX = Screen.width / 1024f;
-			float scaleCorrectionY = Screen.height / 768f;
-			mBUTTONS_SEPARATION = Mathf.RoundToInt(BUTTONS_SEPARATION * scaleCorrectionX);
-			mTEXT_MARGIN = Mathf.RoundToInt(TEXT_MARGIN  * scaleCorrectionX);
-			mTEXT_BUTTON_MARGIN = Mathf.RoundToInt(TEXT_BUTTON_MARGIN * scaleCorrectionX);
-			mDIALOG_W = Mathf.RoundToInt(DIALOG_W * scaleCorrectionX);
-			mDIALOG_H = Mathf.RoundToInt(DIALOG_H * scaleCorrectionX);
-			mTITLE_FONT_SIZE = Mathf.RoundToInt(TITLE_FONT_SIZE * scaleCorrectionX);
-			mBUTTON_FONT_SIZE = Mathf.RoundToInt(BUTTON_FONT_SIZE * scaleCorrectionX);
-			mDIALOG_Y = Mathf.RoundToInt(DIALOG_Y * scaleCorrectionY);
+			mBUTTONS_SEPARATION = Mathf.RoundToInt(BUTTONS_SEPARATION * ButtonProperties.scaleCorrectionX);
+			mTEXT_MARGIN = Mathf.RoundToInt(TEXT_MARGIN  * ButtonProperties.scaleCorrectionX);
+			mTEXT_BUTTON_MARGIN = Mathf.RoundToInt(TEXT_BUTTON_MARGIN * ButtonProperties.scaleCorrectionX);
+			mDIALOG_W = Mathf.RoundToInt(DIALOG_W * ButtonProperties.scaleCorrectionX);
+			mDIALOG_H = Mathf.RoundToInt(DIALOG_H * ButtonProperties.scaleCorrectionX);
+			mTITLE_FONT_SIZE = Mathf.RoundToInt(TITLE_FONT_SIZE * ButtonProperties.scaleCorrectionX);
+			mBUTTON_FONT_SIZE = Mathf.RoundToInt(BUTTON_FONT_SIZE * ButtonProperties.scaleCorrectionX);
+			mDIALOG_Y = Mathf.RoundToInt(DIALOG_Y * ButtonProperties.scaleCorrectionY);
 			mBUTTONS_Y = Mathf.RoundToInt(mDIALOG_H + mDIALOG_Y + ButtonProperties.buttonMargin);
 
 			Font font = (Font)ResourcesManager.LoadResource("Interface/Fonts/Futura Oblique", "Message");
@@ -159,6 +157,8 @@ namespace TVR.Utils
 			mNoButton.TextColor = Color.white;
 			mNoButton.scaleMode = ScaleMode.StretchToFill;
 			mNoButton.enable = false;
+
+			mNoButton.Position(new Rect((Screen.width + mBUTTONS_SEPARATION) / 2, mBUTTONS_Y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
 		
 			mState = States.Hide;
 			mAlpha = new SmoothStep(0, 0, 0, false, 0);
@@ -227,20 +227,16 @@ namespace TVR.Utils
 		
 			CalcContentY(message1, message2, out message1_h, out message2_h);
 		
-			float buttons_pos_y = mBUTTONS_Y;
-		
 			if(mType == Type.YesNo) {
-				mYesButton.Position(new Rect(((Screen.width - mBUTTONS_SEPARATION) / 2) - ButtonProperties.buttonSize, buttons_pos_y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
+				mYesButton.Position(new Rect(((Screen.width - mBUTTONS_SEPARATION) / 2) - ButtonProperties.buttonSize, mBUTTONS_Y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
 			} else {
-				mYesButton.Position(new Rect((Screen.width - ButtonProperties.buttonSize) / 2, buttons_pos_y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
+				mYesButton.Position(new Rect((Screen.width - ButtonProperties.buttonSize) / 2, mBUTTONS_Y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
 			}
 		
 			mYesButton.Text = button1Text;
 			mYesButton.enable = false;
 			mNoButton.Text = button2Text;
 			mNoButton.enable = false;
-		
-			mNoButton.Position(new Rect((Screen.width + mBUTTONS_SEPARATION) / 2, buttons_pos_y, ButtonProperties.buttonSize, ButtonProperties.buttonSize));
 		
 			mAlpha.Reset(1, mAnimationDuration, true, 0);
 			mState = States.Showing;
