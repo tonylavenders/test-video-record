@@ -549,7 +549,10 @@ namespace TVR {
 					mOldIdExpression = mIdExpression;
 					mOldIdAnimation = mIdAnimation;
 					mOldIdProp = mIdProp;
-					mSound = mOldSound;
+					if(mSound != mOldSound) {
+						MonoBehaviour.DestroyImmediate(mSound);
+						mSound = mOldSound;
+					}
 				}
 
 				public int CompareTo(Block other) {		
