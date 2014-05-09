@@ -149,8 +149,11 @@ public class ButtonBarElements : ButtonBar
 	{
 		if(currentSelected==null)
 			return;
-
-		TVR.Utils.Message.Show(1, "AVISO", "\u00BFDesea eliminar el cap\u00EDtulo seleccionado?", TVR.Utils.Message.Type.YesNo, "S\u00ED", "No", Message_Delete);
+		if(elementType == ElementTypes.chapters) {
+			TVR.Utils.Message.Show(1, "AVISO", "\u00BFDesea eliminar el cap\u00EDtulo seleccionado?", TVR.Utils.Message.Type.YesNo, "S\u00ED", "No", Message_Delete);
+		} else if(elementType == ElementTypes.blocks) {
+			TVR.Utils.Message.Show(1, "AVISO", "\u00BFDesea eliminar el bloque seleccionado?", TVR.Utils.Message.Type.YesNo, "S\u00ED", "No", Message_Delete);
+		}
 		mGUIManager.blur = true;
 	}
 
