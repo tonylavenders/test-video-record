@@ -27,8 +27,6 @@ public class GUIManagerChapters : GUIManager
 
 	protected override void Start()
 	{
-		ButtonProperties.Init();
-		
 		Font fontArial = (Font)ResourcesManager.LoadResource("Interface/Fonts/Futura Oblique", "Chapter");
 		Texture white = (Texture)ResourcesManager.LoadResource("Shared/white_pixel", "Chapter");
 		float width = (Screen.width - (ButtonProperties.buttonBarScaleX * 2)) - (MARGIN * 2);

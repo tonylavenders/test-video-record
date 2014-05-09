@@ -39,9 +39,11 @@ public class SceneMgr : MonoBehaviour  {
 
 	void Init() {
 		Application.targetFrameRate = 60;
+		ButtonProperties.Init();
 		TVR.Utils.Message.Init(TVR.Globals.ANIMATIONDURATION);
 		ResourcesLibrary.Init();
 		Data.Init();
+
 		
 		/*mCurrentScene = "Menus";
 		Application.LoadLevel(mCurrentScene);*/
