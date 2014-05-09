@@ -6,9 +6,9 @@ using TVR.Utils;
 public class GUITextController : MonoBehaviour
 {
 	Transform mParent;
-	//int font_size;
-
 	SmoothStep mFade;
+	public bool bIsTime=false;
+	Data.Chapter.Block mBlock;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +22,17 @@ public class GUITextController : MonoBehaviour
 	void Start()
 	{
 		mParent = transform.parent;
-		guiText.fontSize = (int)(mParent.lossyScale.x*(26.0f/90.0f)); //para button.scale=90 ==> font_size=26
+		if(bIsTime){
+			mBlock = mParent.GetComponent<BasicButton>().iObj as Data.Chapter.Block;
+		}
+
+		if(mParent!=null){
+			if(!bIsTime){
+				guiText.fontSize = (int)(mParent.lossyScale.x*(26.0f/90.0f)); //para button.scale=90 ==> font_size=26
+			}else{
+				guiText.fontSize = (int)(mParent.lossyScale.x*(15.0f/90.0f)); 
+			}
+		}
 		Color c = guiText.color;
 		guiText.color = new Color(c.r, c.g, c.b, mFade.Value);
 	}
@@ -32,17 +42,26 @@ public class GUITextController : MonoBehaviour
 	void Update()
 	{
 		SmoothStep.State state = mFade.Update();
-		if(state == SmoothStep.State.inFade || state == SmoothStep.State.justEnd) {
+
+		if(state == SmoothStep.State.inFade || state == SmoothStep.State.justEnd){
 			Color c = guiText.color;
 			guiText.color = new Color(c.r, c.g, c.b, mFade.Value);
 		}
 
 		//position
-		float pos_x = mParent.position.x/Screen.width;
-		float pos_y = mParent.position.y/Screen.height;
-		guiText.transform.position = new Vector3(pos_x, pos_y, 0.0f);
+		if(mParent!=null){
+			float pos_x = mParent.position.x/Screen.width;
+			float pos_y;
+			if(!bIsTime){
+				pos_y = mParent.position.y/Screen.height;
+			}else{
+				pos_y = (mParent.position.y-mParent.lossyScale.x * 0.3f)/Screen.height;
+				guiText.text = "00:"+Mathf.RoundToInt(mBlock.Frames*Globals.MILISPERFRAME).ToString("00");
+			}
+			guiText.transform.position = new Vector3(pos_x, pos_y, 0.0f);
+		}
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION)

@@ -17,6 +17,19 @@ public class ButtonBarElements : ButtonBar
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public override void Show()
+	{
+		base.Show();
+
+		if(elementType==ElementTypes.chapters && Data.selChapter!=null){
+			currentSelected=listButtons[Data.selChapter.Number].GetComponent<BasicButton>();
+			currentSelected.Checked=true;
+			GoToButtonPosition(currentSelected.transform);
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	int GetCount()
 	{
 		if(elementType==ElementTypes.chapters){
@@ -111,14 +124,11 @@ public class ButtonBarElements : ButtonBar
 		if(elementType==ElementTypes.chapters){	
 			iObject newChapter;
 			newChapter = Data.newChapter("", "", -1, -1, null);
-			//Data.selChapter = newChapter as Data.Chapter;
 			listButtons.Add(Instantiate(mButtons[1]) as GameObject);
 			counter=GetCount();
 			listButtons[counter].GetComponent<BasicButton>().iObj = newChapter;
 			mGUIManager.CurrentCharacter=null;
 			mGUIManager.CurrentBackground=null;
-		 //	mGUIManager.mInput.Text=Data.selChapter.Title;
-			//mGUIManager.mInput.enable=true;
 		}
 		else if(elementType==ElementTypes.blocks){
 			iObject newBlock;
@@ -235,7 +245,6 @@ public class ButtonBarElements : ButtonBar
 			listButtons.RemoveAt(currentSelected.iObj.Number);
 			Destroy(currentSelected.gameObject);
 			currentSelected=null;
-			//Data.selChapter=null;
 			stateElements=StatesElements.idle;
 			ResizeButtonBarAfterDelete();
 		}

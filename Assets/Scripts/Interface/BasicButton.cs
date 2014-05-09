@@ -11,7 +11,9 @@ public enum ButtonType{
 	MAIN_EDIT, MAIN_PLAY,
 	EDIT_TIME, EDIT_EXPR, EDIT_ANIM, EDIT_CAM,
 	MUSIC, ANIM, EXPR, BLOCK,
-	EDIT_TIME_TIME, EDIT_TIME_VOICE
+	EDIT_TIME_TIME, EDIT_TIME_VOICE,
+	EDIT_TIME_TIME_INCR, EDIT_TIME_TIME_DECR, EDIT_TIME_TIME_SAVE,
+	EDIT_TIME_VOICE_PLAY, EDIT_TIME_VOICE_REC, EDIT_TIME_VOICE_FX, EDIT_TIME_VOICE_SAVE
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,6 +118,7 @@ public class BasicButton : MonoBehaviour
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
 	Transform mGUIText;
+	Transform mGUITextTime;
 	TextMesh mText3D;
 	static float mSharedTime;
 
@@ -141,6 +144,7 @@ public class BasicButton : MonoBehaviour
 		renderer.material.mainTexture = texUnchecked;
 
 		mGUIText = transform.FindChild("GUI Text");
+		mGUITextTime = transform.FindChild("GUI Text Time");
 		Transform t = transform.FindChild("New Text");
 		if(t != null)
 			mText3D = transform.FindChild("New Text").GetComponent<TextMesh>();
@@ -157,6 +161,7 @@ public class BasicButton : MonoBehaviour
 	void Start()
 	{
 		mButtonBar = transform.parent.GetComponent<ButtonBar>();
+
 		if(mButtonBar!=null)
 			mGUIManager = mButtonBar.mGUIManager;
 		else
@@ -312,6 +317,27 @@ public class BasicButton : MonoBehaviour
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeVoicePressed;
 		}
+		else if(buttonType == ButtonType.EDIT_TIME_TIME_DECR) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeTimeDecrPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_TIME_INCR) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeTimeIncrPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_TIME_SAVE) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeTimeSavePressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_PLAY) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeVoicePlayPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_REC) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeVoiceRecPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeVoiceFxPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_SAVE) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeVoiceSavePressed;
+		}
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -322,6 +348,9 @@ public class BasicButton : MonoBehaviour
 
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Show(delay, duration);
+
+		if(mGUITextTime)
+			mGUITextTime.gameObject.GetComponent<GUITextController>().Show(delay, duration);
 
 		state = States.fade_in;
 	}
@@ -334,6 +363,9 @@ public class BasicButton : MonoBehaviour
 
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Hide(delay, duration);
+
+		if(mGUITextTime)
+			mGUITextTime.gameObject.GetComponent<GUITextController>().Hide(delay, duration);
 
 		state = States.fade_out;
 	}

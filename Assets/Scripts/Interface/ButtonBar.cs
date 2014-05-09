@@ -7,8 +7,8 @@ using TVR.Helpers;
 
 public class ButtonBar : MonoBehaviour
 {
-	public GameObject[] mButtons;
-	protected List<GameObject> listButtons;
+	public GameObject[] mButtons; //generic prefabs
+	public List<GameObject> listButtons; //real buttons
 	public GameObject Separator;
 
 	public float depth_x = 0;
@@ -353,7 +353,7 @@ public class ButtonBar : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Show()
+	public virtual void Show()
 	{
 		if(!bInit)
 			Init();

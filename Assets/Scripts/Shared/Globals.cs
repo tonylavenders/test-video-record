@@ -9,6 +9,8 @@ namespace TVR {
 		public static float RATIOY = Screen.height / 768f;
 		public const int MINFRAMES = 25;
 		public const int MAXFRAMES = 5000;
+		public const int MAX_SEC_BLOCK = 15;
+		public const int MIN_SEC_BLOCK = 1;
 
 		public const int OUTPUTRATEPERSECOND = 44100;
 		public const int OUTPUTRATEPERFRAME = OUTPUTRATEPERSECOND / FRAMESPERSECOND;
