@@ -70,12 +70,16 @@ public class ButtonBar : MonoBehaviour
 				else if(elementType==ElementTypes.blocks){
 					if(Data.selChapter!=null){
 						if(Data.selChapter.selBlock!=null){
+							mGUIManager.CurrentBlockChanged(Data.selChapter.selBlock);
 							Data.selChapter.selBlock.Save();
 						}
 						Data.selChapter.selBlock = value.iObj as Data.Chapter.Block;
 					}
+				}else if(elementType==ElementTypes.main && mGUIManager is GUIManagerBlocks){
+					mGUIManager.CurrentBlockChanged(null);
 				}
-			}else{
+			}//currentSelected=null
+			else{
 				if(elementType==ElementTypes.chapters){
 					mGUIManager.mInput.Fade(0, Globals.ANIMATIONDURATION, true, false);
 					Data.selChapter = null;

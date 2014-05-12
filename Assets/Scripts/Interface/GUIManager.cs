@@ -168,7 +168,18 @@ public class GUIManager : MonoBehaviour
 	{
 		if(bCount) Counter++;
 		else Counter--;
-		mLeftButtonBar.Separator.SetActive(Counter!=0);
+
+		if(Counter!=0){
+			mLeftButtonBar.Separator.GetComponent<SeparatorController>().Show();
+		}else{
+			mLeftButtonBar.Separator.GetComponent<SeparatorController>().Hide();
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public virtual void CurrentBlockChanged(Data.Chapter.Block previousBlock)
+	{
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
