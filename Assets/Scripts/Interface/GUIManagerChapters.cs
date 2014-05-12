@@ -246,19 +246,20 @@ public class GUIManagerChapters : GUIManager
 
 	private void inputSelected(ExtendedButton sender)
 	{
-		#if UNITY_IOS
+		//#if UNITY_IOS
 		blur = true;
 		mInput.enable = true;
-		#endif
+		//#endif
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	 
 	private void inputUnSelected(ExtendedButton sender)
 	{
-		#if UNITY_IOS
+		//#if UNITY_IOS
 		blur = false;
-		#endif
+		//#endif
+		Data.selChapter.Title = mInput.Text;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -266,8 +267,7 @@ public class GUIManagerChapters : GUIManager
 	protected override void OnApplicationPause(bool pauseStatus)
 	{
 		base.OnApplicationPause(pauseStatus);
-
-		if(Data.selChapter!=null){
+		if(pauseStatus && Data.selChapter!=null){
 			Data.selChapter.Save();
 		}
 	}

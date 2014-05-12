@@ -61,7 +61,6 @@ public class ButtonBar : MonoBehaviour
 
 				if(elementType==ElementTypes.chapters){
 					if(Data.selChapter!=null){
-						Data.selChapter.Title = mGUIManager.mInput.Text;
 						Data.selChapter.Save();
 					}
 					Data.selChapter = value.iObj as Data.Chapter;

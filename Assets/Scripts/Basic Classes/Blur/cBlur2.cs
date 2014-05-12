@@ -27,7 +27,7 @@ public class cBlur2 : iBlur {
 	void OnPostRender() {
 		if(base.Enable) {
 			enableCameras(false);
-			Texture2D tex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, true);
+			Texture2D tex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, softwareBlur);
 			tex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
 			tex.Apply();
 
