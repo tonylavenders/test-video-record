@@ -72,19 +72,19 @@ public class BasicButton : MonoBehaviour
 		get { 
 			if(mGUIText!=null)
 				return mGUIText.guiText.text;
-			else if(mText3D!=null)
-				return mText3D.text;
+			/*else if(mText3D!=null)
+				return mText3D.text;*/
 			else
 				return "";
 		}
 		set {
 			if(mGUIText!=null) 
 				mGUIText.guiText.text = value;
-			if(mText3D!=null)
-				mText3D.text = value;
+			/*if(mText3D!=null)
+				mText3D.text = value;*/
 		}
 	}
-	[ExposeProperty]
+	/*[ExposeProperty]
 	public bool Blur {
 		get {
 			if(mText3D != null)
@@ -100,7 +100,7 @@ public class BasicButton : MonoBehaviour
 			if(value && mGUIText != null && mText3D != null)
 				mText3D.color = mGUIText.guiText.color;
 		}
-	}
+	}*/
 	public ButtonType buttonType;
 
 	public delegate void ButtonCallback(BasicButton sender);
@@ -119,7 +119,7 @@ public class BasicButton : MonoBehaviour
 	GUIManager mGUIManager;
 	Transform mGUIText;
 	Transform mGUITextTime;
-	TextMesh mText3D;
+	//TextMesh mText3D;
 	static float mSharedTime;
 
 	Vector2 mMouseInitPos;
@@ -145,9 +145,9 @@ public class BasicButton : MonoBehaviour
 
 		mGUIText = transform.FindChild("GUI Text");
 		mGUITextTime = transform.FindChild("GUI Text Time");
-		Transform t = transform.FindChild("New Text");
+		/*Transform t = transform.FindChild("New Text");
 		if(t != null)
-			mText3D = transform.FindChild("New Text").GetComponent<TextMesh>();
+			mText3D = transform.FindChild("New Text").GetComponent<TextMesh>();*/
 
 		Color c = renderer.material.color;
 		renderer.material.color = new Color(c.r, c.g, c.b, 0.0f);

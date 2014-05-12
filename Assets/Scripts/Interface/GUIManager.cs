@@ -40,17 +40,17 @@ public class GUIManager : MonoBehaviour
 
 	const float cameraZDepth = 0;
 	public int Counter = 0;
-	iBlur mBlur;
+
 	public virtual bool blur {
 		get {
-			return mBlur.Enable;
+			return CameraBlur.Blur.Enable;
 		}
 		set {
-			if(value != mBlur.Enable) {
-				foreach(BasicButton b in transform.GetComponentsInChildren<BasicButton>()) {
+			if(value != CameraBlur.Blur.Enable) {
+				/*foreach(BasicButton b in transform.GetComponentsInChildren<BasicButton>()) {
 					b.Blur = value;
-				}
-				mBlur.Enable = value;
+				}*/
+				CameraBlur.Blur.Enable = value;
 				//TODO: Desactivar animaciones, sistemas de particulas, ...
 			}
 		}
@@ -66,12 +66,6 @@ public class GUIManager : MonoBehaviour
 		mRightButtonBar.Show();
 
 		InitButtons();
-
-		if(transform.GetComponent<cBlur>().isSupported())
-			mBlur = transform.GetComponent<cBlur>();
-		else
-			mBlur = transform.GetComponent<cBlur2>();
-		mBlur.enabled = true;
 
 		if(Data.selChapter!=null && Data.selChapter.IdCharacter!=-1){
 			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
