@@ -60,16 +60,30 @@ namespace TVR {
 				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (2, 'Mid Shot')");
 				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (3, 'Long Shot')");
 
+				db.ExecuteNonQuery("CREATE TABLE [FilterTypes] ([IdFilterType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [FilterType] TEXT NOT NULL)");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (1, 'Off')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (2, 'Monster')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (3, 'Mosquito')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (4, 'Echo')");
+
 				db.ExecuteNonQuery("CREATE TABLE [Chapters] ([IdChapter] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER NOT NULL, [Title] TEXT NOT NULL, [Information] TEXT NOT NULL, [IdCharacter] INTEGER NOT NULL, [IdBackground] INTEGER NOT NULL, [IdMusic] INTEGER)");
-				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdChapter] INTEGER NOT NULL REFERENCES [Chapters] ([IdChapter]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlockTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL, [IdProp] INTEGER)");
+				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdChapter] INTEGER NOT NULL REFERENCES [Chapters] ([IdChapter]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlockTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [IdFilterType] INTEGER NOT NULL REFERENCES [FilterTypes] ([IdFilterType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL, [IdProp] INTEGER)");
 				//db.ExecuteNonQuery("CREATE TABLE [CharacterProps] ([IdCharacterProps] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdBlock] INTEGER NOT NULL REFERENCES [Blocks] ([IdBlock]) ON DELETE CASCADE, [IdResource] INTEGER NOT NULL, [Dummy] TEXT NOT NULL)");
-				db.ExecuteQuery("pragma user_version=1;");
-			}
-			/*if(VersionDB < 2) {
-				if(VersionDB > 0) {
-				}
 				db.ExecuteQuery("pragma user_version=2;");
-			}*/
+				VersionDB = 2;
+			}
+			if(VersionDB < 2) {
+				db.ExecuteNonQuery("CREATE TABLE [FilterTypes] ([IdFilterType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [FilterType] TEXT NOT NULL)");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (1, 'Off')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (2, 'Monster')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (3, 'Mosquito')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (4, 'Echo')");
+
+				db.ExecuteNonQuery("ALTER TABLE Blocks ADD COLUMN [IdFilterType] INTEGER REFERENCES [FilterTypes] ([IdFilterType])");
+				db.ExecuteNonQuery("UPDATE Blocks SET IdFilterType = 1");
+
+				db.ExecuteQuery("pragma user_version=2;");
+			}
 		}
 		
 		public static void closeDB() {
@@ -291,14 +305,14 @@ namespace TVR {
 				}
 			}
 
-			public Block newBlock(Block.blockTypes idBlockType, Block.shotTypes idShotType, int frames, int idExpression, int idAnimation, int? idProp) {
-				return newBlock(mBlocks.Count + 1, idBlockType, idShotType, frames, idExpression, idAnimation, idProp);
+			public Block newBlock(Block.blockTypes BlockType, Block.shotTypes ShotType, Block.filterType FilterType, int frames, int idExpression, int idAnimation, int? idProp) {
+				return newBlock(mBlocks.Count + 1, BlockType, ShotType, FilterType, frames, idExpression, idAnimation, idProp);
 			}
 
-			public Block newBlock(int number, Block.blockTypes idBlockType, Block.shotTypes idShotType, int frames, int idExpression, int idAnimation, int? idProp) {
+			public Block newBlock(int number, Block.blockTypes BlockType, Block.shotTypes ShotType, Block.filterType FilterType, int frames, int idExpression, int idAnimation, int? idProp) {
 				if(number <= 0 || number > mBlocks.Count + 1)
 					throw new System.Exception("The number must be between 0 and number of Blocks in this chapter.");
-				Block block = new Block(-1, idBlockType, idShotType, number, frames, idExpression, idAnimation, idProp, this);
+				Block block = new Block(-1, BlockType, ShotType, FilterType, number, frames, idExpression, idAnimation, idProp, this);
 				block.Save();
 				return block;
 			}
@@ -306,10 +320,10 @@ namespace TVR {
 			public void loadBlocks() {
 				if(mBlocks != null) {
 					mBlocks = new List<Block>();
-					DataTable blocks = db.ExecuteQuery("SELECT IdBlock, IdBlockType, IdShotType, Number, Frames, IdExpression, IdAnimation, IdProp FROM Blocks WHERE IdChapter = " + mIdChapter + " ORDER BY Number");
+					DataTable blocks = db.ExecuteQuery("SELECT IdBlock, IdBlockType, IdShotType, IdFilterType, Number, Frames, IdExpression, IdAnimation, IdProp FROM Blocks WHERE IdChapter = " + mIdChapter + " ORDER BY Number");
 					Block block;
 					foreach(DataRow row in blocks.Rows) {
-						block = new Block((int)row["IdBlock"], (Block.blockTypes)row["IdBlockType"], (Block.shotTypes)row["IdShotType"], (int)row["Number"], (int)row["Frames"], (int)row["IdExpression"], (int)row["IdAnimation"], (int?)row["IdProp"], this);
+						block = new Block((int)row["IdBlock"], (Block.blockTypes)row["IdBlockType"], (Block.shotTypes)row["IdShotType"], (Block.filterType)row["IdFilterType"], (int)row["Number"], (int)row["Frames"], (int)row["IdExpression"], (int)row["IdAnimation"], (int?)row["IdProp"], this);
 						mBlocks.Add(block);
 					}
 					mBlocks.Sort();
@@ -393,19 +407,27 @@ namespace TVR {
 					MidShot = 2,
 					LongShot = 3,
 				}
+				public enum filterType {
+					Off = 1,
+					Monster = 2,
+					Mosquito = 3,
+					Echo = 4,
+				}
 
 				private Chapter mParent;
 				private int mIdBlock;
-				private blockTypes mIdBlockType;
-				private shotTypes mIdShotType;
+				private blockTypes mBlockType;
+				private shotTypes mShotType;
+				private filterType mFilterType;
 				private int mNumber;
 				private int mFrames;
 				private int mIdExpression;
 				private int mIdAnimation;
 				private int? mIdProp;
 
-				private blockTypes mOldIdBlockType;
-				private shotTypes mOldIdShotType;
+				private blockTypes mOldBlockType;
+				private shotTypes mOldShotType;
+				private filterType mOldFilterType;
 				private int mOldFrames;
 				private int mOldIdExpression;
 				private int mOldIdAnimation;
@@ -424,12 +446,16 @@ namespace TVR {
 					get { return mParent.mIdChapter; }
 				}
 				public blockTypes BlockType {
-					get { return mIdBlockType; }
-					set { mIdBlockType = value; }
+					get { return mBlockType; }
+					set { mBlockType = value; }
 				}
 				public shotTypes ShotType {
-					get { return mIdShotType; }
-					set { mIdShotType = value; }
+					get { return mShotType; }
+					set { mShotType = value; }
+				}
+				public filterType FilterType {
+					get { return mFilterType; }
+					set { mFilterType = value; }
 				}
 				public int Number {
 					get { return mNumber; }
@@ -460,19 +486,21 @@ namespace TVR {
 					}
 				}
 
-				public Block(int idBlock, blockTypes idBlockType, shotTypes idShotType, int number, int frames, int idExpression, int idAnimation, int? idProp, Chapter parent) {
+				public Block(int idBlock, blockTypes BlockType, shotTypes ShotType, filterType FilterType, int number, int frames, int idExpression, int idAnimation, int? idProp, Chapter parent) {
 					mParent = parent;
 					mIdBlock = idBlock;
-					mIdBlockType = idBlockType;
-					mIdShotType = idShotType;
+					mBlockType = BlockType;
+					mShotType = ShotType;
+					mFilterType = FilterType;
 					mNumber = number;
 					mFrames = frames;
 					mIdExpression = idExpression;
 					mIdAnimation = idAnimation;
 					mIdProp = idProp;
 
-					mOldIdBlockType = idBlockType;
-					mOldIdShotType = idShotType;
+					mOldBlockType = BlockType;
+					mOldShotType = ShotType;
+					mOldFilterType = FilterType;
 					mOldFrames = frames;
 					mOldIdExpression = idExpression;
 					mOldIdAnimation = idAnimation;
@@ -482,16 +510,17 @@ namespace TVR {
 				public void Save() {
 					if(mIdBlock == -1) {
 						string idProp = mIdProp == null ? "NULL" : mIdProp.ToString();
-						db.ExecuteNonQuery("INSERT INTO Blocks (IdChapter, IdBlockType, IdShotType, Number, Frames, IdExpression, IdAnimation, IdProp) VALUES (" + mParent.mIdChapter + ", " + (int)mIdBlockType + ", " + (int)mIdShotType + ", " + mNumber + ", " + mFrames + ", " + mIdExpression + ", " + mIdAnimation + ", " + idProp + ")");
+						db.ExecuteNonQuery("INSERT INTO Blocks (IdChapter, IdBlockType, IdShotType, IdFilterType, Number, Frames, IdExpression, IdAnimation, IdProp) VALUES (" + mParent.mIdChapter + ", " + (int)mBlockType + ", " + (int)mShotType + ", " + (int)mFilterType + ", " + mNumber + ", " + mFrames + ", " + mIdExpression + ", " + mIdAnimation + ", " + idProp + ")");
 						mIdBlock = (int)db.ExecuteQuery("SELECT MAX(IdBlock) as ID FROM Blocks")[0]["ID"];
 						mParent.addBlock(this);
 					} else {
 						SaveSound();
 						if(Change()) {
 							string idProp = mIdProp == null ? "NULL" : mIdProp.ToString();
-							db.ExecuteNonQuery("UPDATE Blocks SET IdBlockType = " + (int)mIdBlockType + ", IdShotType = " + (int)mIdShotType + ", Frames = " + mFrames + ", IdExpression = " + mIdExpression + ", IdAnimation = " + mIdAnimation + ", IdProp = " + idProp + " WHERE IdBlock = " + mIdBlock);
-							mOldIdBlockType = mIdBlockType;
-							mOldIdShotType = mIdShotType;
+							db.ExecuteNonQuery("UPDATE Blocks SET IdBlockType = " + (int)mBlockType + ", IdShotType = " + (int)mShotType + ", IdFilterType = " + (int)mFilterType + ", Frames = " + mFrames + ", IdExpression = " + mIdExpression + ", IdAnimation = " + mIdAnimation + ", IdProp = " + idProp + " WHERE IdBlock = " + mIdBlock);
+							mOldBlockType = mBlockType;
+							mOldShotType = mShotType;
+							mOldFilterType = mFilterType;
 							mOldFrames = mFrames;
 							mOldIdExpression = mIdExpression;
 							mOldIdAnimation = mIdAnimation;
@@ -504,13 +533,13 @@ namespace TVR {
 				}
 
 				private bool ChangeBBDD() {
-					return mIdBlockType != mOldIdBlockType || mIdShotType != mOldIdShotType || mFrames != mOldFrames || mIdExpression != mOldIdExpression || mIdAnimation != mOldIdAnimation || mIdProp != mOldIdProp;
+					return mBlockType != mOldBlockType || mShotType != mOldShotType || mFilterType != mOldFilterType || mFrames != mOldFrames || mIdExpression != mOldIdExpression || mIdAnimation != mOldIdAnimation || mIdProp != mOldIdProp;
 				}
 
 				public void Delete() {
 					db.ExecuteNonQuery("DELETE FROM Blocks WHERE IdBlock = " + mIdBlock);
 					mParent.removeBlock(this);
-					if(mIdBlockType == blockTypes.Voice) {
+					if(mBlockType == blockTypes.Voice) {
 						if(mSound != null && mSound == mOldSound)
 							DeleteSound();
 						if(mSound != null)
@@ -543,8 +572,9 @@ namespace TVR {
 				}
 
 				public void Revert() {
-					mOldIdBlockType = mIdBlockType;
-					mOldIdShotType = mIdShotType;
+					mOldBlockType = mBlockType;
+					mOldShotType = mShotType;
+					mOldFilterType = mFilterType;
 					mOldFrames = mFrames;
 					mOldIdExpression = mIdExpression;
 					mOldIdAnimation = mIdAnimation;
@@ -575,7 +605,7 @@ namespace TVR {
 
 				public AudioClip Sound {
 					set {
-						if(mOldIdBlockType == blockTypes.Voice) {
+						if(mOldBlockType == blockTypes.Voice) {
 							if(value == null) {
 								/*if(mSound != null)
 									MonoBehaviour.DestroyImmediate(mSound);
@@ -590,7 +620,7 @@ namespace TVR {
 							throw new Exception("Are you trying to load an audioclip into block time?");
 					}
 					get {
-						if(mIdBlockType == blockTypes.Voice) {
+						if(mBlockType == blockTypes.Voice) {
 							if(mActionLoad1 != null) {
 								System.Threading.Thread t = (System.Threading.Thread)mActionLoad1.function.Target;
 								if(t.IsAlive) {
@@ -616,7 +646,7 @@ namespace TVR {
 				}
 
 				public void loadResource() {
-					if(mIdBlockType == blockTypes.Voice) {
+					if(mBlockType == blockTypes.Voice) {
 						mSoundLoaded = false;
 						mActionLoad2 = null;
 						if(!mSoundLoaded) {
@@ -693,11 +723,11 @@ namespace TVR {
 				}
 
 				private void SaveSound() {
-					if(mOldIdBlockType == blockTypes.Voice && mIdBlockType != blockTypes.Voice) {
+					if(mOldBlockType == blockTypes.Voice && mBlockType != blockTypes.Voice) {
 						//if(mSound != null && mSound == mOldSound)
 						DeleteSound();
 						unloadResource();
-					} else if(mIdBlockType == blockTypes.Voice && ChangeSound() && mSoundLoaded) {
+					} else if(mBlockType == blockTypes.Voice && ChangeSound() && mSoundLoaded) {
 						float[] samples = new float[mSound.samples * mSound.channels];
 						mSound.GetData(samples, 0);
 						if(mOldSound != null)
