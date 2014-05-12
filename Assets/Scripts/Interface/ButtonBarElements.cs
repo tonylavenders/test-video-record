@@ -132,7 +132,7 @@ public class ButtonBarElements : ButtonBar
 		}
 		else if(elementType==ElementTypes.blocks){
 			iObject newBlock;
-			newBlock = Data.selChapter.newBlock(Data.Chapter.Block.blockTypes.Time, Data.Chapter.Block.shotTypes.CloseUP, 25, 1, 1, null);
+			newBlock = Data.selChapter.newBlock(Data.Chapter.Block.blockTypes.Time, Data.Chapter.Block.shotTypes.CloseUP, Data.Chapter.Block.filterType.Off, 25, 1, 1, null);
 			listButtons.Add(Instantiate(mButtons[1]) as GameObject);
 			counter=GetCount();
 			listButtons[counter].GetComponent<BasicButton>().iObj = newBlock;
