@@ -17,9 +17,9 @@ public class ButtonBarElements : ButtonBar
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public override void Show()
+	public override void Show(bool bReactivate)
 	{
-		base.Show();
+		base.Show(bReactivate);
 
 		if(elementType==ElementTypes.chapters && Data.selChapter!=null){
 			currentSelected=listButtons[Data.selChapter.Number].GetComponent<BasicButton>();
