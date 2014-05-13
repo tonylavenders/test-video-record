@@ -70,13 +70,13 @@ public class ButtonBar : MonoBehaviour
 				else if(elementType==ElementTypes.blocks){
 					if(Data.selChapter!=null){
 						if(Data.selChapter.selBlock!=null){
-							mGUIManager.CurrentBlockChanged(Data.selChapter.selBlock);
+							mGUIManager.SaveWarning(Data.selChapter.selBlock);
 							Data.selChapter.selBlock.Save();
 						}
 						Data.selChapter.selBlock = value.iObj as Data.Chapter.Block;
 					}
-				}else if(elementType==ElementTypes.main && mGUIManager is GUIManagerBlocks){
-					mGUIManager.CurrentBlockChanged(null);
+				}else if((elementType==ElementTypes.main || elementType==ElementTypes.time) && mGUIManager is GUIManagerBlocks){
+					mGUIManager.SaveWarning(null);
 				}
 			}//currentSelected=null
 			else{
@@ -313,7 +313,8 @@ public class ButtonBar : MonoBehaviour
 	public void EnableButtons()
 	{
 		foreach(GameObject button in listButtons){
-			button.GetComponent<BasicButton>().Enable = true;
+			//button.GetComponent<BasicButton>().Enable = true;
+			button.GetComponent<BasicButton>().Show(0, Globals.ANIMATIONDURATION, true);
 		}
 	}
 	
@@ -322,7 +323,8 @@ public class ButtonBar : MonoBehaviour
 	public void DisableButtons()
 	{
 		foreach(GameObject button in listButtons){
-			button.GetComponent<BasicButton>().Enable = false;
+			//button.GetComponent<BasicButton>().Enable = false;
+			button.GetComponent<BasicButton>().Show(0, Globals.ANIMATIONDURATION, false);
 		}
 	}
 
@@ -356,7 +358,7 @@ public class ButtonBar : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public virtual void Show()
+	public virtual void Show(bool bReactivate)
 	{
 		if(!bInit)
 			Init();
@@ -366,7 +368,7 @@ public class ButtonBar : MonoBehaviour
 			mFade.Reset(1f, Globals.ANIMATIONDURATION);
 			state=States.fade_in;
 			foreach(GameObject button in listButtons){
-				button.GetComponent<BasicButton>().Show(); 
+				button.GetComponent<BasicButton>().Show(0, Globals.ANIMATIONDURATION, bReactivate); 
 			}
 			if(mGUIManager.mInput!=null && elementType!=ElementTypes.main && elementType!=ElementTypes.chapters && elementType!=ElementTypes.blocks){
 				mGUIManager.mInput.Fade(0, Globals.ANIMATIONDURATION, true, false);

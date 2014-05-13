@@ -17,17 +17,14 @@ public class GUIManagerBlocks : GUIManager
 	public BasicButton mIncreaseTimeButton;
 	public BasicButton mSaveTimeButton;
 
-	public BasicButton mVoicePlayButton;
-	public BasicButton mVoiceRecButton;
-	public BasicButton mVoiceFxButton;
-	public BasicButton mVoiceSaveButton;
-
 	public GUIText mTextTime;
 	public GUIText mTextTimeShadow;
 
 	int mLastBlockTime;
 	int mCurrentBlockTime;
 	Data.Chapter.Block mPreviousBlock=null;
+
+	public SoundRecorder soundRecorder;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,7 +42,7 @@ public class GUIManagerBlocks : GUIManager
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public override void CurrentBlockChanged(Data.Chapter.Block previousBlock)
+	public override void SaveWarning(Data.Chapter.Block previousBlock)
 	{
 		if(mCurrentBlockTime!=mLastBlockTime){
 			TVR.Utils.Message.Show(1, "AVISO", "No ha guardado los cambios. \u00BFDesea guardar?", TVR.Utils.Message.Type.YesNo, "S\u00ED", "No", Message_Save);
@@ -70,6 +67,7 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(mPreviousBlock!=null){
 			mPreviousBlock.Frames = mCurrentBlockTime*Globals.FRAMESPERSECOND;
+			mPreviousBlock.Save();
 			mPreviousBlock=null;
 		}else{
 			Data.selChapter.selBlock.Frames = mCurrentBlockTime*Globals.FRAMESPERSECOND;
@@ -82,10 +80,9 @@ public class GUIManagerBlocks : GUIManager
 	protected override void InitButtons()
 	{
 		base.InitButtons();
+		soundRecorder.InitButtons();
 
 		mEditButton.Show();
-
-		//TIME
 
 		//Time: Decrease button
 		float pos_x = ButtonProperties.buttonBarScaleX*2.0f+ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize/2.0f;
@@ -103,29 +100,6 @@ public class GUIManagerBlocks : GUIManager
 		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 		mSaveTimeButton.Init(pos, scale);
-
-		//VOICE
-
-		//Voice: Play button
-		pos_x = ButtonProperties.buttonBarScaleX*2.0f+ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize/2.0f;
-		pos_y -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize; 
-		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
-		mVoicePlayButton.Init(pos, scale);
-
-		//Voice: Rec button
-		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
-		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
-		mVoiceRecButton.Init(pos, scale);
-
-		//Voice: Fx button
-		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
-		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
-		mVoiceFxButton.Init(pos, scale);
-
-		//Voice: Save button
-		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
-		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
-		mVoiceSaveButton.Init(pos, scale);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +122,7 @@ public class GUIManagerBlocks : GUIManager
 	public void OnButtonAnimationsPressed(BasicButton sender)
 	{
 		if(sender.Checked){
-			mAnimationsButtonBar.Show();
+			mAnimationsButtonBar.Show(true);
 		}else{
 			mAnimationsButtonBar.Hide();
 		}
@@ -160,18 +134,26 @@ public class GUIManagerBlocks : GUIManager
 	public void OnButtonExpressionsPressed(BasicButton sender)
 	{
 		if(sender.Checked){
-			mExpressionsButtonBar.Show();
+			mExpressionsButtonBar.Show(true);
 		}else{
 			mExpressionsButtonBar.Hide();
 		}
 		Count(sender.Checked);
 	}
-	
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void SetTime(int seconds)
+	{
+		mTextTime.text = "00:"+seconds.ToString("00");
+		mTextTimeShadow.text = mTextTime.text;
+	}
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	string TimeToString(int seconds)
+	public void SetColor(Color color)
 	{
-		return "00:"+seconds.ToString("00");
+		mTextTime.color = color;
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,17 +169,8 @@ public class GUIManagerBlocks : GUIManager
 			mIncreaseTimeButton.Hide();
 			mSaveTimeButton.Hide();
 		}
-		if(bVoice){
-			mVoicePlayButton.Show();
-			mVoiceRecButton.Show();
-			mVoiceFxButton.Show();
-			mVoiceSaveButton.Show();
-		}else{
-			mVoicePlayButton.Hide();
-			mVoiceRecButton.Hide();
-			mVoiceFxButton.Hide();
-			mVoiceSaveButton.Hide();
-		}
+
+		soundRecorder.ChangeButtonState(bVoice);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -205,7 +178,7 @@ public class GUIManagerBlocks : GUIManager
 	public void OnButtonTimePressed(BasicButton sender)
 	{
 		if(sender.Checked){
-			mTimeButtonBar.Show();
+			mTimeButtonBar.Show(true);
 			if(mTimeButtonBar.listButtons[0].GetComponent<BasicButton>().Checked){
 				ChangeButtonState(true, false);
 			}
@@ -213,8 +186,7 @@ public class GUIManagerBlocks : GUIManager
 				ChangeButtonState(false, true);
 			}
 			int seconds = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
-			mTextTime.text = TimeToString(seconds);
-			mTextTimeShadow.text = TimeToString(seconds);
+			SetTime(seconds);
 			mTextTime.GetComponent<GUITextController>().Show();
 			mTextTimeShadow.GetComponent<GUITextController>().Show();
 		}else{
@@ -250,8 +222,7 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(mCurrentBlockTime > Globals.MIN_SEC_BLOCK){
 			mCurrentBlockTime--;
-			mTextTime.text = TimeToString(mCurrentBlockTime);
-			mTextTimeShadow.text = TimeToString(mCurrentBlockTime);
+			SetTime(mCurrentBlockTime);
 		}
 	}
 
@@ -261,8 +232,7 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(mCurrentBlockTime < Globals.MAX_SEC_BLOCK){
 			mCurrentBlockTime++;
-			mTextTime.text = TimeToString(mCurrentBlockTime);
-			mTextTimeShadow.text = TimeToString(mCurrentBlockTime);
+			SetTime(mCurrentBlockTime);
 		}
 	}
 	
@@ -271,30 +241,6 @@ public class GUIManagerBlocks : GUIManager
 	public void OnButtonTimeTimeSavePressed(BasicButton sender)
 	{
 		SaveBlockTime();
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public void OnButtonTimeVoicePlayPressed(BasicButton sender)
-	{
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public void OnButtonTimeVoiceRecPressed(BasicButton sender)
-	{
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public void OnButtonTimeVoiceFxPressed(BasicButton sender)
-	{
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public void OnButtonTimeVoiceSavePressed(BasicButton sender)
-	{
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -340,6 +286,15 @@ public class GUIManagerBlocks : GUIManager
 	{
 		base.OnApplicationPause(pauseStatus);
 		
+		if(pauseStatus && Data.selChapter!=null && Data.selChapter.selBlock!=null){
+			Data.selChapter.selBlock.Save();
+		}
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	protected override void OnApplicationQuit()
+	{
 		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
 			Data.selChapter.selBlock.Save();
 		}

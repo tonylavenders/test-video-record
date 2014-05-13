@@ -83,8 +83,7 @@ public class GUIManagerChapters : GUIManager
 	protected override void InitButtons()
 	{
 		base.InitButtons();
-		mEditButton.Enable=false;
-		mEditButton.Show();
+		mEditButton.Show(0, Globals.ANIMATIONDURATION, false);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,7 +121,7 @@ public class GUIManagerChapters : GUIManager
 	public void OnButtonCharactersPressed(BasicButton sender)
 	{
 		if(sender.Checked){
-			mCharactersButtonBar.Show();
+			mCharactersButtonBar.Show(true);
 		}else{
 			mCharactersButtonBar.Hide();
 		}
@@ -134,7 +133,7 @@ public class GUIManagerChapters : GUIManager
 	public void OnButtonBackgroundsPressed(BasicButton sender)
 	{
 		if(sender.Checked){
-			mBackgroundsButtonBar.Show();
+			mBackgroundsButtonBar.Show(true);
 		}else{
 			mBackgroundsButtonBar.Hide();
 		}
@@ -146,7 +145,7 @@ public class GUIManagerChapters : GUIManager
 	public void OnButtonMusicsPressed(BasicButton sender)
 	{
 		if(sender.Checked){
-			mMusicButtonBar.Show();
+			mMusicButtonBar.Show(true);
 		}else{
 			mMusicButtonBar.Hide();
 		}
@@ -267,7 +266,17 @@ public class GUIManagerChapters : GUIManager
 	protected override void OnApplicationPause(bool pauseStatus)
 	{
 		base.OnApplicationPause(pauseStatus);
+
 		if(pauseStatus && Data.selChapter!=null){
+			Data.selChapter.Save();
+		}
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	protected override void OnApplicationQuit()
+	{
+		if(Data.selChapter!=null){
 			Data.selChapter.Save();
 		}
 	}

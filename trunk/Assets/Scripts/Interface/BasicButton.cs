@@ -24,8 +24,13 @@ public class BasicButton : MonoBehaviour
 
 	public Texture texChecked;
 	public Texture texUnchecked;
+	public Texture texDisabled;
 	public bool bKeepSt = true;
 	public bool bUnselectable = true;
+
+	public float fAlphaDisabled=0.3f;
+	bool bReactivate=true;
+
 	[HideInInspector] [SerializeField] bool bEnabled=true;
 	[ExposeProperty]
 	public bool Enable {
@@ -37,9 +42,11 @@ public class BasicButton : MonoBehaviour
 					enabledCallback(this);
 				if(state == States.fade_in || state == States.idle) {
 					if(value)
-						mFade.Reset(1f, Globals.ANIMATIONDURATION);
+						//mFade.Reset(1f, Globals.ANIMATIONDURATION);
+						Show(0, Globals.ANIMATIONDURATION, true);
 					else
-						mFade.Reset(0.3f, Globals.ANIMATIONDURATION);
+						//mFade.Reset(fAlphaDisabled, Globals.ANIMATIONDURATION);
+						Show(fAlphaDisabled, Globals.ANIMATIONDURATION, false);
 				}
 				if(!value)
 					Checked = false;
@@ -192,12 +199,15 @@ public class BasicButton : MonoBehaviour
 			if(SSState==SmoothStep.State.justEnd) {
 				if(mFade.Value == 0)
 					state = States.hidden;
-				else
+				else{
 					state = States.idle;
+					Enable = bReactivate;
+				}
 			}
 			Color c = renderer.material.color;
 			renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 		}
+
 		//Check if user is touching the button
 		if(bEnabled && state == States.idle && mSharedTime != Time.time) {
 			RaycastHit hit;
@@ -327,30 +337,40 @@ public class BasicButton : MonoBehaviour
 			clickedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeTimeSavePressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_PLAY) {
-			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeVoicePlayPressed;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoicePlayPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_REC) {
-			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeVoiceRecPressed;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceRecPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX) {
-			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeVoiceFxPressed;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_SAVE) {
-			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeVoiceSavePressed;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceSavePressed;
 		}
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION)
+	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION, bool reactivate=true)
 	{
-		mFade.Reset(Enable ? 1f : 0.3f, duration, true, delay);
+		bReactivate = reactivate;
 
-		if(mGUIText)
-			mGUIText.gameObject.GetComponent<GUITextController>().Show(delay, duration);
+		if(texDisabled!=null){
+			if(bReactivate){
+				renderer.material.mainTexture = texUnchecked;
+			}else{
+				renderer.material.mainTexture = texDisabled;
+			}
+		}
+		mFade.Reset(bReactivate ? 1.0f : fAlphaDisabled, duration, true, delay);
 
-		if(mGUITextTime)
-			mGUITextTime.gameObject.GetComponent<GUITextController>().Show(delay, duration);
+		if(mGUIText){
+			mGUIText.gameObject.GetComponent<GUITextController>().Show(delay, duration, bReactivate ? 1.0f : fAlphaDisabled);
+		}
+		if(mGUITextTime){
+			mGUITextTime.gameObject.GetComponent<GUITextController>().Show(delay, duration, bReactivate ? 1.0f : fAlphaDisabled);
+		}
 
 		state = States.fade_in;
 	}
