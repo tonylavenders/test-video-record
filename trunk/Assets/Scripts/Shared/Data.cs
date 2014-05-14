@@ -907,11 +907,12 @@ namespace TVR {
 					//SevenZipHelper.Compress(byteArray, filePath, true);
 				}
 
-				/*private void SaveOriginalSound(float[] samples) {
-					string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
+				/*private void SaveOriginalSound(float[] samples, string filePath) {
+					//string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
 					byte[] byteArray = new byte[samples.Length * sizeof(float)];
 					Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
-					SevenZipHelper.Compress(byteArray, filePath, true);
+					System.IO.File.WriteAllBytes(filePath, byteArray);
+					//SevenZipHelper.Compress(byteArray, filePath, true);
 				}*/
 
 				private void DeleteSound() {
