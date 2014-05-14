@@ -12,7 +12,7 @@ namespace TVR {
 		public const int MAX_SEC_BLOCK = 15;
 		public const int MIN_SEC_BLOCK = 1;
 
-		public const int OUTPUTRATEPERSECOND = 44100;
+		public const int OUTPUTRATEPERSECOND = 16000;
 		public const int OUTPUTRATEPERFRAME = OUTPUTRATEPERSECOND / FRAMESPERSECOND;
 		public const short NUMCHANNELS = 2;
 		public const int WAVHEADERSIZE = 44; //default for uncompressed wav
