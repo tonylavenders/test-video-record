@@ -65,12 +65,14 @@ namespace TVR {
 				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (2, 'Monster')");
 				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (3, 'Mosquito')");
 				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (4, 'Echo')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (5, 'Monster Pro')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (6, 'Mosquito Pro')");
 
 				db.ExecuteNonQuery("CREATE TABLE [Chapters] ([IdChapter] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER NOT NULL, [Title] TEXT NOT NULL, [Information] TEXT NOT NULL, [IdCharacter] INTEGER NOT NULL, [IdBackground] INTEGER NOT NULL, [IdMusic] INTEGER)");
 				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdChapter] INTEGER NOT NULL REFERENCES [Chapters] ([IdChapter]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlockTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [IdFilterType] INTEGER NOT NULL REFERENCES [FilterTypes] ([IdFilterType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL, [IdProp] INTEGER)");
 				//db.ExecuteNonQuery("CREATE TABLE [CharacterProps] ([IdCharacterProps] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdBlock] INTEGER NOT NULL REFERENCES [Blocks] ([IdBlock]) ON DELETE CASCADE, [IdResource] INTEGER NOT NULL, [Dummy] TEXT NOT NULL)");
-				db.ExecuteQuery("pragma user_version=2;");
-				VersionDB = 2;
+				db.ExecuteQuery("pragma user_version=3;");
+				VersionDB = 3;
 			}
 			if(VersionDB < 2) {
 				db.ExecuteNonQuery("CREATE TABLE [FilterTypes] ([IdFilterType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [FilterType] TEXT NOT NULL)");
@@ -82,7 +84,13 @@ namespace TVR {
 				db.ExecuteNonQuery("ALTER TABLE Blocks ADD COLUMN [IdFilterType] INTEGER REFERENCES [FilterTypes] ([IdFilterType])");
 				db.ExecuteNonQuery("UPDATE Blocks SET IdFilterType = 1");
 
-				db.ExecuteQuery("pragma user_version=2;");
+				//db.ExecuteQuery("pragma user_version=2;");
+			}
+			if(VersionDB < 3) {
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (5, 'Monster Pro')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (6, 'Mosquito Pro')");
+
+				db.ExecuteQuery("pragma user_version=3;");
 			}
 		}
 		
@@ -412,6 +420,8 @@ namespace TVR {
 					Monster = 2,
 					Mosquito = 3,
 					Echo = 4,
+					MonsterPro = 5,
+					MosquitoPro = 6,
 				}
 
 				private Chapter mParent;
