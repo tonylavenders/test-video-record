@@ -610,7 +610,7 @@ namespace TVR {
 				}
 
 				#region Sound
-				public const int FREQUENCY = 44100;  
+				public const int FREQUENCY = Globals.OUTPUTRATEPERSECOND;  
 				public const string EXTENSION = ".xjc";
 				public const string ORIGINAL = "_Original";
 				private AudioClip mSound;
