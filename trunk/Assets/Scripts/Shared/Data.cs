@@ -899,10 +899,13 @@ namespace TVR {
 
 				private void SaveSound(float[] samples, float[] samplesOriginal) {
 					Debug.Log("Start");
+					Utils.AudioFilters filter = new TVR.Utils.AudioFilters();
+					float[] outSamples;
+					filter.Mosquito(samples, out outSamples);
 					string filePath;
 					if(samples != null) {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
-						SaveSound(samples, filePath);
+						SaveSound(outSamples, filePath);
 					}
 					if(samplesOriginal != null) {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
