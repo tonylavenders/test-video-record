@@ -753,7 +753,7 @@ namespace TVR {
 						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
-							byteArray = System.IO.File.ReadAllBytes(filePath);
+							byteArray = LZ4Sharp.LZ4.Decompress(filePath);
 							//SevenZipHelper.Decompress(filePath, out byteArray);
 							float[] samples = new float[byteArray.Length / sizeof(float)];
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
@@ -773,7 +773,7 @@ namespace TVR {
 						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
-							byteArray = System.IO.File.ReadAllBytes(filePath);
+							byteArray = LZ4Sharp.LZ4.Decompress(filePath);
 							//SevenZipHelper.Decompress(filePath, out byteArray);
 							float[] samples = new float[byteArray.Length / sizeof(float)];
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
@@ -793,7 +793,7 @@ namespace TVR {
 						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
-							byteArray = System.IO.File.ReadAllBytes(filePath);
+							byteArray = LZ4Sharp.LZ4.Decompress(filePath);
 							//SevenZipHelper.Decompress(filePath, out byteArray);
 							float[] samples = new float[byteArray.Length / sizeof(float)];
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
@@ -826,7 +826,7 @@ namespace TVR {
 						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
-							byteArray = System.IO.File.ReadAllBytes(filePath);
+							byteArray = LZ4Sharp.LZ4.Decompress(filePath);
 							//SevenZipHelper.Decompress(filePath, out byteArray);
 							float[] samples = new float[byteArray.Length / sizeof(float)];
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
@@ -903,7 +903,7 @@ namespace TVR {
 					//string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
 					byte[] byteArray = new byte[samples.Length * sizeof(float)];
 					Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
-					System.IO.File.WriteAllBytes(filePath, byteArray);
+					LZ4Sharp.LZ4.Compress(filePath, byteArray);
 					//SevenZipHelper.Compress(byteArray, filePath, true);
 				}
 
