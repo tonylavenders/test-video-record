@@ -79,6 +79,17 @@ public class SoundRecorder : MonoBehaviour
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public void SetAudioClip()
+	{
+		if(Data.selChapter.selBlock.Sound!=null){
+			audioClip = Data.selChapter.selBlock.Sound;
+			audioSource.clip = audioClip;
+			mCurrentTime = (int)Data.selChapter.selBlock.Sound.length;
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	void Update()
 	{
 		if(mMode==Modes.Recording){
@@ -91,6 +102,7 @@ public class SoundRecorder : MonoBehaviour
 				mVoicePlayButton.Show();
 				mVoiceFxButton.Show();
 				mVoiceSaveButton.Show();
+				mVoiceRecButton.Checked=false;
 				guiManagerBlocks.SetColor(Color.red);
 				mMode=Modes.Idle;
 			}
@@ -105,6 +117,7 @@ public class SoundRecorder : MonoBehaviour
 				mVoiceRecButton.Show();
 				mVoiceFxButton.Show();
 				mVoiceSaveButton.Show();
+				mVoicePlayButton.Checked=false;
 				audioSource.Stop();
 				mMode=Modes.Idle;
 			}
@@ -133,6 +146,40 @@ public class SoundRecorder : MonoBehaviour
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Remove empty sound at the end of the file
+	void RemoveEmptyData()
+	{
+		float[] samples = new float[audioClip.samples * audioClip.channels];
+		audioClip.GetData(samples, 0);
+		
+		float recordTime = Mathf.Max(CurrentTime, 0.5f); //0.5sec minimum record time
+		
+		int count = 0;
+		int trim = Mathf.CeilToInt(recordTime * frequency);
+		if(trim > samples.Length)
+			trim = samples.Length;
+		for(int i = trim - 1; i > 0; --i) {
+			if(samples[i] != 0f)
+				break;
+			else
+				++count;
+		}
+		
+		int size = Mathf.Max(trim - count, (int)(frequency * 0.5f));
+		float[] samplesTrim = new float[size];
+		
+		Buffer.BlockCopy(samples, 0, samplesTrim, 0, samplesTrim.Length * sizeof(float));
+		
+		audioClip = AudioClip.Create("user_clip", samplesTrim.Length, channels, frequency, false, false);
+		audioClip.SetData(samplesTrim, 0);
+		
+		samples = null;
+		samplesTrim = null;
+		
+		audioSource.clip = audioClip;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//PLAY
 	public void OnButtonTimeVoicePlayPressed(BasicButton sender)
 	{
@@ -146,7 +193,7 @@ public class SoundRecorder : MonoBehaviour
 			mMode=Modes.Playing;
 		}
 		//Stop playing
-		else if(mMode==Modes.Recording){
+		else if(mMode==Modes.Playing){
 			audioSource.Stop();
 			guiManagerBlocks.SetTime((int)audioClip.length);
 			mVoiceRecButton.Show();
@@ -183,40 +230,6 @@ public class SoundRecorder : MonoBehaviour
 			mMode=Modes.Idle;
 		}
 	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Remove empty sound at the end of the file
-	void RemoveEmptyData()
-	{
-		float[] samples = new float[audioClip.samples * audioClip.channels];
-		audioClip.GetData(samples, 0);
-		
-		float recordTime = Mathf.Max(CurrentTime, 0.5f); //0.5sec minimum record time
-
-		int count = 0;
-		int trim = Mathf.CeilToInt(recordTime * frequency);
-		if(trim > samples.Length)
-			trim = samples.Length;
-		for(int i = trim - 1; i > 0; --i) {
-			if(samples[i] != 0f)
-				break;
-			else
-				++count;
-		}
-		
-		int size = Mathf.Max(trim - count, (int)(frequency * 0.5f));
-		float[] samplesTrim = new float[size];
-		
-		Buffer.BlockCopy(samples, 0, samplesTrim, 0, samplesTrim.Length * sizeof(float));
-		
-		audioClip = AudioClip.Create("user_clip", samplesTrim.Length, channels, frequency, false, false);
-		audioClip.SetData(samplesTrim, 0);
-		
-		samples = null;
-		samplesTrim = null;
-		
-		audioSource.clip = audioClip;
-	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//FX
@@ -228,6 +241,13 @@ public class SoundRecorder : MonoBehaviour
 	//SAVE
 	public void OnButtonTimeVoiceSavePressed(BasicButton sender)
 	{
+		if(audioClip!=null){
+			Data.selChapter.selBlock.BlockType = Data.Chapter.Block.blockTypes.Voice;
+			Data.selChapter.selBlock.Frames = (int)audioClip.length*Globals.FRAMESPERSECOND;
+			Data.selChapter.selBlock.Sound = audioClip;
+			Data.selChapter.selBlock.OriginalSound = audioClip;
+			Data.selChapter.selBlock.Save();
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
