@@ -882,6 +882,7 @@ namespace TVR {
 				}
 
 				private void SaveSound(float[] samples, float[] samplesOriginal) {
+					Debug.Log("Start");
 					string filePath;
 					if(samples != null) {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
@@ -891,6 +892,7 @@ namespace TVR {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
 						SaveSound(samplesOriginal, filePath);
 					}
+					Debug.Log("End");
 				}
 
 				private void SaveSound(float[] samples, string filePath) {
