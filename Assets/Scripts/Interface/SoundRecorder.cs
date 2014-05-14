@@ -27,7 +27,7 @@ public class SoundRecorder : MonoBehaviour
 	}
 
 	const int totalTime = 15;
-	const int frequency = 44100;
+	const int frequency = Globals.OUTPUTRATEPERSECOND;
 	const int channels = 1;
 
 	enum Modes{
