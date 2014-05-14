@@ -753,7 +753,8 @@ namespace TVR {
 						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
-							SevenZipHelper.Decompress(filePath, out byteArray);
+							byteArray = System.IO.File.ReadAllBytes(filePath);
+							//SevenZipHelper.Decompress(filePath, out byteArray);
 							float[] samples = new float[byteArray.Length / sizeof(float)];
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
 							mSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
@@ -772,7 +773,8 @@ namespace TVR {
 						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
-							SevenZipHelper.Decompress(filePath, out byteArray);
+							byteArray = System.IO.File.ReadAllBytes(filePath);
+							//SevenZipHelper.Decompress(filePath, out byteArray);
 							float[] samples = new float[byteArray.Length / sizeof(float)];
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
 							mOriginalSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
@@ -791,7 +793,8 @@ namespace TVR {
 						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
-							SevenZipHelper.Decompress(filePath, out byteArray);
+							byteArray = System.IO.File.ReadAllBytes(filePath);
+							//SevenZipHelper.Decompress(filePath, out byteArray);
 							float[] samples = new float[byteArray.Length / sizeof(float)];
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
 							mActionLoad2 = new QueueManager.QueueManagerAction("LoadAudioClip", () => LoadSoundAsync2(samples), "RecordedSound.LoadSoundAsync2");
@@ -823,7 +826,8 @@ namespace TVR {
 						string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
-							SevenZipHelper.Decompress(filePath, out byteArray);
+							byteArray = System.IO.File.ReadAllBytes(filePath);
+							//SevenZipHelper.Decompress(filePath, out byteArray);
 							float[] samples = new float[byteArray.Length / sizeof(float)];
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
 							mActionOriginalLoad2 = new QueueManager.QueueManagerAction("LoadAudioClip", () => LoadOriginalSoundAsync2(samples), "RecordedSound.LoadSoundAsync2");
@@ -899,7 +903,8 @@ namespace TVR {
 					//string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
 					byte[] byteArray = new byte[samples.Length * sizeof(float)];
 					Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
-					SevenZipHelper.Compress(byteArray, filePath, true);
+					System.IO.File.WriteAllBytes(filePath, byteArray);
+					//SevenZipHelper.Compress(byteArray, filePath, true);
 				}
 
 				/*private void SaveOriginalSound(float[] samples) {
