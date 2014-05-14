@@ -24,7 +24,7 @@ public class GUIManager : MonoBehaviour
 		}set{
 			Destroy(mCurrentCharacter);
 			mCurrentCharacter=value;
-			//mEditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
+			mEditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
 		}
 	}
 	GameObject mCurrentBackground;
