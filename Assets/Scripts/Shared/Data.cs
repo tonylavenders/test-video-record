@@ -754,9 +754,12 @@ namespace TVR {
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
 							byteArray = LZ4Sharp.LZ4.Decompress(filePath);
-							//SevenZipHelper.Decompress(filePath, out byteArray);
-							float[] samples = new float[byteArray.Length / sizeof(float)];
-							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
+							short[] sSamples = new short[byteArray.Length / sizeof(short)];
+							Buffer.BlockCopy(byteArray, 0, sSamples, 0, byteArray.Length);
+							float[] samples = new float[sSamples.Length];
+							for(int i = 0; i < sSamples.Length; ++i)
+								samples[i] = ((float)sSamples[i]) / short.MaxValue;
+
 							mSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
 							mSound.SetData(samples, 0);
 						} else {
@@ -774,9 +777,12 @@ namespace TVR {
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
 							byteArray = LZ4Sharp.LZ4.Decompress(filePath);
-							//SevenZipHelper.Decompress(filePath, out byteArray);
-							float[] samples = new float[byteArray.Length / sizeof(float)];
-							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
+							short[] sSamples = new short[byteArray.Length / sizeof(short)];
+							Buffer.BlockCopy(byteArray, 0, sSamples, 0, byteArray.Length);
+							float[] samples = new float[sSamples.Length];
+							for(int i = 0; i < sSamples.Length; ++i)
+								samples[i] = ((float)sSamples[i]) / short.MaxValue;
+
 							mOriginalSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
 							mOriginalSound.SetData(samples, 0);
 						} else {
@@ -794,9 +800,12 @@ namespace TVR {
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
 							byteArray = LZ4Sharp.LZ4.Decompress(filePath);
-							//SevenZipHelper.Decompress(filePath, out byteArray);
-							float[] samples = new float[byteArray.Length / sizeof(float)];
-							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
+							short[] sSamples = new short[byteArray.Length / sizeof(short)];
+							Buffer.BlockCopy(byteArray, 0, sSamples, 0, byteArray.Length);
+							float[] samples = new float[sSamples.Length];
+							for(int i = 0; i < sSamples.Length; ++i)
+								samples[i] = ((float)sSamples[i]) / short.MaxValue;
+
 							mActionLoad2 = new QueueManager.QueueManagerAction("LoadAudioClip", () => LoadSoundAsync2(samples), "RecordedSound.LoadSoundAsync2");
 							QueueManager.add(mActionLoad2, QueueManager.Priorities.Highest);
 						} else {
@@ -827,9 +836,12 @@ namespace TVR {
 						if(System.IO.File.Exists(filePath)) {
 							byte[] byteArray = null;
 							byteArray = LZ4Sharp.LZ4.Decompress(filePath);
-							//SevenZipHelper.Decompress(filePath, out byteArray);
-							float[] samples = new float[byteArray.Length / sizeof(float)];
-							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
+							short[] sSamples = new short[byteArray.Length / sizeof(short)];
+							Buffer.BlockCopy(byteArray, 0, sSamples, 0, byteArray.Length);
+							float[] samples = new float[sSamples.Length];
+							for(int i = 0; i < sSamples.Length; ++i)
+								samples[i] = ((float)sSamples[i]) / short.MaxValue;
+
 							mActionOriginalLoad2 = new QueueManager.QueueManagerAction("LoadAudioClip", () => LoadOriginalSoundAsync2(samples), "RecordedSound.LoadSoundAsync2");
 							QueueManager.add(mActionOriginalLoad2, QueueManager.Priorities.Highest);
 						} else {
@@ -901,19 +913,14 @@ namespace TVR {
 
 				private void SaveSound(float[] samples, string filePath) {
 					//string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
-					byte[] byteArray = new byte[samples.Length * sizeof(float)];
-					Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
-					LZ4Sharp.LZ4.Compress(filePath, byteArray);
-					//SevenZipHelper.Compress(byteArray, filePath, true);
-				}
+					short[] sSamples = new short[samples.Length];
+					for(int i = 0; i < samples.Length; ++i)
+						sSamples[i] = (short)Mathf.RoundToInt(samples[i] * short.MaxValue);
 
-				/*private void SaveOriginalSound(float[] samples, string filePath) {
-					//string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
-					byte[] byteArray = new byte[samples.Length * sizeof(float)];
-					Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
-					System.IO.File.WriteAllBytes(filePath, byteArray);
-					//SevenZipHelper.Compress(byteArray, filePath, true);
-				}*/
+					byte[] byteArray = new byte[sSamples.Length * sizeof(short)];
+					Buffer.BlockCopy(sSamples, 0, byteArray, 0, byteArray.Length);
+					LZ4Sharp.LZ4.Compress(filePath, byteArray);
+				}
 
 				private void DeleteSound() {
 					if(System.IO.File.Exists(System.IO.Path.Combine(TVR.Globals.RecordedSoundsPath, mIdBlock + EXTENSION)))
