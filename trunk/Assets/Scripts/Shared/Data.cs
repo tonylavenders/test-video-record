@@ -855,41 +855,57 @@ namespace TVR {
 						//if(mSound != null && mSound == mOldSound)
 						DeleteSound();
 						unloadResource();
-					} else if(mBlockType == blockTypes.Voice) { 
+					} else if(mBlockType == blockTypes.Voice) {
+						float[] samples = null;
+						float[] samplesOriginal = null;
 						if(mSound != mOldSound && mSoundLoaded) {
-							float[] samples = new float[mSound.samples * mSound.channels];
+							samples = new float[mSound.samples * mSound.channels];
 							mSound.GetData(samples, 0);
 							if(mOldSound != null)
 								MonoBehaviour.DestroyImmediate(mOldSound);
 							mOldSound = mSound;
-							System.Threading.Thread t = new System.Threading.Thread(() => SaveSound(samples));
-							t.Start();
+							/*System.Threading.Thread t = new System.Threading.Thread(() => SaveSound(samples));
+							t.Start();*/
 						}
-						/*if(mOriginalSound != mOldOriginalSound && mOriginalSoundLoaded) {
-							float[] samples = new float[mOriginalSound.samples * mOriginalSound.channels];
-							mOriginalSound.GetData(samples, 0);
+						if(mOriginalSound != mOldOriginalSound && mOriginalSoundLoaded) {
+							samplesOriginal = new float[mOriginalSound.samples * mOriginalSound.channels];
+							mOriginalSound.GetData(samplesOriginal, 0);
 							if(mOldOriginalSound != null)
 								MonoBehaviour.DestroyImmediate(mOldOriginalSound);
 							mOldOriginalSound = mOriginalSound;
-							System.Threading.Thread t = new System.Threading.Thread(() => SaveOriginalSound(samples));
-							t.Start();
-						}*/
+							/*System.Threading.Thread t = new System.Threading.Thread(() => SaveOriginalSound(samplesOriginal));
+							t.Start();*/
+						}
+						System.Threading.Thread t = new System.Threading.Thread(() => SaveSound(samples, samplesOriginal));
+						t.Start();
 					}
 				}
 
-				private void SaveSound(float[] samples) {
-					string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
+				private void SaveSound(float[] samples, float[] samplesOriginal) {
+					string filePath;
+					if(samples != null) {
+						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
+						SaveSound(samples, filePath);
+					}
+					if(samplesOriginal != null) {
+						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
+						SaveSound(samplesOriginal, filePath);
+					}
+				}
+
+				private void SaveSound(float[] samples, string filePath) {
+					//string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
 					byte[] byteArray = new byte[samples.Length * sizeof(float)];
 					Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
 					SevenZipHelper.Compress(byteArray, filePath, true);
 				}
 
-				private void SaveOriginalSound(float[] samples) {
+				/*private void SaveOriginalSound(float[] samples) {
 					string filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
 					byte[] byteArray = new byte[samples.Length * sizeof(float)];
 					Buffer.BlockCopy(samples, 0, byteArray, 0, byteArray.Length);
 					SevenZipHelper.Compress(byteArray, filePath, true);
-				}
+				}*/
 
 				private void DeleteSound() {
 					if(System.IO.File.Exists(System.IO.Path.Combine(TVR.Globals.RecordedSoundsPath, mIdBlock + EXTENSION)))
