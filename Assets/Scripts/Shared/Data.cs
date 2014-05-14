@@ -758,10 +758,10 @@ namespace TVR {
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
 							mSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
 							mSound.SetData(samples, 0);
-						} /*else {
+						} else {
 							mSound = AudioClip.Create("user_clip", 0, 1, FREQUENCY, false, false);
 							//mSound = AudioClip.Create("user_clip", FREQUENCY, 1, FREQUENCY, false, false);
-						}*/
+						}
 						mOldSound = mSound;
 						mSoundLoaded = true;
 					}
@@ -777,10 +777,10 @@ namespace TVR {
 							Buffer.BlockCopy(byteArray, 0, samples, 0, byteArray.Length);
 							mOriginalSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
 							mOriginalSound.SetData(samples, 0);
-						} /*else {
+						} else {
 							mSound = AudioClip.Create("user_clip", 0, 1, FREQUENCY, false, false);
 							//mSound = AudioClip.Create("user_clip", FREQUENCY, 1, FREQUENCY, false, false);
-						}*/
+						}
 						mOldOriginalSound = mOriginalSound;
 						mOriginalSoundLoaded = true;
 					}
@@ -808,10 +808,10 @@ namespace TVR {
 					if(samples != null) {
 						mSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
 						mSound.SetData(samples, 0);
-					} /*else {
+					} else {
 						mSound = AudioClip.Create("user_clip", 0, 1, FREQUENCY, false, false);
 						//mSound = AudioClip.Create("user_clip", FREQUENCY, 1, FREQUENCY, false, false);
-					}*/
+					}
 					mOldSound = mSound;
 					mSoundLoaded = true;
 					mActionLoad2 = null;
@@ -840,10 +840,10 @@ namespace TVR {
 					if(samples != null) {
 						mOriginalSound = AudioClip.Create("user_clip", samples.Length, 1, FREQUENCY, false, false);
 						mOriginalSound.SetData(samples, 0);
-					} /*else {
+					} else {
 						mSound = AudioClip.Create("user_clip", 0, 1, FREQUENCY, false, false);
 						//mSound = AudioClip.Create("user_clip", FREQUENCY, 1, FREQUENCY, false, false);
-					}*/
+					}
 					mOldOriginalSound = mOriginalSound;
 					mOriginalSoundLoaded = true;
 					mActionOriginalLoad2 = null;
@@ -865,7 +865,7 @@ namespace TVR {
 							System.Threading.Thread t = new System.Threading.Thread(() => SaveSound(samples));
 							t.Start();
 						}
-						if(mOriginalSound != mOldOriginalSound && mOriginalSoundLoaded) {
+						/*if(mOriginalSound != mOldOriginalSound && mOriginalSoundLoaded) {
 							float[] samples = new float[mOriginalSound.samples * mOriginalSound.channels];
 							mOriginalSound.GetData(samples, 0);
 							if(mOldOriginalSound != null)
@@ -873,7 +873,7 @@ namespace TVR {
 							mOldOriginalSound = mOriginalSound;
 							System.Threading.Thread t = new System.Threading.Thread(() => SaveOriginalSound(samples));
 							t.Start();
-						}
+						}*/
 					}
 				}
 
