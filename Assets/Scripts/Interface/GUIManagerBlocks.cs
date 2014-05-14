@@ -118,6 +118,38 @@ public class GUIManagerBlocks : GUIManager
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void SetTime(int seconds)
+	{
+		mTextTime.text = "00:"+seconds.ToString("00");
+		mTextTimeShadow.text = mTextTime.text;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void SetColor(Color color)
+	{
+		mTextTime.color = color;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	void ChangeButtonState(bool bTime, bool bVoice)
+	{
+		if(bTime){
+			mDecreaseTimeButton.Show();
+			mIncreaseTimeButton.Show();
+			mSaveTimeButton.Show();
+		}else{
+			mDecreaseTimeButton.Hide();
+			mIncreaseTimeButton.Hide();
+			mSaveTimeButton.Hide();
+		}
+		
+		soundRecorder.ChangeButtonState(bVoice);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Animations button
 	public void OnButtonAnimationsPressed(BasicButton sender)
 	{
@@ -139,38 +171,6 @@ public class GUIManagerBlocks : GUIManager
 			mExpressionsButtonBar.Hide();
 		}
 		Count(sender.Checked);
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public void SetTime(int seconds)
-	{
-		mTextTime.text = "00:"+seconds.ToString("00");
-		mTextTimeShadow.text = mTextTime.text;
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	public void SetColor(Color color)
-	{
-		mTextTime.color = color;
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	void ChangeButtonState(bool bTime, bool bVoice)
-	{
-		if(bTime){
-			mDecreaseTimeButton.Show();
-			mIncreaseTimeButton.Show();
-			mSaveTimeButton.Show();
-		}else{
-			mDecreaseTimeButton.Hide();
-			mIncreaseTimeButton.Hide();
-			mSaveTimeButton.Hide();
-		}
-
-		soundRecorder.ChangeButtonState(bVoice);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -213,16 +213,21 @@ public class GUIManagerBlocks : GUIManager
 	//Time-Voice button
 	public void OnButtonTimeVoicePressed(BasicButton sender)
 	{
-		ChangeButtonState(false, true);
+		if(sender.Checked){
+			soundRecorder.SetAudioClip();
+			ChangeButtonState(false, true);
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public void OnButtonTimeTimeDecrPressed(BasicButton sender)
 	{
-		if(mCurrentBlockTime > Globals.MIN_SEC_BLOCK){
-			mCurrentBlockTime--;
-			SetTime(mCurrentBlockTime);
+		if(sender.Checked){
+			if(mCurrentBlockTime > Globals.MIN_SEC_BLOCK){
+				mCurrentBlockTime--;
+				SetTime(mCurrentBlockTime);
+			}
 		}
 	}
 
@@ -230,9 +235,11 @@ public class GUIManagerBlocks : GUIManager
 
 	public void OnButtonTimeTimeIncrPressed(BasicButton sender)
 	{
-		if(mCurrentBlockTime < Globals.MAX_SEC_BLOCK){
-			mCurrentBlockTime++;
-			SetTime(mCurrentBlockTime);
+		if(sender.Checked){
+			if(mCurrentBlockTime < Globals.MAX_SEC_BLOCK){
+				mCurrentBlockTime++;
+				SetTime(mCurrentBlockTime);
+			}
 		}
 	}
 	
