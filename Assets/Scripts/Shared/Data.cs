@@ -903,11 +903,11 @@ namespace TVR {
 							/*System.Threading.Thread t = new System.Threading.Thread(() => SaveOriginalSound(samplesOriginal));
 							t.Start();*/
 						}
-							if(mSavingThread != null) {
-								//if(mSavingThread.IsAlive)
-								mSavingThread.Join();
-								mSavingThread = null;
-							}
+						if(mSavingThread != null) {
+							//if(mSavingThread.IsAlive)
+							mSavingThread.Join();
+							mSavingThread = null;
+						}
 						mSavingThread = new System.Threading.Thread(() => SaveSound(samples, samplesOriginal));
 						mSavingThread.Start();
 					}
@@ -916,13 +916,13 @@ namespace TVR {
 				private void SaveSound(float[] samples, float[] samplesOriginal) {
 					Debug.Log("Start");
 					Utils.AudioFilters filter = new TVR.Utils.AudioFilters();
-					float[] outSamples;
-					filter.Mosquito(samples, out outSamples);
+					/*float[] outSamples;
+					filter.Mosquito(samples, out outSamples);*/
 					string filePath;
 					if(samples != null) {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
-						SaveSound(outSamples, filePath);
-						//SaveSound(samples, filePath);
+						//SaveSound(outSamples, filePath);
+						SaveSound(samples, filePath);
 					}
 					if(samplesOriginal != null) {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
