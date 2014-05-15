@@ -625,6 +625,8 @@ namespace TVR {
 				private QueueManager.QueueManagerAction mActionOriginalLoad1;
 				private QueueManager.QueueManagerAction mActionOriginalLoad2;
 
+				private System.Threading.Thread mSavingThread;
+
 				public AudioClip Sound {
 					set {
 						if(mBlockType == blockTypes.Voice) {
@@ -646,8 +648,9 @@ namespace TVR {
 							if(mActionLoad1 != null) {
 								System.Threading.Thread t = (System.Threading.Thread)mActionLoad1.function.Target;
 								if(t.IsAlive) {
-									while(t.IsAlive)
-										System.Threading.Thread.Sleep(100);
+									/*while(t.IsAlive)
+										System.Threading.Thread.Sleep(100);*/
+									t.Join();
 								} else {
 									QueueManager.removeAction(mActionLoad1);
 									LoadSound();
@@ -666,7 +669,6 @@ namespace TVR {
 							return null;
 					}
 				}
-
 				public AudioClip OriginalSound {
 					set {
 						if(mBlockType == blockTypes.Voice) {
@@ -685,8 +687,9 @@ namespace TVR {
 							if(mActionOriginalLoad1 != null) {
 								System.Threading.Thread t = (System.Threading.Thread)mActionOriginalLoad1.function.Target;
 								if(t.IsAlive) {
-									while(t.IsAlive)
-										System.Threading.Thread.Sleep(100);
+									/*while(t.IsAlive)
+										System.Threading.Thread.Sleep(100);*/
+									t.Join();
 								} else {
 									QueueManager.removeAction(mActionOriginalLoad1);
 									LoadOriginalSound();
@@ -703,6 +706,14 @@ namespace TVR {
 							return mOriginalSound;
 						} else
 							return null;
+					}
+				}
+				public bool Saving {
+					get {
+						if(mSavingThread != null)
+							return mSavingThread.IsAlive;
+						else
+							return false;
 					}
 				}
 
@@ -892,21 +903,26 @@ namespace TVR {
 							/*System.Threading.Thread t = new System.Threading.Thread(() => SaveOriginalSound(samplesOriginal));
 							t.Start();*/
 						}
-						System.Threading.Thread t = new System.Threading.Thread(() => SaveSound(samples, samplesOriginal));
-						t.Start();
+							if(mSavingThread != null) {
+								//if(mSavingThread.IsAlive)
+								mSavingThread.Join();
+								mSavingThread = null;
+							}
+						mSavingThread = new System.Threading.Thread(() => SaveSound(samples, samplesOriginal));
+						mSavingThread.Start();
 					}
 				}
 
 				private void SaveSound(float[] samples, float[] samplesOriginal) {
 					Debug.Log("Start");
 					Utils.AudioFilters filter = new TVR.Utils.AudioFilters();
-					/*float[] outSamples;
-					filter.Mosquito(samples, out outSamples);*/
+					float[] outSamples;
+					filter.Mosquito(samples, out outSamples);
 					string filePath;
 					if(samples != null) {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
-						//SaveSound(outSamples, filePath);
-						SaveSound(samples, filePath);
+						SaveSound(outSamples, filePath);
+						//SaveSound(samples, filePath);
 					}
 					if(samplesOriginal != null) {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
