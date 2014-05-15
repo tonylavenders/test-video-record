@@ -56,7 +56,8 @@ public class SoundRecorder : MonoBehaviour
 	public void InitButtons()
 	{
 		//Voice: Play button
-		float pos_x = ButtonProperties.buttonBarScaleX*2.0f+ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize/2.0f;
+		//float pos_x = ButtonProperties.buttonBarScaleX*2.0f+ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize/2.0f;
+		float pos_x = (ButtonProperties.buttonBarScaleX/2.0f) + ButtonProperties.buttonBarScaleX*2.0f;
 		float pos_y = 4*(ButtonProperties.buttonSize/2+ButtonProperties.buttonMargin/2) + Screen.height/2;
 		pos_y -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize; 
 		Vector3 pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
@@ -64,17 +65,20 @@ public class SoundRecorder : MonoBehaviour
 		mVoicePlayButton.Init(pos, scale);
 		
 		//Voice: Rec button
-		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
+		//pos_x += ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
+		pos_x += ButtonProperties.buttonBarScaleX;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 		mVoiceRecButton.Init(pos, scale);
 		
 		//Voice: Fx button
-		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
+		//pos_x += ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
+		pos_x += ButtonProperties.buttonBarScaleX;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 		mVoiceFxButton.Init(pos, scale);
 		
 		//Voice: Save button
-		pos_x += ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize;
+		//pos_x += ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
+		pos_x += ButtonProperties.buttonBarScaleX;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 		mVoiceSaveButton.Init(pos, scale);
 	}
@@ -260,8 +264,48 @@ public class SoundRecorder : MonoBehaviour
 	//FX
 	public void OnButtonTimeVoiceFxPressed(BasicButton sender)
 	{
+		if(sender.Checked){
+			guiManagerBlocks.mVoiceFxButtonBar.Show(true);
+			sender.Hide(0,0);
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonVoiceFxMonsterPressed(BasicButton sender)
+	{
+		guiManagerBlocks.mVoiceFxButtonBar.Hide();
+		mVoiceFxButton.Show(0.2f,0.2f,true);
+		mVoiceFxButton.Checked=false;
 	}
 	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonVoiceFxSmurfPressed(BasicButton sender)
+	{
+		guiManagerBlocks.mVoiceFxButtonBar.Hide();
+		mVoiceFxButton.Show(0.2f,0.2f,true);
+		mVoiceFxButton.Checked=false;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonVoiceFxEchoPressed(BasicButton sender)
+	{
+		guiManagerBlocks.mVoiceFxButtonBar.Hide();
+		mVoiceFxButton.Show(0.2f,0.2f,true);
+		mVoiceFxButton.Checked=false;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonVoiceFxOffPressed(BasicButton sender)
+	{
+		guiManagerBlocks.mVoiceFxButtonBar.Hide();
+		mVoiceFxButton.Show(0.2f,0.2f,true);
+		mVoiceFxButton.Checked=false;
+	}
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//SAVE
 	public void OnButtonTimeVoiceSavePressed(BasicButton sender)

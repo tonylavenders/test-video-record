@@ -13,7 +13,8 @@ public enum ButtonType{
 	MUSIC, ANIM, EXPR, BLOCK,
 	EDIT_TIME_TIME, EDIT_TIME_VOICE,
 	EDIT_TIME_TIME_INCR, EDIT_TIME_TIME_DECR, EDIT_TIME_TIME_SAVE,
-	EDIT_TIME_VOICE_PLAY, EDIT_TIME_VOICE_REC, EDIT_TIME_VOICE_FX, EDIT_TIME_VOICE_SAVE
+	EDIT_TIME_VOICE_PLAY, EDIT_TIME_VOICE_REC, EDIT_TIME_VOICE_FX, EDIT_TIME_VOICE_SAVE,
+	EDIT_TIME_VOICE_FX_MONSTER, EDIT_TIME_VOICE_FX_SMURF, EDIT_TIME_VOICE_FX_ECHO, EDIT_TIME_VOICE_FX_OFF
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -353,6 +354,18 @@ public class BasicButton : MonoBehaviour
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_SAVE) {
 			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceSavePressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_MONSTER) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxMonsterPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_SMURF) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxSmurfPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_ECHO) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxEchoPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_OFF) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxOffPressed;
 		}
 	}
 	

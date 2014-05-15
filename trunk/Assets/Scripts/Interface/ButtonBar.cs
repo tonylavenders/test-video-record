@@ -44,7 +44,8 @@ public class ButtonBar : MonoBehaviour
 		expressions,
 		music,
 		time,
-		cameras
+		cameras,
+		voice_fx
 	}
 	public ElementTypes elementType;
 
@@ -151,10 +152,10 @@ public class ButtonBar : MonoBehaviour
 
 		//Move the button bar to the correct position (buttons are moved with the button bar)
 		if(align==Aligns.left){
-			pos_x = (ButtonProperties.buttonBarScaleX/2.0f) + ButtonProperties.buttonBarScaleX*depth_x + depth_x;
+			pos_x = (ButtonProperties.buttonBarScaleX/2.0f) + ButtonProperties.buttonBarScaleX*depth_x;// + depth_x;
 		}
 		else if(align==Aligns.right){
-			pos_x = Screen.width - (ButtonProperties.buttonBarScaleX/2.0f) + ButtonProperties.buttonBarScaleX*depth_x + depth_x;
+			pos_x = Screen.width - (ButtonProperties.buttonBarScaleX/2.0f) + ButtonProperties.buttonBarScaleX*depth_x;// + depth_x;
 		}
 
 		//If more than 5 buttons, then the first button is top aligned
@@ -368,7 +369,7 @@ public class ButtonBar : MonoBehaviour
 			Init();
 
 		//There is no other buttonbar opened --> fade in buttonbar and buttons
-		if(mGUIManager.Counter==0){
+		if(mGUIManager.Counter==0 || elementType==ElementTypes.voice_fx){
 			mFade.Reset(1f, Globals.ANIMATIONDURATION);
 			state=States.fade_in;
 			foreach(GameObject button in listButtons){

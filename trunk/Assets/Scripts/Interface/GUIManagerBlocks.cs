@@ -12,6 +12,7 @@ public class GUIManagerBlocks : GUIManager
 	public ButtonBar mAnimationsButtonBar;
 	public ButtonBar mExpressionsButtonBar;
 	public ButtonBar mTimeButtonBar;
+	public ButtonBar mVoiceFxButtonBar;
 
 	public BasicButton mDecreaseTimeButton;
 	public BasicButton mIncreaseTimeButton;
@@ -145,10 +146,12 @@ public class GUIManagerBlocks : GUIManager
 		mAnimationsButtonBar.Hide();
 		mExpressionsButtonBar.Hide();
 		mTimeButtonBar.Hide();
+		mVoiceFxButtonBar.Hide();
 		
 		mAnimationsButtonBar.UncheckButtons();
 		mExpressionsButtonBar.UncheckButtons();
 		mTimeButtonBar.UncheckButtons();
+		mVoiceFxButtonBar.UncheckButtons();
 		
 		LeftButtonBar.UncheckButtons();
 
@@ -217,12 +220,15 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(sender.Checked){
 			mTimeButtonBar.Show(true);
+			//TIME
 			if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Time){
 				ChangeButtonState(true, false);
 				mTimeButtonBar.listButtons[0].GetComponent<BasicButton>().Checked=true;
 				Mode=Modes.TimeMode;
 			}
+			//VOICE
 			else if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Voice){
+				soundRecorder.SetAudioClip();
 				ChangeButtonState(false, true);
 				mTimeButtonBar.listButtons[1].GetComponent<BasicButton>().Checked=true;
 				Mode=Modes.VoiceMode;
