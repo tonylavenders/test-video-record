@@ -67,12 +67,13 @@ namespace TVR {
 				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (4, 'Echo')");
 				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (5, 'Monster Pro')");
 				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (6, 'Mosquito Pro')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (7, 'Robot')");
 
 				db.ExecuteNonQuery("CREATE TABLE [Chapters] ([IdChapter] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER NOT NULL, [Title] TEXT NOT NULL, [Information] TEXT NOT NULL, [IdCharacter] INTEGER NOT NULL, [IdBackground] INTEGER NOT NULL, [IdMusic] INTEGER)");
 				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdChapter] INTEGER NOT NULL REFERENCES [Chapters] ([IdChapter]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlockTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [IdFilterType] INTEGER NOT NULL REFERENCES [FilterTypes] ([IdFilterType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL, [IdProp] INTEGER)");
 				//db.ExecuteNonQuery("CREATE TABLE [CharacterProps] ([IdCharacterProps] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdBlock] INTEGER NOT NULL REFERENCES [Blocks] ([IdBlock]) ON DELETE CASCADE, [IdResource] INTEGER NOT NULL, [Dummy] TEXT NOT NULL)");
-				db.ExecuteQuery("pragma user_version=3;");
-				VersionDB = 3;
+				db.ExecuteQuery("pragma user_version=4;");
+				VersionDB = 4;
 			}
 			if(VersionDB < 2) {
 				db.ExecuteNonQuery("CREATE TABLE [FilterTypes] ([IdFilterType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [FilterType] TEXT NOT NULL)");
@@ -90,7 +91,12 @@ namespace TVR {
 				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (5, 'Monster Pro')");
 				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (6, 'Mosquito Pro')");
 
-				db.ExecuteQuery("pragma user_version=3;");
+				//db.ExecuteQuery("pragma user_version=3;");
+			}
+			if(VersionDB < 4) {
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (7, 'Robot')");
+
+				db.ExecuteQuery("pragma user_version=4;");
 			}
 		}
 		
@@ -422,7 +428,12 @@ namespace TVR {
 					Echo = 4,
 					MonsterPro = 5,
 					MosquitoPro = 6,
+					Robot = 7,
 				}
+				/*Utils.AudioFilters filter = new TVR.Utils.AudioFilters();
+				float[] outSamples;
+				filter.Robot(samples, out outSamples);
+				samples = outSamples;*/
 
 				private Chapter mParent;
 				private int mIdBlock;
@@ -915,9 +926,6 @@ namespace TVR {
 
 				private void SaveSound(float[] samples, float[] samplesOriginal) {
 					Debug.Log("Start");
-					/*Utils.AudioFilters filter = new TVR.Utils.AudioFilters();
-					float[] outSamples;
-					filter.Monster(samples, out outSamples);*/
 					string filePath;
 					if(samples != null) {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
