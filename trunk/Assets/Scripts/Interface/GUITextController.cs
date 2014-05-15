@@ -24,6 +24,7 @@ public class GUITextController : MonoBehaviour
 		mParent = transform.parent;
 		if(bIsTime){
 			mBlock = mParent.GetComponent<BasicButton>().iObj as Data.Chapter.Block;
+			SetTextTime(mBlock.Frames*Globals.MILISPERFRAME);
 		}
 
 		if(mParent!=null){
@@ -36,6 +37,15 @@ public class GUITextController : MonoBehaviour
 		Color c = guiText.color;
 		guiText.color = new Color(c.r, c.g, c.b, mFade.Value);
 	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void SetTextTime(float fSeconds)
+	{
+		int seconds = Mathf.RoundToInt(fSeconds);
+		seconds = Mathf.Max(seconds,1);
+		guiText.text = "00:"+seconds.ToString("00");
+	}                  
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -56,7 +66,6 @@ public class GUITextController : MonoBehaviour
 				pos_y = mParent.position.y/Screen.height;
 			}else{
 				pos_y = (mParent.position.y-mParent.lossyScale.x * 0.3f)/Screen.height;
-				guiText.text = "00:"+Mathf.RoundToInt(mBlock.Frames*Globals.MILISPERFRAME).ToString("00");
 			}
 			guiText.transform.position = new Vector3(pos_x, pos_y, 0.0f);
 		}

@@ -53,35 +53,39 @@ public class ButtonBar : MonoBehaviour
 	const int MAX_BUTTONS=5;
 
 	BasicButton mCurrentSelected=null;
-	protected BasicButton currentSelected{
+	public BasicButton currentSelected{
 		get { return mCurrentSelected; }
 		set {
 			if(value!=null){
 				mGUIManager.EnableButtons();
 
+				//Current chapter has changed
 				if(elementType==ElementTypes.chapters){
 					if(Data.selChapter!=null){
 						Data.selChapter.Save();
 					}
 					Data.selChapter = value.iObj as Data.Chapter;
-					mGUIManager.mInput.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
-					mGUIManager.mInput.Text = Data.selChapter.Title;
+					mGUIManager.inputText.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
+					mGUIManager.inputText.Text = Data.selChapter.Title;
 				}
+				//Current block has changed
 				else if(elementType==ElementTypes.blocks){
 					if(Data.selChapter!=null){
 						if(Data.selChapter.selBlock!=null){
-							mGUIManager.SaveWarning(Data.selChapter.selBlock);
+							mGUIManager.SaveWarning(Data.selChapter.selBlock, mCurrentSelected); //save the previous block
 							Data.selChapter.selBlock.Save();
 						}
 						Data.selChapter.selBlock = value.iObj as Data.Chapter.Block;
 					}
-				}else if((elementType==ElementTypes.main || elementType==ElementTypes.time) && mGUIManager is GUIManagerBlocks){
-					mGUIManager.SaveWarning(null);
+				}
+				//Current category has changed
+				else if((elementType==ElementTypes.main || elementType==ElementTypes.time) && mGUIManager is GUIManagerBlocks){
+					mGUIManager.SaveWarning(null, null);
 				}
 			}//currentSelected=null
 			else{
 				if(elementType==ElementTypes.chapters){
-					mGUIManager.mInput.Fade(0, Globals.ANIMATIONDURATION, true, false);
+					mGUIManager.inputText.Fade(0, Globals.ANIMATIONDURATION, true, false);
 					Data.selChapter = null;
 				}
 			 	else if(elementType==ElementTypes.blocks){
@@ -363,17 +367,18 @@ public class ButtonBar : MonoBehaviour
 		if(!bInit)
 			Init();
 
-		//First time buttonbar is opened
+		//There is no other buttonbar opened --> fade in buttonbar and buttons
 		if(mGUIManager.Counter==0){
 			mFade.Reset(1f, Globals.ANIMATIONDURATION);
 			state=States.fade_in;
 			foreach(GameObject button in listButtons){
 				button.GetComponent<BasicButton>().Show(0, Globals.ANIMATIONDURATION, bReactivate); 
 			}
-			if(mGUIManager.mInput!=null && elementType!=ElementTypes.main && elementType!=ElementTypes.chapters && elementType!=ElementTypes.blocks){
-				mGUIManager.mInput.Fade(0, Globals.ANIMATIONDURATION, true, false);
+			if(mGUIManager.inputText!=null && elementType!=ElementTypes.main && elementType!=ElementTypes.chapters && elementType!=ElementTypes.blocks){
+				mGUIManager.inputText.Fade(0, Globals.ANIMATIONDURATION, true, false);
 			}
 		}
+		//There is another buttonbar opened -> show buttonbar immediately, fade in buttons with delay (wait for the other buttons to finish fade out)
 		else{
 			mFade.Value=1f;
 			Color c = renderer.material.color;
@@ -394,15 +399,15 @@ public class ButtonBar : MonoBehaviour
 
 	public void Hide()
 	{
-		//If the button of the buttonbar is pressed, then the buttonbar is faded out
+		//There is no other buttonbar opened --> fade out buttonbar
 		if(mGUIManager.Counter==1){
 			mFade.Reset(0f, Globals.ANIMATIONDURATION);
 			state=States.fade_out;
-			if(mGUIManager.mInput!=null){
-				mGUIManager.mInput.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
+			if(mGUIManager.inputText!=null){
+				mGUIManager.inputText.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
 			}
 		}
-		//If another button is pressed, then the current buttonbar is hidden and new buttonbar is faded in
+		//Another buttonbar will be opened -> hide button bar immediately
 		else{
 			mFade.Value=0f;
 			Color c = renderer.material.color;
@@ -410,6 +415,7 @@ public class ButtonBar : MonoBehaviour
 			state=States.hidden;
 		}
 
+		//fade out the buttons
 		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Hide(0, 0.2f);
 		}

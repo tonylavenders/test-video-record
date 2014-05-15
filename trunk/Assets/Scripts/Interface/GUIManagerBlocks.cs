@@ -20,11 +20,18 @@ public class GUIManagerBlocks : GUIManager
 	public GUIText mTextTime;
 	public GUIText mTextTimeShadow;
 
-	int mLastBlockTime;
-	int mCurrentBlockTime;
+	int mLastBlockTime=-1;
+	int mCurrentBlockTime=-1;
 	Data.Chapter.Block mPreviousBlock=null;
+	BasicButton mPreviousButton=null;
 
 	public SoundRecorder soundRecorder;
+
+	enum Modes{
+		TimeMode,
+		VoiceMode
+	}
+	Modes Mode;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,23 +48,32 @@ public class GUIManagerBlocks : GUIManager
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public override void SaveWarning(Data.Chapter.Block previousBlock)
+	//If time has changed and block isn't saved yet then show warning message
+	public override void SaveWarning(Data.Chapter.Block previousBlock, BasicButton previousButton)
 	{
-		if(mCurrentBlockTime!=mLastBlockTime){
+		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Showing){
+			return;
+		}
+		if((mCurrentBlockTime!=-1 && mLastBlockTime!=-1 && mCurrentBlockTime!=mLastBlockTime) || !soundRecorder.bLastSaved){
 			TVR.Utils.Message.Show(1, "AVISO", "No ha guardado los cambios. \u00BFDesea guardar?", TVR.Utils.Message.Type.YesNo, "S\u00ED", "No", Message_Save);
 			mPreviousBlock = previousBlock;
+			mPreviousButton = previousButton;
 		}
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	//Message to choice whether save the block or not
 	void Message_Save(TVR.Utils.Message.ButtonClicked buttonClicked, int Identifier)
 	{
 		if(buttonClicked == TVR.Utils.Message.ButtonClicked.Yes){
-			SaveBlockTime();
+			if(!soundRecorder.bLastSaved){
+				soundRecorder.SaveAudioData(mPreviousBlock, mPreviousButton);
+			}else{
+				SaveBlockTime();
+			}
 		}else{
 			mCurrentBlockTime=mLastBlockTime;
+			soundRecorder.bLastSaved=true;
 		}
 	}
 
@@ -66,23 +82,43 @@ public class GUIManagerBlocks : GUIManager
 	void SaveBlockTime()
 	{
 		if(mPreviousBlock!=null){
-			mPreviousBlock.Frames = mCurrentBlockTime*Globals.FRAMESPERSECOND;
-			mPreviousBlock.Save();
-			mPreviousBlock=null;
+			SaveBlock(mPreviousBlock);
 		}else{
-			Data.selChapter.selBlock.Frames = mCurrentBlockTime*Globals.FRAMESPERSECOND;
+			SaveBlock(Data.selChapter.selBlock);
 		}
-		mLastBlockTime = mCurrentBlockTime;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void SaveBlock(Data.Chapter.Block block)
+	{
+		block.Frames = mCurrentBlockTime*Globals.FRAMESPERSECOND;
+
+		if(Mode==Modes.TimeMode){
+			block.BlockType = Data.Chapter.Block.blockTypes.Time;
+		}else if(Mode==Modes.VoiceMode){
+			block.BlockType = Data.Chapter.Block.blockTypes.Voice;
+		}
+		block.Save();
+		mPreviousBlock=null;
+	
+		if(mPreviousButton!=null){
+			mPreviousButton.SetTextTime();
+		}else{
+			RightButtonBar.currentSelected.SetTextTime();
+		}
+	
+		mLastBlockTime = mCurrentBlockTime;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	protected override void InitButtons()
 	{
 		base.InitButtons();
 		soundRecorder.InitButtons();
 
-		mEditButton.Show();
+		EditButton.Show();
 
 		//Time: Decrease button
 		float pos_x = ButtonProperties.buttonBarScaleX*2.0f+ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize/2.0f;
@@ -114,7 +150,9 @@ public class GUIManagerBlocks : GUIManager
 		mExpressionsButtonBar.UncheckButtons();
 		mTimeButtonBar.UncheckButtons();
 		
-		mLeftButtonBar.UncheckButtons();
+		LeftButtonBar.UncheckButtons();
+
+		ChangeButtonState(false,false);
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,7 +172,7 @@ public class GUIManagerBlocks : GUIManager
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	void ChangeButtonState(bool bTime, bool bVoice)
+	public void ChangeButtonState(bool bTime, bool bVoice)
 	{
 		if(bTime){
 			mDecreaseTimeButton.Show();
@@ -179,14 +217,18 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(sender.Checked){
 			mTimeButtonBar.Show(true);
-			if(mTimeButtonBar.listButtons[0].GetComponent<BasicButton>().Checked){
+			if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Time){
 				ChangeButtonState(true, false);
+				mTimeButtonBar.listButtons[0].GetComponent<BasicButton>().Checked=true;
+				Mode=Modes.TimeMode;
 			}
-			else if(mTimeButtonBar.listButtons[1].GetComponent<BasicButton>().Checked){
+			else if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Voice){
 				ChangeButtonState(false, true);
+				mTimeButtonBar.listButtons[1].GetComponent<BasicButton>().Checked=true;
+				Mode=Modes.VoiceMode;
 			}
-			int seconds = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
-			SetTime(seconds);
+			mCurrentBlockTime = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
+			SetTime(mCurrentBlockTime);
 			mTextTime.GetComponent<GUITextController>().Show();
 			mTextTimeShadow.GetComponent<GUITextController>().Show();
 		}else{
@@ -206,6 +248,7 @@ public class GUIManagerBlocks : GUIManager
 			ChangeButtonState(true, false);
 			mLastBlockTime = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
 			mCurrentBlockTime = mLastBlockTime;
+			Mode=Modes.TimeMode;
 		}
 	}
 
@@ -216,6 +259,9 @@ public class GUIManagerBlocks : GUIManager
 		if(sender.Checked){
 			soundRecorder.SetAudioClip();
 			ChangeButtonState(false, true);
+			mLastBlockTime = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
+			mCurrentBlockTime = mLastBlockTime;
+			Mode=Modes.VoiceMode;
 		}
 	}
 
@@ -223,11 +269,9 @@ public class GUIManagerBlocks : GUIManager
 
 	public void OnButtonTimeTimeDecrPressed(BasicButton sender)
 	{
-		if(sender.Checked){
-			if(mCurrentBlockTime > Globals.MIN_SEC_BLOCK){
-				mCurrentBlockTime--;
-				SetTime(mCurrentBlockTime);
-			}
+		if(mCurrentBlockTime > Globals.MIN_SEC_BLOCK){
+			mCurrentBlockTime--;
+			SetTime(mCurrentBlockTime);
 		}
 	}
 
@@ -235,11 +279,9 @@ public class GUIManagerBlocks : GUIManager
 
 	public void OnButtonTimeTimeIncrPressed(BasicButton sender)
 	{
-		if(sender.Checked){
-			if(mCurrentBlockTime < Globals.MAX_SEC_BLOCK){
-				mCurrentBlockTime++;
-				SetTime(mCurrentBlockTime);
-			}
+		if(mCurrentBlockTime < Globals.MAX_SEC_BLOCK){
+			mCurrentBlockTime++;
+			SetTime(mCurrentBlockTime);
 		}
 	}
 	
@@ -248,6 +290,7 @@ public class GUIManagerBlocks : GUIManager
 	public void OnButtonTimeTimeSavePressed(BasicButton sender)
 	{
 		SaveBlockTime();
+		HideAllButtonBars();
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

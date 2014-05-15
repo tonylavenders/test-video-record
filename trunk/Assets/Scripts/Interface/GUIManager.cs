@@ -9,13 +9,13 @@ using TVR.Button;
 
 public class GUIManager : MonoBehaviour
 {
-	public ButtonBar mLeftButtonBar;
-	public ButtonBarElements mRightButtonBar;
+	public ButtonBar LeftButtonBar;
+	public ButtonBarElements RightButtonBar;
 
-	public BasicButton mEditButton;
-	public BasicButton mPlayButton;
+	public BasicButton EditButton;
+	public BasicButton PlayButton;
 
-	public InputText mInput;
+	public InputText inputText;
 	
 	GameObject mCurrentCharacter;
 	public GameObject CurrentCharacter{
@@ -24,7 +24,7 @@ public class GUIManager : MonoBehaviour
 		}set{
 			Destroy(mCurrentCharacter);
 			mCurrentCharacter=value;
-			mEditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
+			EditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
 		}
 	}
 	GameObject mCurrentBackground;
@@ -34,7 +34,7 @@ public class GUIManager : MonoBehaviour
 		}set{
 			Destroy(mCurrentBackground);
 			mCurrentBackground=value;
-			mEditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
+			EditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
 		}
 	}
 
@@ -64,8 +64,8 @@ public class GUIManager : MonoBehaviour
 	{
 		SetGUICamera();
 
-		mLeftButtonBar.Show(false);
-		mRightButtonBar.Show(true);
+		LeftButtonBar.Show(false);
+		RightButtonBar.Show(true);
 
 		InitButtons();
 
@@ -87,30 +87,30 @@ public class GUIManager : MonoBehaviour
 		Vector3 pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 		Vector3 scale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 
-		mEditButton.Init(pos, scale);
+		EditButton.Init(pos, scale);
 
 		//Play button
 		pos_x -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 
-		mPlayButton.Init(pos, scale);
-		mPlayButton.Show(0, Globals.ANIMATIONDURATION, false);
+		PlayButton.Init(pos, scale);
+		PlayButton.Show(0, Globals.ANIMATIONDURATION, false);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public virtual void EnableButtons()
 	{
-		mLeftButtonBar.EnableButtons();
-		mPlayButton.Enable=true;
+		LeftButtonBar.EnableButtons();
+		PlayButton.Enable=true;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public virtual void DisableButtons()
 	{
-		mLeftButtonBar.DisableButtons();
-		mPlayButton.Enable=false;
+		LeftButtonBar.DisableButtons();
+		PlayButton.Enable=false;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -174,15 +174,15 @@ public class GUIManager : MonoBehaviour
 		else Counter--;
 
 		if(Counter!=0){
-			mLeftButtonBar.Separator.GetComponent<SeparatorController>().Show();
+			LeftButtonBar.Separator.GetComponent<SeparatorController>().Show();
 		}else{
-			mLeftButtonBar.Separator.GetComponent<SeparatorController>().Hide();
+			LeftButtonBar.Separator.GetComponent<SeparatorController>().Hide();
 		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public virtual void SaveWarning(Data.Chapter.Block previousBlock)
+	public virtual void SaveWarning(Data.Chapter.Block previousBlock, BasicButton previousButton)
 	{
 	}
 	

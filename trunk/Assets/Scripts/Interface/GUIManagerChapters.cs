@@ -18,7 +18,7 @@ public class GUIManagerChapters : GUIManager
 
 	public override bool blur {
 		set {
-			mInput.enable = !value;
+			inputText.enable = !value;
 			base.blur = value;
 		}
 	}
@@ -35,34 +35,36 @@ public class GUIManagerChapters : GUIManager
 		Rect rectFileName = new Rect((ButtonProperties.buttonBarScaleX) + MARGIN, pos_y, width, height);
 
 		//mInput = new InputText(rectFileName, white, white, white, white, fontArial, white, Globals.NEW_CHAPTER_TEXT, false, 2);
-		mInput = new InputText(rectFileName, null, null, null, null, fontArial, white, Globals.NEW_CHAPTER_TEXT, false, 2);
-		mInput.TextSize = Mathf.RoundToInt(50 * (height / STANDARD_HEIGHT));
-		mInput.TextPosition = TextAnchor.MiddleCenter;
-		mInput.TextColor = Color.white;
-		mInput.specialCharacters = new char[]{ ' ', '-', '_', '.', '/', ',' };
-		mInput.maxLength = 20;
-		mInput.Text = "";
-		mInput.shadow=true;
-		mInput.TextStyle=FontStyle.Bold;
-		mInput.selectedCallBack = inputSelected;
-		mInput.unSelectedCallBack = inputUnSelected;
-		mInput.scaleMode = ScaleMode.StretchToFill;
-		mInput.Alpha = 0;
-		mInput.enable = false;
+		inputText = new InputText(rectFileName, null, null, null, null, fontArial, white, Globals.NEW_CHAPTER_TEXT, false, 2);
+		inputText.TextSize = Mathf.RoundToInt(50 * (height / STANDARD_HEIGHT));
+		inputText.TextPosition = TextAnchor.MiddleCenter;
+		inputText.TextColor = Color.white;
+		inputText.specialCharacters = new char[]{ ' ', '-', '_', '.', '/', ',' };
+		inputText.maxLength = 20;
+		inputText.Text = "";
+		inputText.shadow=true;
+		inputText.TextStyle=FontStyle.Bold;
+		inputText.selectedCallBack = inputSelected;
+		inputText.unSelectedCallBack = inputUnSelected;
+		inputText.scaleMode = ScaleMode.StretchToFill;
+		inputText.Alpha = 0;
+		inputText.enable = false;
 
 		if(Data.selChapter!=null){
-			mInput.Text = Data.selChapter.Title;
-			mInput.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
+			inputText.Text = Data.selChapter.Title;
+			inputText.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
 		}
 
 		base.Start();
+
+		SetCurrentChapterElements();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	protected override void Update()
 	{
-		mInput.Update();
+		inputText.Update();
 		base.Update();
 	}
 
@@ -70,10 +72,10 @@ public class GUIManagerChapters : GUIManager
 
 	protected override void OnGUI()
 	{
-		mInput.OnGUIAllEvents();
+		inputText.OnGUIAllEvents();
 
 		if(Event.current.type == EventType.Repaint){
-			mInput.OnGUI();
+			inputText.OnGUI();
 		}
 		base.OnGUI();
 	}
@@ -83,7 +85,7 @@ public class GUIManagerChapters : GUIManager
 	protected override void InitButtons()
 	{
 		base.InitButtons();
-		mEditButton.Show(0, Globals.ANIMATIONDURATION, false);
+		EditButton.Show(0, Globals.ANIMATIONDURATION, false);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +100,7 @@ public class GUIManagerChapters : GUIManager
 	public override void DisableButtons()
 	{
 		base.DisableButtons();
-		mEditButton.Enable=false;
+		EditButton.Enable=false;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +115,30 @@ public class GUIManagerChapters : GUIManager
 		mBackgroundsButtonBar.UncheckButtons();
 		mMusicButtonBar.UncheckButtons();
 
-		mLeftButtonBar.UncheckButtons();
+		LeftButtonBar.UncheckButtons();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void SetCurrentChapterElements()
+	{
+		if(Data.selChapter==null){
+			return;
+		}
+		if(Data.selChapter.IdCharacter!=-1){
+			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
+			mCharactersButtonBar.SetCurrentButton(Data.selChapter.IdCharacter);
+		}else{
+			CurrentCharacter=null;
+			mCharactersButtonBar.UncheckButtons();
+		}
+		if(Data.selChapter.IdBackground!=-1){
+			CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
+			mBackgroundsButtonBar.SetCurrentButton(Data.selChapter.IdBackground);
+		}else{
+			CurrentBackground=null;
+			mBackgroundsButtonBar.UncheckButtons();
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,21 +209,7 @@ public class GUIManagerChapters : GUIManager
 	public void OnButtonChapterPressed(BasicButton sender)
 	{
 		HideAllButtonBars();
-
-		if(Data.selChapter.IdCharacter!=-1){
-			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
-			mCharactersButtonBar.SetCurrentButton(Data.selChapter.IdCharacter);
-		}else{
-			CurrentCharacter=null;
-			mCharactersButtonBar.UncheckButtons();
-		}
-		if(Data.selChapter.IdBackground!=-1){
-			CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
-			mBackgroundsButtonBar.SetCurrentButton(Data.selChapter.IdBackground);
-		}else{
-			CurrentBackground=null;
-			mBackgroundsButtonBar.UncheckButtons();
-		}
+		SetCurrentChapterElements();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -247,7 +258,7 @@ public class GUIManagerChapters : GUIManager
 	{
 		//#if UNITY_IOS
 		blur = true;
-		mInput.enable = true;
+		inputText.enable = true;
 		//#endif
 	}
 
@@ -258,7 +269,7 @@ public class GUIManagerChapters : GUIManager
 		//#if UNITY_IOS
 		blur = false;
 		//#endif
-		Data.selChapter.Title = mInput.Text;
+		Data.selChapter.Title = inputText.Text;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
