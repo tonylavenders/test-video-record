@@ -49,14 +49,15 @@ using UnityEngine;
 
 namespace TVR.Utils {
 	public class AudioFilters {
-
 		#region Pitch Shifter 
-		private const int SHIFT = 10;
+		private const int SHIFTMONSTER = 3;
+		private const int SHIFTMOSQUITO = 3;
+
 		public void Mosquito(float[] indata, out float[] outdata) {
 			int count = 0;
-			outdata = new float[(indata.Length - Mathf.FloorToInt(indata.Length / SHIFT)) + 1];
+			outdata = new float[(indata.Length - Mathf.FloorToInt(indata.Length / SHIFTMOSQUITO)) + 1];
 			for(int i = 0, j = 1; i < indata.Length; ++i, ++j) {
-				if(j < SHIFT) {
+				if(j < SHIFTMOSQUITO) {
 					if(count < outdata.Length) {
 						outdata[count] = indata[i];
 						count++;
@@ -68,18 +69,28 @@ namespace TVR.Utils {
 
 		public void Monster(float[] indata, out float[] outdata) {
 			int count = 0;
-			outdata = new float[(Mathf.CeilToInt((indata.Length * 2) / SHIFT)) + 1];
-			for(int i = 0, j = 1; i < indata.Length; ++i, ++j) {
-				if(j < SHIFT) {
+			outdata = new float[(indata.Length + Mathf.CeilToInt(indata.Length / SHIFTMONSTER)) + 1];
+			for(int i = 0, j = 1; i < indata.Length; ++i, ++j, ++count) {
+				if(count < outdata.Length) {
 					outdata[count] = indata[i];
-					count++;
-				} else
-					j = 0;
+					if(j >= SHIFTMONSTER) {
+						count++;
+						float value = indata[i];
+						if(i < indata.Length - 1) {
+							value += indata[i + 1];
+							value /= 2f;
+						}
+						outdata[count] = value;
+						j = 0;
+					}
+				}
 			}
 		}
 		#endregion
 
 		#region Pitch Shifter (Pro)
+		const float SHIFTMONSTERPRO = 0.7f;
+		const float SHIFTMOSQUITOPRO = 1.5f;
 		private const int MAX_FRAME_LENGTH = 16000;
 		private float[] gInFIFO = new float[MAX_FRAME_LENGTH];
 		private float[] gOutFIFO = new float[MAX_FRAME_LENGTH];
@@ -92,6 +103,14 @@ namespace TVR.Utils {
 		private float[] gSynFreq = new float[MAX_FRAME_LENGTH];
 		private float[] gSynMagn = new float[MAX_FRAME_LENGTH];
 		private long gRover;//, gInit;
+
+		public void MosquitoPro(float[] indata, out float[] outdata) {
+			PitchShift(SHIFTMOSQUITOPRO, indata.Length, Globals.OUTPUTRATEPERSECOND, indata, out outdata);
+		}
+
+		public void MonsterPro(float[] indata, out float[] outdata) {
+			PitchShift(SHIFTMONSTERPRO, indata.Length, Globals.OUTPUTRATEPERSECOND, indata, out outdata);
+		}
 
 		public void PitchShift(float pitchShift, long numSampsToProcess, float sampleRate, float[] indata, out float[] outdata) {
 			PitchShift(pitchShift, numSampsToProcess, (long)2048, (long)10, sampleRate, indata, out outdata);
