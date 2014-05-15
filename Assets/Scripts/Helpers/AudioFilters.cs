@@ -88,10 +88,27 @@ namespace TVR.Utils {
 		}
 		#endregion
 
+		#region Echo
+		private const float DECAYRATIO = 1f / 3f; //DECAYRATIO < 1
+		private const float DELAY = 0.5f;
+		private const float DRYMIX = 1f;
+		private const float WETMIX = 1f;
+		private bool AddSamples = true;
+
+		private const float VOLUMENATENUATION = 1f - DECAYRATIO;
+		private int ECHOS = Mathf.CeilToInt(1 / DECAYRATIO) - 1;
+		//private const int SAMPLESTOADD = (int)(ECHOS * DELAY * Globals.OUTPUTRATEPERSECOND);
+
+		public void Echo(float[] indata, out float[] outdata) {
+			Debug.Log(ECHOS);
+			outdata = null;
+		}
+		#endregion
+
 		#region Pitch Shifter (Pro)
 		const float SHIFTMONSTERPRO = 0.7f;
 		const float SHIFTMOSQUITOPRO = 1.5f;
-		private const int MAX_FRAME_LENGTH = 16000;
+		private const int MAX_FRAME_LENGTH = 4096; //16000;
 		private float[] gInFIFO = new float[MAX_FRAME_LENGTH];
 		private float[] gOutFIFO = new float[MAX_FRAME_LENGTH];
 		private float[] gFFTworksp = new float[2 * MAX_FRAME_LENGTH];
