@@ -22,7 +22,7 @@ public class SoundRecorder : MonoBehaviour
 		get{ return mCurrentTime;}
 		set{ 
 			mCurrentTime=value;
-			guiManagerBlocks.SetTime((int)value);
+			guiManagerBlocks.SetTime((int)Mathf.Min(value,15.0f));
 		}
 	}
 
@@ -36,6 +36,8 @@ public class SoundRecorder : MonoBehaviour
 		Recording
 	}
 	Modes mMode;
+
+	public bool bLastSaved=true;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -178,7 +180,28 @@ public class SoundRecorder : MonoBehaviour
 		
 		audioSource.clip = audioClip;
 	}
-	
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void SaveAudioData(Data.Chapter.Block block, BasicButton button)
+	{
+		if(audioClip!=null){
+			if(block==null){
+				block=Data.selChapter.selBlock;
+			}
+			block.BlockType = Data.Chapter.Block.blockTypes.Voice;
+			block.Frames = (int)(audioClip.length*Globals.FRAMESPERSECOND);
+			block.Sound = audioClip;
+			block.OriginalSound = audioClip;
+			block.Save();
+			if(button==null){
+				button=guiManagerBlocks.RightButtonBar.currentSelected;
+			}
+			button.SetTextTime();
+			bLastSaved=true;
+		}
+	}
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//PLAY
 	public void OnButtonTimeVoicePlayPressed(BasicButton sender)
@@ -216,6 +239,7 @@ public class SoundRecorder : MonoBehaviour
 			guiManagerBlocks.SetColor(Color.red);
 			CurrentTime=0;
 			mMode=Modes.Recording;
+			bLastSaved=false;
 		}
 		//Stop recording
 		else if(mMode==Modes.Recording){
@@ -223,6 +247,7 @@ public class SoundRecorder : MonoBehaviour
 				Microphone.End(null);
 				RemoveEmptyData();
 			}
+			guiManagerBlocks.SetTime((int)Mathf.Max(1.0f,CurrentTime));
 			guiManagerBlocks.SetColor(Color.white);
 			mVoicePlayButton.Show();
 			mVoiceFxButton.Show();
@@ -241,13 +266,8 @@ public class SoundRecorder : MonoBehaviour
 	//SAVE
 	public void OnButtonTimeVoiceSavePressed(BasicButton sender)
 	{
-		if(audioClip!=null){
-			Data.selChapter.selBlock.BlockType = Data.Chapter.Block.blockTypes.Voice;
-			Data.selChapter.selBlock.Frames = (int)audioClip.length*Globals.FRAMESPERSECOND;
-			Data.selChapter.selBlock.Sound = audioClip;
-			Data.selChapter.selBlock.OriginalSound = audioClip;
-			Data.selChapter.selBlock.Save();
-		}
+		SaveAudioData(null,null);
+		guiManagerBlocks.HideAllButtonBars();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

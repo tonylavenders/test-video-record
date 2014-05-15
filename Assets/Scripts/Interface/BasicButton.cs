@@ -42,10 +42,8 @@ public class BasicButton : MonoBehaviour
 					enabledCallback(this);
 				if(state == States.fade_in || state == States.idle) {
 					if(value)
-						//mFade.Reset(1f, Globals.ANIMATIONDURATION);
 						Show(0, Globals.ANIMATIONDURATION, true);
 					else
-						//mFade.Reset(fAlphaDisabled, Globals.ANIMATIONDURATION);
 						Show(fAlphaDisabled, Globals.ANIMATIONDURATION, false);
 				}
 				if(!value)
@@ -62,6 +60,8 @@ public class BasicButton : MonoBehaviour
 		set {
 			if(bChecked!=value){
 				bChecked=value;
+				if(checkedCallback!=null)
+					checkedCallback(this);
 				if(value){
 					renderer.material.mainTexture = texChecked;
 					if(mButtonBar != null)
@@ -69,8 +69,6 @@ public class BasicButton : MonoBehaviour
 				}else{
 					renderer.material.mainTexture = texUnchecked;
 				}
-				if(checkedCallback!=null)
-					checkedCallback(this);
 			}
 		}
 	}
@@ -252,6 +250,14 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public void SetTextTime()
+	{
+		Data.Chapter.Block mBlock = iObj as Data.Chapter.Block;
+		mGUITextTime.GetComponent<GUITextController>().SetTextTime(mBlock.Frames*Globals.MILISPERFRAME);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	public void GoToPosition(float finalY, float delay=0, float duration=Globals.ANIMATIONDURATION)
 	{
 		mMoveY.Reset(transform.position.y, finalY, duration, true, delay);
@@ -286,7 +292,7 @@ public class BasicButton : MonoBehaviour
 			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonSharePressed;
 		}
 		else if(buttonType == ButtonType.MAIN_DEL_ELEM) {
-			clickedCallback = mGUIManager.mRightButtonBar.OnButtonDeleteElementPressed;
+			clickedCallback = mGUIManager.RightButtonBar.OnButtonDeleteElementPressed;
 		}
 		else if(buttonType == ButtonType.ADD_ELEM) {
 			clickedCallback = ((ButtonBarElements)mButtonBar).OnButtonAddElementPressed;
