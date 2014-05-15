@@ -54,9 +54,8 @@ namespace TVR.Utils {
 		private const int SHIFTMOSQUITO = 3;
 
 		public void Mosquito(float[] indata, out float[] outdata) {
-			int count = 0;
 			outdata = new float[(indata.Length - Mathf.FloorToInt(indata.Length / SHIFTMOSQUITO)) + 1];
-			for(int i = 0, j = 1; i < indata.Length; ++i, ++j) {
+			for(int i = 0, j = 1, count = 0; i < indata.Length; ++i, ++j) {
 				if(j < SHIFTMOSQUITO) {
 					if(count < outdata.Length) {
 						outdata[count] = indata[i];
@@ -68,9 +67,8 @@ namespace TVR.Utils {
 		}
 
 		public void Monster(float[] indata, out float[] outdata) {
-			int count = 0;
 			outdata = new float[(indata.Length + Mathf.CeilToInt(indata.Length / SHIFTMONSTER)) + 1];
-			for(int i = 0, j = 1; i < indata.Length; ++i, ++j, ++count) {
+			for(int i = 0, j = 1, count = 0; i < indata.Length; ++i, ++j, ++count) {
 				if(count < outdata.Length) {
 					outdata[count] = indata[i];
 					if(j >= SHIFTMONSTER) {
@@ -89,19 +87,69 @@ namespace TVR.Utils {
 		#endregion
 
 		#region Echo
-		private const float DECAYRATIO = 1f / 3f; //DECAYRATIO < 1
-		private const float DELAY = 0.5f;
-		private const float DRYMIX = 1f;
-		private const float WETMIX = 1f;
+		private const float DECAYRATIO = 1f / 4f; //Echo decay per delay. (>0 - <1)
+		private const float DELAY = 0.4f; //Echo delay in seconds.
+		private const float DRYMIX = 1f; //Volume of original signal to pass to output.
+		private const float WETMIX = 0.8f; //Volume of echo signal to pass to output.
 		private bool AddSamples = true;
 
-		private const float VOLUMENATENUATION = 1f - DECAYRATIO;
+		private const float INITVOLUME = 1f - DECAYRATIO;
 		private int ECHOS = Mathf.CeilToInt(1 / DECAYRATIO) - 1;
-		//private const int SAMPLESTOADD = (int)(ECHOS * DELAY * Globals.OUTPUTRATEPERSECOND);
 
 		public void Echo(float[] indata, out float[] outdata) {
-			Debug.Log(ECHOS);
-			outdata = null;
+			float maxValue = 0;
+			int[] delay = new int[ECHOS];
+			int[] initDelay = new int[ECHOS];
+			float value = 0f;
+
+			for(int i = 0; i < ECHOS; ++i) {
+				delay[i] = (int)(-1 * DELAY * Globals.OUTPUTRATEPERSECOND * (i + 1));
+				initDelay[i] = delay[i];
+			}
+
+			if(AddSamples)
+				outdata = new float[indata.Length + (int)(ECHOS * DELAY * Globals.OUTPUTRATEPERSECOND)];
+			else
+				outdata = new float[indata.Length];
+
+			for(int i = 0; i < outdata.Length; ++i) {
+				value = 0;
+				for(int j = 0; j < ECHOS; ++j) {
+					if(delay[j] >= 0 && i + initDelay[j] < indata.Length) {
+						value += indata[i + initDelay[j]] * (INITVOLUME - (DECAYRATIO * j));
+					}
+					delay[j]++;
+				}
+				value *= WETMIX;
+				if(i < indata.Length)
+					value += (indata[i] * DRYMIX);
+				if(maxValue < Mathf.Abs(value))
+					maxValue = Mathf.Abs(value);
+				outdata[i] = value;
+			}
+			if(maxValue > 1) {
+				for(int i = 0; i < outdata.Length; ++i) {
+					outdata[i] /= maxValue;
+				}
+			}
+		}
+		#endregion
+
+		#region Robot
+		private const int NUMSAMPLES = 8;
+		public void Robot(float[] indata, out float[] outdata) {
+			outdata = new float[indata.Length];
+			float value = 0;
+			for(int i = 0, count = 0; i < indata.Length; ++i, ++count) {
+				if(count >= NUMSAMPLES - 1) {
+					value /= NUMSAMPLES;
+					for(int j = NUMSAMPLES - 1; j >= 0; --j)
+						outdata[i - j] = value;
+					value = 0;
+					count = 0;
+				}
+				value += indata[i];
+			}
 		}
 		#endregion
 
