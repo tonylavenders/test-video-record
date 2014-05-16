@@ -54,16 +54,6 @@ namespace TVR.Utils {
 		private const int SHIFTMOSQUITO = 3;
 
 		public void Mosquito(float[] indata, out float[] outdata) {
-			/*outdata = new float[(indata.Length - Mathf.FloorToInt(indata.Length / SHIFTMOSQUITO)) + 1];
-			for(int i = 0, j = 1, count = 0; i < indata.Length; ++i, ++j) {
-				if(j < SHIFTMOSQUITO) {
-					if(count < outdata.Length) {
-						outdata[count] = indata[i];
-						count++;
-					}
-				} else
-					j = 0;
-			}*/
 			Mosquito(indata, out outdata, SHIFTMOSQUITO);
 		}
 
@@ -150,21 +140,13 @@ namespace TVR.Utils {
 		#endregion
 
 		#region Robot
-		private const int NUMSAMPLES = 7;
+		private const int ROBOTSAMPLES = 7;
+		private const int ROBOTRATIO = 32768 >> 2;
+		private const int SHIFTROBOT = 5;
+
 		public void Robot(float[] indata, out float[] outdata) {
-			outdata = new float[indata.Length];
-			float value = 0;
-			for(int i = 0, count = 0; i < indata.Length; ++i, ++count) {
-				if(count >= NUMSAMPLES - 1) {
-					value /= NUMSAMPLES;
-					for(int j = NUMSAMPLES - 1; j >= 0; --j)
-						outdata[i - j] = value;
-					value = 0;
-					count = -1;
-				}
-				value += indata[i];
-			}
-			Mosquito(outdata, out outdata, 5);
+			Compression(indata, out outdata, ROBOTSAMPLES, ROBOTRATIO);
+			Mosquito(outdata, out outdata, SHIFTROBOT);
 		}
 		#endregion
 
@@ -172,7 +154,7 @@ namespace TVR.Utils {
 		private const float DISTROSIONQUANTITY = 0.035f; //(>0 - <1)
 		public void Distorsion(float[] indata, out float[] outdata) {
 			outdata = new float[indata.Length];
-			for(int i = 0, count = 0; i < indata.Length; ++i, ++count) {
+			for(int i = 0; i < indata.Length; ++i) {
 				outdata[i] = Mathf.Round(indata[i] / DISTROSIONQUANTITY) * DISTROSIONQUANTITY;
 			}
 		}
@@ -212,6 +194,37 @@ namespace TVR.Utils {
 					outdata[i] /= maxValue;
 				}
 			}*/
+		}
+		#endregion
+
+		#region Compression
+		private const int COMPRESSIONSAMPLES = 2;
+		private const int COMPRESSIONRATIO = 32768 >> 10;
+
+		public void Compression(float[] indata, out float[] outdata) {
+			Compression(indata, out outdata, COMPRESSIONSAMPLES, COMPRESSIONRATIO);
+		}
+
+		private void Compression(float[] indata, out float[] outdata, int compressionSamples, int compressionRatio) {
+			Debug.Log(compressionRatio);
+			outdata = new float[indata.Length];
+			float value;
+			for(int i = 0; i < indata.Length; i += compressionSamples) {
+				value = 0;
+				for(int j = 0; j < compressionSamples; j++) {
+					if(i + j < indata.Length)
+						value += indata[i + j];
+				}
+				value /= compressionSamples;
+
+				if(compressionRatio != 32768)
+					value = (int)(value * compressionRatio) / (float)compressionRatio;
+
+				for(int j = 0; j < compressionSamples; j++) {
+					if(i + j < outdata.Length)
+						outdata[i + j] = value;
+				}
+			}
 		}
 		#endregion
 
