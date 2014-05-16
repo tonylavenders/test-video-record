@@ -62,6 +62,7 @@ public class GUIManager : MonoBehaviour
 
 	protected virtual void Start()
 	{
+		QueueManager.pauseOnButtonDown = true;
 		SetGUICamera();
 
 		LeftButtonBar.Show(false);

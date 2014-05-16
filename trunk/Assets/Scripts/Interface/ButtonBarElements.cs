@@ -97,7 +97,6 @@ public class ButtonBarElements : ButtonBar
 		}
 		//Blocks buttons
 		else if(elementType==ElementTypes.blocks){
-			Data.selChapter.loadBlocks();
 			foreach(Data.Chapter.Block block in Data.selChapter.Blocks){
 				listButtons.Add(Instantiate(mButtons[1]) as GameObject);
 				listButtons[i].transform.position = init_pos - new Vector3(0, (ButtonProperties.buttonSize + ButtonProperties.buttonMargin)*(i-1), 0);
