@@ -14,7 +14,9 @@ public enum ButtonType{
 	EDIT_TIME_TIME, EDIT_TIME_VOICE,
 	EDIT_TIME_TIME_INCR, EDIT_TIME_TIME_DECR, EDIT_TIME_TIME_SAVE,
 	EDIT_TIME_VOICE_PLAY, EDIT_TIME_VOICE_REC, EDIT_TIME_VOICE_FX, EDIT_TIME_VOICE_SAVE,
-	EDIT_TIME_VOICE_FX_MONSTER, EDIT_TIME_VOICE_FX_SMURF, EDIT_TIME_VOICE_FX_ECHO, EDIT_TIME_VOICE_FX_OFF
+	EDIT_TIME_VOICE_FX_MONSTER, EDIT_TIME_VOICE_FX_SMURF, EDIT_TIME_VOICE_FX_ECHO, EDIT_TIME_VOICE_FX_OFF,
+	EDIT_TIME_VOICE_FX_MONSTER_PRO, EDIT_TIME_VOICE_FX_SMURF_PRO, EDIT_TIME_VOICE_FX_ROBOT, EDIT_TIME_VOICE_FX_DIST,
+	EDIT_TIME_VOICE_FX_NOISE, EDIT_TIME_VOICE_FX_COMPRESS
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,13 +41,11 @@ public class BasicButton : MonoBehaviour
 		set {
 			if(bEnabled != value) {
 				bEnabled = value;
-				if(enabledCallback != null)
+				if(enabledCallback != null){
 					enabledCallback(this);
+				}
 				if(state == States.fade_in || state == States.idle) {
-					if(value)
-						Show(0, Globals.ANIMATIONDURATION, true);
-					else
-						Show(fAlphaDisabled, Globals.ANIMATIONDURATION, false);
+					Show(0, Globals.ANIMATIONDURATION, value);
 				}
 				if(!value)
 					Checked = false;
@@ -124,7 +124,7 @@ public class BasicButton : MonoBehaviour
 	ButtonBar mButtonBar;
 	GUIManager mGUIManager;
 	Transform mGUIText;
-	Transform mGUITextTime;
+	Transform mGUITextBottom;
 	//TextMesh mText3D;
 	static float mSharedTime;
 
@@ -150,7 +150,7 @@ public class BasicButton : MonoBehaviour
 		renderer.material.mainTexture = texUnchecked;
 
 		mGUIText = transform.FindChild("GUI Text");
-		mGUITextTime = transform.FindChild("GUI Text Time");
+		mGUITextBottom = transform.FindChild("GUI Text Bottom");
 		/*Transform t = transform.FindChild("New Text");
 		if(t != null)
 			mText3D = transform.FindChild("New Text").GetComponent<TextMesh>();*/
@@ -251,10 +251,9 @@ public class BasicButton : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void SetTextTime()
+	public void SetTextBottom(string text="")
 	{
-		Data.Chapter.Block mBlock = iObj as Data.Chapter.Block;
-		mGUITextTime.GetComponent<GUITextController>().SetTextTime(mBlock.Frames*Globals.MILISPERFRAME);
+		mGUITextBottom.GetComponent<GUITextController>().SetTextBottom(text);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -387,8 +386,12 @@ public class BasicButton : MonoBehaviour
 		if(mGUIText){
 			mGUIText.gameObject.GetComponent<GUITextController>().Show(delay, duration, bReactivate ? 1.0f : fAlphaDisabled);
 		}
-		if(mGUITextTime){
-			mGUITextTime.gameObject.GetComponent<GUITextController>().Show(delay, duration, bReactivate ? 1.0f : fAlphaDisabled);
+		if(mGUITextBottom){
+			if(renderer.material.color.a!=0.0f){
+				mGUITextBottom.gameObject.GetComponent<GUITextController>().Show(0f, 0f, bReactivate ? 1.0f : 0.3f);
+			}else{
+				mGUITextBottom.gameObject.GetComponent<GUITextController>().Show(delay, duration, bReactivate ? 1.0f : 0.3f);
+			}
 		}
 
 		state = States.fade_in;
@@ -403,8 +406,8 @@ public class BasicButton : MonoBehaviour
 		if(mGUIText)
 			mGUIText.gameObject.GetComponent<GUITextController>().Hide(delay, duration);
 
-		if(mGUITextTime)
-			mGUITextTime.gameObject.GetComponent<GUITextController>().Hide(delay, duration);
+		if(mGUITextBottom)
+			mGUITextBottom.gameObject.GetComponent<GUITextController>().Hide(delay, duration);
 
 		state = States.fade_out;
 	}

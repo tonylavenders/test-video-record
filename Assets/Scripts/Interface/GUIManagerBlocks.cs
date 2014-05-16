@@ -104,9 +104,9 @@ public class GUIManagerBlocks : GUIManager
 		mPreviousBlock=null;
 	
 		if(mPreviousButton!=null){
-			mPreviousButton.SetTextTime();
+			mPreviousButton.SetTextBottom();
 		}else{
-			RightButtonBar.currentSelected.SetTextTime();
+			RightButtonBar.currentSelected.SetTextBottom();
 		}
 	
 		mLastBlockTime = mCurrentBlockTime;

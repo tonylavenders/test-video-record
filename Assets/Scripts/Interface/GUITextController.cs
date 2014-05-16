@@ -8,30 +8,32 @@ public class GUITextController : MonoBehaviour
 	Transform mParent;
 	SmoothStep mFade;
 	public bool bIsTime=false;
+	public bool bIsFX=false;
 	Data.Chapter.Block mBlock;
+	BasicButton mButton;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Awake()
 	{
 		mFade = new SmoothStep(0.0f,1.0f,1.0f,false);
+		mParent = transform.parent;
+		if(mParent!=null){
+			mButton = mParent.GetComponent<BasicButton>();
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Start()
 	{
-		mParent = transform.parent;
-		if(bIsTime){
-			mBlock = mParent.GetComponent<BasicButton>().iObj as Data.Chapter.Block;
-			SetTextTime(mBlock.Frames*Globals.MILISPERFRAME);
-		}
+		SetTextBottom();
 
 		if(mParent!=null){
-			if(!bIsTime){
-				guiText.fontSize = (int)(mParent.lossyScale.x*(26.0f/90.0f)); //para button.scale=90 ==> font_size=26
-			}else{
+			if(bIsTime || bIsFX){
 				guiText.fontSize = (int)(mParent.lossyScale.x*(15.0f/90.0f)); 
+			}else{
+				guiText.fontSize = (int)(mParent.lossyScale.x*(26.0f/90.0f)); //para button.scale=90 ==> font_size=26
 			}
 		}
 		Color c = guiText.color;
@@ -40,12 +42,18 @@ public class GUITextController : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void SetTextTime(float fSeconds)
+	public void SetTextBottom(string text="")
 	{
-		int seconds = Mathf.RoundToInt(fSeconds);
-		seconds = Mathf.Max(seconds,1);
-		guiText.text = "00:"+seconds.ToString("00");
-	}                  
+		if(bIsTime){
+			Data.Chapter.Block mBlock = mButton.iObj as Data.Chapter.Block;
+			int seconds = Mathf.RoundToInt(mBlock.Frames*Globals.MILISPERFRAME);
+			seconds = Mathf.Max(seconds,1);
+			guiText.text = "00:"+seconds.ToString("00");
+		}
+		else if(bIsFX){
+			guiText.text = text;
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -62,10 +70,13 @@ public class GUITextController : MonoBehaviour
 		if(mParent!=null){
 			float pos_x = mParent.position.x/Screen.width;
 			float pos_y;
-			if(!bIsTime){
-				pos_y = mParent.position.y/Screen.height;
-			}else{
+
+			//time or fx label
+			if(bIsTime || bIsFX){
 				pos_y = (mParent.position.y-mParent.lossyScale.x * 0.3f)/Screen.height;
+			//chapter or block number label
+			}else{
+				pos_y = mParent.position.y/Screen.height;
 			}
 			guiText.transform.position = new Vector3(pos_x, pos_y, 0.0f);
 		}
@@ -75,13 +86,7 @@ public class GUITextController : MonoBehaviour
 	
 	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION, float fAlpha=1.0f)
 	{
-		if(mParent!=null){
-			mFade.Reset(fAlpha, duration, true, delay);
-		}
-		//Time GUIText
-		else{
-			mFade.Reset(1.0f, duration, true, delay);
-		}
+		mFade.Reset(fAlpha, duration, true, delay);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
