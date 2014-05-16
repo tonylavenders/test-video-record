@@ -191,6 +191,8 @@ public class GUIManagerChapters : GUIManager
 		if(Data.selChapter!=null){
 			Data.selChapter.Save();
 		}
+		QueueManager.pauseOnButtonDown = false;
+		Data.selChapter.loadBlocks();
 		SceneMgr.Get.SwitchTo("ChapterEditor");
 	}
 	

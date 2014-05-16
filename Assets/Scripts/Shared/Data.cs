@@ -61,19 +61,21 @@ namespace TVR {
 				db.ExecuteNonQuery("INSERT INTO ShotTypes (IdShotType, ShotType) VALUES (3, 'Long Shot')");
 
 				db.ExecuteNonQuery("CREATE TABLE [FilterTypes] ([IdFilterType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [FilterType] TEXT NOT NULL)");
-				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (1, 'Off')");
-				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (2, 'Monster')");
-				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (3, 'Mosquito')");
-				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (4, 'Echo')");
-				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (5, 'Monster Pro')");
-				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (6, 'Mosquito Pro')");
-				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (7, 'Robot')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (0, 'Off')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (1, 'Monster')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (2, 'Mosquito')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (3, 'Echo')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (4, 'Monster Pro')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (5, 'Mosquito Pro')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (6, 'Robot')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (7, 'Distorsion')");
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (8, 'Noise')");
 
 				db.ExecuteNonQuery("CREATE TABLE [Chapters] ([IdChapter] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [Number] INTEGER NOT NULL, [Title] TEXT NOT NULL, [Information] TEXT NOT NULL, [IdCharacter] INTEGER NOT NULL, [IdBackground] INTEGER NOT NULL, [IdMusic] INTEGER)");
 				db.ExecuteNonQuery("CREATE TABLE [Blocks] ([IdBlock] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdChapter] INTEGER NOT NULL REFERENCES [Chapters] ([IdChapter]) ON DELETE CASCADE, [IdBlockType] INTEGER NOT NULL REFERENCES [BlockTypes] ([IdBlockType]), [IdShotType] INTEGER NOT NULL REFERENCES [ShotTypes] ([IdShotType]), [IdFilterType] INTEGER NOT NULL REFERENCES [FilterTypes] ([IdFilterType]), [Number] INTEGER NOT NULL, [Frames] INTEGER NOT NULL, [IdExpression] INTEGER NOT NULL, [IdAnimation] INTEGER NOT NULL, [IdProp] INTEGER)");
 				//db.ExecuteNonQuery("CREATE TABLE [CharacterProps] ([IdCharacterProps] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, [IdBlock] INTEGER NOT NULL REFERENCES [Blocks] ([IdBlock]) ON DELETE CASCADE, [IdResource] INTEGER NOT NULL, [Dummy] TEXT NOT NULL)");
-				db.ExecuteQuery("pragma user_version=4;");
-				VersionDB = 4;
+				db.ExecuteQuery("pragma user_version=5;");
+				VersionDB = 5;
 			}
 			if(VersionDB < 2) {
 				db.ExecuteNonQuery("CREATE TABLE [FilterTypes] ([IdFilterType] INTEGER PRIMARY KEY NOT NULL UNIQUE, [FilterType] TEXT NOT NULL)");
@@ -96,7 +98,25 @@ namespace TVR {
 			if(VersionDB < 4) {
 				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (7, 'Robot')");
 
-				db.ExecuteQuery("pragma user_version=4;");
+				//db.ExecuteQuery("pragma user_version=4;");
+			}
+			if(VersionDB < 5) {
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (10, 'Distorsion')");
+				db.ExecuteNonQuery("UPDATE Blocks SET IdFilterType = 10  WHERE IdFilterType = 1");
+				db.ExecuteNonQuery("UPDATE FilterTypes SET IdFilterType = 0 WHERE IdFilterType = 1");
+				db.ExecuteNonQuery("UPDATE FilterTypes SET IdFilterType = 1 WHERE IdFilterType = 2");
+				db.ExecuteNonQuery("UPDATE FilterTypes SET IdFilterType = 2 WHERE IdFilterType = 3");
+				db.ExecuteNonQuery("UPDATE FilterTypes SET IdFilterType = 3 WHERE IdFilterType = 4");
+				db.ExecuteNonQuery("UPDATE FilterTypes SET IdFilterType = 4 WHERE IdFilterType = 5");
+				db.ExecuteNonQuery("UPDATE FilterTypes SET IdFilterType = 5 WHERE IdFilterType = 6");
+				db.ExecuteNonQuery("UPDATE FilterTypes SET IdFilterType = 6 WHERE IdFilterType = 7");
+
+				db.ExecuteNonQuery("UPDATE Blocks SET IdFilterType = 0  WHERE IdFilterType = 10");
+				db.ExecuteNonQuery("UPDATE FilterTypes SET IdFilterType = 7 WHERE IdFilterType = 10");
+
+				db.ExecuteNonQuery("INSERT INTO FilterTypes (IdFilterType, FilterType) VALUES (8, 'Noise')");
+
+				db.ExecuteQuery("pragma user_version=5;");
 			}
 		}
 		
@@ -422,13 +442,15 @@ namespace TVR {
 					LongShot = 3,
 				}
 				public enum filterType {
-					Off = 1,
-					Monster = 2,
-					Mosquito = 3,
-					Echo = 4,
-					MonsterPro = 5,
-					MosquitoPro = 6,
-					Robot = 7,
+					Off = 0,
+					Monster = 1,
+					Mosquito = 2,
+					Echo = 3,
+					MonsterPro = 4,
+					MosquitoPro = 5,
+					Robot = 6,
+					Distorsion = 7,
+					Noise = 8,
 				}
 				/*Utils.AudioFilters filter = new TVR.Utils.AudioFilters();
 				float[] outSamples;
@@ -828,6 +850,11 @@ namespace TVR {
 							for(int i = 0; i < sSamples.Length; ++i)
 								samples[i] = ((float)sSamples[i]) / short.MaxValue;
 
+							/*Utils.AudioFilters filter = new TVR.Utils.AudioFilters();
+							float[] outSamples;
+							filter.Mosquito(samples, out outSamples);
+							mActionLoad2 = new QueueManager.QueueManagerAction("LoadAudioClip", () => LoadSoundAsync2(outSamples), "RecordedSound.LoadSoundAsync2");*/
+
 							mActionLoad2 = new QueueManager.QueueManagerAction("LoadAudioClip", () => LoadSoundAsync2(samples), "RecordedSound.LoadSoundAsync2");
 							QueueManager.add(mActionLoad2, QueueManager.Priorities.Highest);
 						} else {
@@ -925,18 +952,15 @@ namespace TVR {
 				}
 
 				private void SaveSound(float[] samples, float[] samplesOriginal) {
-					Debug.Log("Start");
 					string filePath;
 					if(samples != null) {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + EXTENSION);
-						//SaveSound(outSamples, filePath);
 						SaveSound(samples, filePath);
 					}
 					if(samplesOriginal != null) {
 						filePath = System.IO.Path.Combine(Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION);
 						SaveSound(samplesOriginal, filePath);
 					}
-					Debug.Log("End");
 				}
 
 				private void SaveSound(float[] samples, string filePath) {

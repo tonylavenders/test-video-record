@@ -54,9 +54,23 @@ namespace TVR.Utils {
 		private const int SHIFTMOSQUITO = 3;
 
 		public void Mosquito(float[] indata, out float[] outdata) {
-			outdata = new float[(indata.Length - Mathf.FloorToInt(indata.Length / SHIFTMOSQUITO)) + 1];
+			/*outdata = new float[(indata.Length - Mathf.FloorToInt(indata.Length / SHIFTMOSQUITO)) + 1];
 			for(int i = 0, j = 1, count = 0; i < indata.Length; ++i, ++j) {
 				if(j < SHIFTMOSQUITO) {
+					if(count < outdata.Length) {
+						outdata[count] = indata[i];
+						count++;
+					}
+				} else
+					j = 0;
+			}*/
+			Mosquito(indata, out outdata, SHIFTMOSQUITO);
+		}
+
+		private void Mosquito(float[] indata, out float[] outdata, int shiftMosquito) {
+			outdata = new float[(indata.Length - Mathf.FloorToInt(indata.Length / shiftMosquito)) + 1];
+			for(int i = 0, j = 1, count = 0; i < indata.Length; ++i, ++j) {
+				if(j < shiftMosquito) {
 					if(count < outdata.Length) {
 						outdata[count] = indata[i];
 						count++;
@@ -136,7 +150,7 @@ namespace TVR.Utils {
 		#endregion
 
 		#region Robot
-		private const int NUMSAMPLES = 8;
+		private const int NUMSAMPLES = 7;
 		public void Robot(float[] indata, out float[] outdata) {
 			outdata = new float[indata.Length];
 			float value = 0;
@@ -146,10 +160,58 @@ namespace TVR.Utils {
 					for(int j = NUMSAMPLES - 1; j >= 0; --j)
 						outdata[i - j] = value;
 					value = 0;
-					count = 0;
+					count = -1;
 				}
 				value += indata[i];
 			}
+			Mosquito(outdata, out outdata, 5);
+		}
+		#endregion
+
+		#region Distorsion
+		private const float DISTROSIONQUANTITY = 0.035f; //(>0 - <1)
+		public void Distorsion(float[] indata, out float[] outdata) {
+			outdata = new float[indata.Length];
+			for(int i = 0, count = 0; i < indata.Length; ++i, ++count) {
+				outdata[i] = Mathf.Round(indata[i] / DISTROSIONQUANTITY) * DISTROSIONQUANTITY;
+			}
+		}
+		#endregion
+
+		#region Noise
+		private const float NOISEVOLUME = 0.05f;
+
+		public void Noise(float[] indata, out float[] outdata) {
+			float noiseVolume;
+			float maxValue = 0;
+			float value = 0f;
+			System.Random r = new System.Random();
+			float rnd;
+			float normalize = 1;
+
+			for(int i = 0; i < indata.Length; ++i) {
+				if(maxValue < Mathf.Abs(indata[i]))
+					maxValue = Mathf.Abs(indata[i]);
+			}
+			noiseVolume = NOISEVOLUME * maxValue;
+			if(noiseVolume + maxValue > 1) {
+				normalize += 1 - (noiseVolume + maxValue);
+			}
+			float noiseValue = noiseVolume * 2f;
+
+			outdata = new float[indata.Length];
+			for(int i = 0; i < outdata.Length; ++i) {
+				rnd = (float)r.NextDouble();
+				value = (indata[i] * normalize) + ((rnd * noiseValue) - noiseVolume);
+				/*if(maxValue < Mathf.Abs(value))
+					maxValue = Mathf.Abs(value);*/
+				outdata[i] = value;
+			}
+			/*if(maxValue > 1) {
+				for(int i = 0; i < outdata.Length; ++i) {
+					outdata[i] /= maxValue;
+				}
+			}*/
 		}
 		#endregion
 
