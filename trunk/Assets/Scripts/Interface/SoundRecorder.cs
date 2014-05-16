@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using TVR;
+using TVR.Utils;
 using System;
 
 public class SoundRecorder : MonoBehaviour
@@ -12,10 +13,10 @@ public class SoundRecorder : MonoBehaviour
 
 	public GUIManagerBlocks guiManagerBlocks;
 
-	AudioClip audioClip;
-	AudioClip audioClipMonster;
-	AudioClip audioClipSmurf;
+	AudioFilters filter;
+	AudioClip[] audioClips;
 	AudioSource audioSource;
+	int mCurrentFilter=0;
 
 	float mCurrentTime;
 	float CurrentTime{
@@ -49,6 +50,9 @@ public class SoundRecorder : MonoBehaviour
 		audioSource.loop = false;
 		audioSource.playOnAwake = false;
 		audioSource.clip = null;
+
+		audioClips = new AudioClip[Enum.GetNames(typeof(Data.Chapter.Block.filterType)).Length];
+		filter = new AudioFilters();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,10 +91,15 @@ public class SoundRecorder : MonoBehaviour
 
 	public void SetAudioClip()
 	{
-		if(Data.selChapter.selBlock.Sound!=null){
-			audioClip = Data.selChapter.selBlock.Sound;
-			audioSource.clip = audioClip;
-			mCurrentTime = (int)Data.selChapter.selBlock.Sound.length;
+		if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Voice)
+		{
+			audioClips[(int)Data.selChapter.selBlock.FilterType] = Data.selChapter.selBlock.Sound;
+			audioSource.clip = Data.selChapter.selBlock.Sound;
+			CurrentTime = (int)Data.selChapter.selBlock.Sound.length;
+
+			if(Data.selChapter.selBlock.FilterType!=Data.Chapter.Block.filterType.Off){
+				audioClips[0] = Data.selChapter.selBlock.OriginalSound;
+			}
 		}
 	}
 
@@ -115,7 +124,7 @@ public class SoundRecorder : MonoBehaviour
 		}
 		else if(mMode==Modes.Playing){
 			//Playing
-			if(CurrentTime < audioClip.length){
+			if(CurrentTime < audioSource.clip.length){
 				CurrentTime += Time.deltaTime;
 			}
 			//End playing
@@ -135,10 +144,10 @@ public class SoundRecorder : MonoBehaviour
 	public void ChangeButtonState(bool bShow)
 	{
 		if(bShow){
-			mVoicePlayButton.Show(0, Globals.ANIMATIONDURATION, audioClip!=null);
+			mVoicePlayButton.Show(0, Globals.ANIMATIONDURATION, audioClips[mCurrentFilter]!=null);
 			mVoiceRecButton.Show();
-			mVoiceFxButton.Show(0, Globals.ANIMATIONDURATION, audioClip!=null);
-			mVoiceSaveButton.Show(0, Globals.ANIMATIONDURATION, audioClip!=null);
+			mVoiceFxButton.Show(0, Globals.ANIMATIONDURATION, audioClips[mCurrentFilter]!=null);
+			mVoiceSaveButton.Show(0, Globals.ANIMATIONDURATION, audioClips[mCurrentFilter]!=null);
 		}
 		else{
 			mVoicePlayButton.Hide();
@@ -155,8 +164,8 @@ public class SoundRecorder : MonoBehaviour
 	//Remove empty sound at the end of the file
 	void RemoveEmptyData()
 	{
-		float[] samples = new float[audioClip.samples * audioClip.channels];
-		audioClip.GetData(samples, 0);
+		float[] samples = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(samples, 0);
 		
 		float recordTime = Mathf.Max(CurrentTime, 0.5f); //0.5sec minimum record time
 		
@@ -176,32 +185,32 @@ public class SoundRecorder : MonoBehaviour
 		
 		Buffer.BlockCopy(samples, 0, samplesTrim, 0, samplesTrim.Length * sizeof(float));
 		
-		audioClip = AudioClip.Create("user_clip", samplesTrim.Length, channels, frequency, false, false);
-		audioClip.SetData(samplesTrim, 0);
+		audioClips[0] = AudioClip.Create("user_clip", samplesTrim.Length, channels, frequency, false, false);
+		audioClips[0].SetData(samplesTrim, 0);
 		
 		samples = null;
 		samplesTrim = null;
 		
-		audioSource.clip = audioClip;
+		audioSource.clip = audioClips[0];
 	}
-
+	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public void SaveAudioData(Data.Chapter.Block block, BasicButton button)
 	{
-		if(audioClip!=null){
+		if(audioClips[0]!=null){
 			if(block==null){
 				block=Data.selChapter.selBlock;
 			}
 			block.BlockType = Data.Chapter.Block.blockTypes.Voice;
-			block.Frames = (int)(audioClip.length*Globals.FRAMESPERSECOND);
-			block.Sound = audioClip;
-			block.OriginalSound = audioClip;
+			block.Frames = (int)(audioClips[0].length*Globals.FRAMESPERSECOND);
+			block.Sound = audioClips[mCurrentFilter];
+			block.OriginalSound = audioClips[0];
 			block.Save();
 			if(button==null){
 				button=guiManagerBlocks.RightButtonBar.currentSelected;
 			}
-			button.SetTextTime();
+			button.SetTextBottom();
 			bLastSaved=true;
 		}
 	}
@@ -212,6 +221,7 @@ public class SoundRecorder : MonoBehaviour
 	{
 		//Start playing
 		if(mMode==Modes.Idle){
+			audioSource.clip=audioClips[mCurrentFilter];
 			audioSource.Play();
 			mVoiceRecButton.Show(0, Globals.ANIMATIONDURATION, false);
 			mVoiceFxButton.Show(0, Globals.ANIMATIONDURATION, false);
@@ -222,7 +232,7 @@ public class SoundRecorder : MonoBehaviour
 		//Stop playing
 		else if(mMode==Modes.Playing){
 			audioSource.Stop();
-			guiManagerBlocks.SetTime((int)audioClip.length);
+			guiManagerBlocks.SetTime((int)audioClips[mCurrentFilter].length);
 			mVoiceRecButton.Show();
 			mVoiceFxButton.Show();
 			mVoiceSaveButton.Show();
@@ -236,7 +246,7 @@ public class SoundRecorder : MonoBehaviour
 	{
 		//Start recording
 		if(mMode==Modes.Idle){
-			audioClip = Microphone.Start(null, false, totalTime, frequency);
+			audioClips[0] = Microphone.Start(null, false, totalTime, frequency);
 			mVoicePlayButton.Show(0, Globals.ANIMATIONDURATION, false);
 			mVoiceFxButton.Show(0, Globals.ANIMATIONDURATION, false);
 			mVoiceSaveButton.Show(0, Globals.ANIMATIONDURATION, false);
@@ -247,7 +257,7 @@ public class SoundRecorder : MonoBehaviour
 		}
 		//Stop recording
 		else if(mMode==Modes.Recording){
-			if(audioClip != null) {
+			if(audioClips[0] != null) {
 				Microphone.End(null);
 				RemoveEmptyData();
 			}
@@ -272,38 +282,64 @@ public class SoundRecorder : MonoBehaviour
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	void ApplyFilter(string filterName, float[] outdata)
+	{
+		guiManagerBlocks.mVoiceFxButtonBar.Hide();
+		mVoiceFxButton.SetTextBottom(filterName);
+		mVoiceFxButton.Show(0.2f,0.2f,true);
+		mVoiceFxButton.Checked=false;
+
+		audioClips[mCurrentFilter]= AudioClip.Create("sound", outdata.Length, channels, frequency, false, false);
+		audioClips[mCurrentFilter].SetData(outdata,0);
+		audioSource.clip = audioClips[mCurrentFilter];
+		CurrentTime = (int)audioSource.clip.length;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//MONSTER
 	public void OnButtonVoiceFxMonsterPressed(BasicButton sender)
 	{
-		guiManagerBlocks.mVoiceFxButtonBar.Hide();
-		mVoiceFxButton.Show(0.2f,0.2f,true);
-		mVoiceFxButton.Checked=false;
+		float[] indata, outdata;
+		indata = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(indata, 0);
+		filter.Monster(indata, out outdata);
+		mCurrentFilter = (int)Data.Chapter.Block.filterType.Monster;
+		ApplyFilter("Monster", outdata);
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	//SMURF
 	public void OnButtonVoiceFxSmurfPressed(BasicButton sender)
 	{
-		guiManagerBlocks.mVoiceFxButtonBar.Hide();
-		mVoiceFxButton.Show(0.2f,0.2f,true);
-		mVoiceFxButton.Checked=false;
+		float[] indata, outdata;
+		indata = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(indata, 0);
+		filter.Mosquito(indata, out outdata);
+		mCurrentFilter = (int)Data.Chapter.Block.filterType.Mosquito;
+		ApplyFilter("Smurf", outdata);
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	//ECHO
 	public void OnButtonVoiceFxEchoPressed(BasicButton sender)
 	{
-		guiManagerBlocks.mVoiceFxButtonBar.Hide();
-		mVoiceFxButton.Show(0.2f,0.2f,true);
-		mVoiceFxButton.Checked=false;
+		float[] indata, outdata;
+		indata = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(indata, 0);
+		filter.Echo(indata, out outdata);
+		mCurrentFilter = (int)Data.Chapter.Block.filterType.Echo;
+		ApplyFilter("Echo", outdata);
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	//OFF
 	public void OnButtonVoiceFxOffPressed(BasicButton sender)
 	{
 		guiManagerBlocks.mVoiceFxButtonBar.Hide();
+		mVoiceFxButton.SetTextBottom("<none>");
 		mVoiceFxButton.Show(0.2f,0.2f,true);
 		mVoiceFxButton.Checked=false;
+		mCurrentFilter = (int)Data.Chapter.Block.filterType.Off;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
