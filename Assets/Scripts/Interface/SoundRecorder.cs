@@ -276,6 +276,7 @@ public class SoundRecorder : MonoBehaviour
 	{
 		if(sender.Checked){
 			guiManagerBlocks.mVoiceFxButtonBar.Show(true);
+			guiManagerBlocks.HideTime();
 			sender.Hide(0,0);
 		}
 	}
@@ -293,6 +294,8 @@ public class SoundRecorder : MonoBehaviour
 		audioClips[mCurrentFilter].SetData(outdata,0);
 		audioSource.clip = audioClips[mCurrentFilter];
 		CurrentTime = (int)audioSource.clip.length;
+
+		guiManagerBlocks.ShowTime();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -329,6 +332,78 @@ public class SoundRecorder : MonoBehaviour
 		filter.Echo(indata, out outdata);
 		mCurrentFilter = (int)Data.Chapter.Block.filterType.Echo;
 		ApplyFilter("Echo", outdata);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//MONSTER PRO
+	public void OnButtonVoiceFxMonsterProPressed(BasicButton sender)
+	{
+		float[] indata, outdata;
+		indata = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(indata, 0);
+		filter.MonsterPro(indata, out outdata);
+		mCurrentFilter = (int)Data.Chapter.Block.filterType.MonsterPro;
+		ApplyFilter("M-Pro", outdata);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//SMURF PRO
+	public void OnButtonVoiceFxSmurfProPressed(BasicButton sender)
+	{
+		float[] indata, outdata;
+		indata = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(indata, 0);
+		filter.MosquitoPro(indata, out outdata);
+		mCurrentFilter = (int)Data.Chapter.Block.filterType.MosquitoPro;
+		ApplyFilter("S-Pro", outdata);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//ROBOT
+	public void OnButtonVoiceFxRobotPressed(BasicButton sender)
+	{
+		float[] indata, outdata;
+		indata = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(indata, 0);
+		filter.Robot(indata, out outdata);
+		mCurrentFilter = (int)Data.Chapter.Block.filterType.Robot;
+		ApplyFilter("Robot", outdata);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//DISTORTION
+	public void OnButtonVoiceFxDistortionPressed(BasicButton sender)
+	{
+		float[] indata, outdata;
+		indata = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(indata, 0);
+		filter.Distorsion(indata, out outdata);
+		mCurrentFilter = (int)Data.Chapter.Block.filterType.Distorsion;
+		ApplyFilter("Dist", outdata);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//NOISE
+	public void OnButtonVoiceFxNoisePressed(BasicButton sender)
+	{
+		float[] indata, outdata;
+		indata = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(indata, 0);
+		filter.Noise(indata, out outdata);
+		mCurrentFilter = (int)Data.Chapter.Block.filterType.Noise;
+		ApplyFilter("Noise", outdata);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//COMPRESSION
+	public void OnButtonVoiceFxCompressionPressed(BasicButton sender)
+	{
+		float[] indata, outdata;
+		indata = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(indata, 0);
+		filter.Compression(indata, out outdata);
+		mCurrentFilter = (int)Data.Chapter.Block.filterType.Compression;
+		ApplyFilter("Compress", outdata);
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
