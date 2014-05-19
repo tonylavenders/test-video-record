@@ -324,6 +324,7 @@ public class BasicButton : MonoBehaviour
 		else if(buttonType == ButtonType.EDIT_EXPR) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonExpressionsPressed;
 		}
+		//TIME SECTION ////////////////////////////////////////////////////////////////////////////////////////////////////////
 		else if(buttonType == ButtonType.EDIT_TIME) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimePressed;
 		}
@@ -354,6 +355,7 @@ public class BasicButton : MonoBehaviour
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_SAVE) {
 			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceSavePressed;
 		}
+		//SOUND FILTERS ////////////////////////////////////////////////////////////////////////////////////////////////////////
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_MONSTER) {
 			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxMonsterPressed;
 		}
@@ -362,6 +364,24 @@ public class BasicButton : MonoBehaviour
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_ECHO) {
 			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxEchoPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_MONSTER_PRO) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxMonsterProPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_SMURF_PRO) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxSmurfProPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_ROBOT) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxRobotPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_DIST) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxDistortionPressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_NOISE) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxNoisePressed;
+		}
+		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_COMPRESS) {
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxCompressionPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_OFF) {
 			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxOffPressed;
