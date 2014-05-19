@@ -216,6 +216,14 @@ public class ButtonBar : MonoBehaviour
 		if(state==States.hidden || Camera.main == null)
 			return;
 
+		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+			return;
+
+		if(mGUIManager is GUIManagerBlocks){
+			if(((GUIManagerBlocks)mGUIManager).soundRecorder.mMode!=SoundRecorder.Modes.Idle)
+				return;
+		}
+
 		//MoveY
 		SmoothStep.State SSState = mMoveY.Update();
 		if(SSState == SmoothStep.State.inFade || SSState == SmoothStep.State.justEnd) {
@@ -245,6 +253,9 @@ public class ButtonBar : MonoBehaviour
 				}
 				mSpeed.End();
 				mMoveY.End();
+			}
+			else if(elementType==ElementTypes.voice_fx){
+				((GUIManagerBlocks)mGUIManager).soundRecorder.CloseButtonBar();
 			}
 		}
 

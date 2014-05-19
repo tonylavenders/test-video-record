@@ -31,12 +31,12 @@ public class SoundRecorder : MonoBehaviour
 	const int frequency = Globals.OUTPUTRATEPERSECOND;
 	const int channels = 1;
 
-	enum Modes{
+	public enum Modes{
 		Idle,
 		Playing,
 		Recording
 	}
-	Modes mMode;
+	public Modes mMode;
 
 	public bool bLastSaved=true;
 
@@ -91,6 +91,8 @@ public class SoundRecorder : MonoBehaviour
 
 	public void SetAudioClip()
 	{
+		SetTextBottom();
+
 		if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Voice)
 		{
 			mCurrentFilter=(int)Data.selChapter.selBlock.FilterType;
@@ -98,7 +100,6 @@ public class SoundRecorder : MonoBehaviour
 			audioSource.clip = Data.selChapter.selBlock.Sound;
 			CurrentTime = (int)Data.selChapter.selBlock.Sound.length;
 			guiManagerBlocks.mVoiceFxButtonBar.SetCurrentButton(mCurrentFilter);
-			SetTextBottom();
 
 			if(Data.selChapter.selBlock.FilterType!=Data.Chapter.Block.filterType.Off){
 				audioClips[0] = Data.selChapter.selBlock.OriginalSound;
@@ -146,6 +147,9 @@ public class SoundRecorder : MonoBehaviour
 
 	void Update()
 	{
+		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+			return;
+
 		if(mMode==Modes.Recording){
 			//Recording
 			if(Microphone.IsRecording(null)){
@@ -157,7 +161,7 @@ public class SoundRecorder : MonoBehaviour
 				mVoiceFxButton.Show();
 				mVoiceSaveButton.Show();
 				mVoiceRecButton.Checked=false;
-				guiManagerBlocks.SetColor(Color.red);
+				guiManagerBlocks.SetColor(Color.white);
 				mMode=Modes.Idle;
 			}
 		}
@@ -334,24 +338,33 @@ public class SoundRecorder : MonoBehaviour
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void ApplyFilter(float[] outdata)
+	public void CloseButtonBar()
 	{
 		guiManagerBlocks.mVoiceFxButtonBar.Hide();
 		mVoiceFxButton.Show(0.2f,0.2f,true);
 		mVoiceFxButton.Checked=false;
+		SetTextBottom();
+		guiManagerBlocks.ShowTime();
+	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void ApplyFilter(float[] outdata)
+	{
+		CloseButtonBar();
 		audioClips[mCurrentFilter]= AudioClip.Create("sound", outdata.Length, channels, frequency, false, false);
 		audioClips[mCurrentFilter].SetData(outdata,0);
 		audioSource.clip = audioClips[mCurrentFilter];
 		CurrentTime = (int)audioSource.clip.length;
-		SetTextBottom();
-		guiManagerBlocks.ShowTime();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//MONSTER
 	public void OnButtonVoiceFxMonsterPressed(BasicButton sender)
 	{
+		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Monster)
+			return;
+
 		float[] indata, outdata;
 		indata = new float[audioClips[0].samples * audioClips[0].channels];
 		audioClips[0].GetData(indata, 0);
@@ -364,6 +377,9 @@ public class SoundRecorder : MonoBehaviour
 	//SMURF
 	public void OnButtonVoiceFxSmurfPressed(BasicButton sender)
 	{
+		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Mosquito)
+			return;
+
 		float[] indata, outdata;
 		indata = new float[audioClips[0].samples * audioClips[0].channels];
 		audioClips[0].GetData(indata, 0);
@@ -376,6 +392,9 @@ public class SoundRecorder : MonoBehaviour
 	//ECHO
 	public void OnButtonVoiceFxEchoPressed(BasicButton sender)
 	{
+		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Echo)
+			return;
+
 		float[] indata, outdata;
 		indata = new float[audioClips[0].samples * audioClips[0].channels];
 		audioClips[0].GetData(indata, 0);
@@ -388,6 +407,9 @@ public class SoundRecorder : MonoBehaviour
 	//MONSTER PRO
 	public void OnButtonVoiceFxMonsterProPressed(BasicButton sender)
 	{
+		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.MonsterPro)
+			return;
+
 		float[] indata, outdata;
 		indata = new float[audioClips[0].samples * audioClips[0].channels];
 		audioClips[0].GetData(indata, 0);
@@ -400,6 +422,9 @@ public class SoundRecorder : MonoBehaviour
 	//SMURF PRO
 	public void OnButtonVoiceFxSmurfProPressed(BasicButton sender)
 	{
+		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.MosquitoPro)
+			return;
+
 		float[] indata, outdata;
 		indata = new float[audioClips[0].samples * audioClips[0].channels];
 		audioClips[0].GetData(indata, 0);
@@ -412,6 +437,9 @@ public class SoundRecorder : MonoBehaviour
 	//ROBOT
 	public void OnButtonVoiceFxRobotPressed(BasicButton sender)
 	{
+		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Robot)
+			return;
+
 		float[] indata, outdata;
 		indata = new float[audioClips[0].samples * audioClips[0].channels];
 		audioClips[0].GetData(indata, 0);
@@ -424,6 +452,9 @@ public class SoundRecorder : MonoBehaviour
 	//DISTORTION
 	public void OnButtonVoiceFxDistortionPressed(BasicButton sender)
 	{
+		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Distorsion)
+			return;
+
 		float[] indata, outdata;
 		indata = new float[audioClips[0].samples * audioClips[0].channels];
 		audioClips[0].GetData(indata, 0);
@@ -436,6 +467,9 @@ public class SoundRecorder : MonoBehaviour
 	//NOISE
 	public void OnButtonVoiceFxNoisePressed(BasicButton sender)
 	{
+		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Noise)
+			return;
+
 		float[] indata, outdata;
 		indata = new float[audioClips[0].samples * audioClips[0].channels];
 		audioClips[0].GetData(indata, 0);
@@ -448,6 +482,9 @@ public class SoundRecorder : MonoBehaviour
 	//COMPRESSION
 	public void OnButtonVoiceFxCompressionPressed(BasicButton sender)
 	{
+		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Compression)
+			return;
+
 		float[] indata, outdata;
 		indata = new float[audioClips[0].samples * audioClips[0].channels];
 		audioClips[0].GetData(indata, 0);
@@ -460,6 +497,9 @@ public class SoundRecorder : MonoBehaviour
 	//OFF
 	public void OnButtonVoiceFxOffPressed(BasicButton sender)
 	{
+		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Off)
+			return;
+
 		guiManagerBlocks.mVoiceFxButtonBar.Hide();
 		mVoiceFxButton.Show(0.2f,0.2f,true);
 		mVoiceFxButton.Checked=false;
