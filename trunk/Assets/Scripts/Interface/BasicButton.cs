@@ -183,6 +183,14 @@ public class BasicButton : MonoBehaviour
 		if(state == States.hidden || Camera.main == null)
 			return;
 
+		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+			return;
+
+		if(mGUIManager is GUIManagerBlocks && buttonType!=ButtonType.EDIT_TIME_VOICE_PLAY && buttonType!=ButtonType.EDIT_TIME_VOICE_REC){
+			if(((GUIManagerBlocks)mGUIManager).soundRecorder.mMode!=SoundRecorder.Modes.Idle)
+				return;
+		}
+
 		//MoveY
 		SmoothStep.State SSState = mMoveY.Update();
 		if(SSState == SmoothStep.State.inFade || SSState==SmoothStep.State.justEnd) {

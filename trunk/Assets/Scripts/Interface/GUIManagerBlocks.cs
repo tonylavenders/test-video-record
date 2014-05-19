@@ -52,9 +52,9 @@ public class GUIManagerBlocks : GUIManager
 	//If time has changed and block isn't saved yet then show warning message
 	public override void SaveWarning(Data.Chapter.Block previousBlock, BasicButton previousButton)
 	{
-		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Showing){
+		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
 			return;
-		}
+
 		if((mCurrentBlockTime!=-1 && mLastBlockTime!=-1 && mCurrentBlockTime!=mLastBlockTime) || !soundRecorder.bLastSaved){
 			TVR.Utils.Message.Show(1, "AVISO", "No ha guardado los cambios. \u00BFDesea guardar?", TVR.Utils.Message.Type.YesNo, "S\u00ED", "No", Message_Save);
 			mPreviousBlock = previousBlock;
@@ -250,6 +250,7 @@ public class GUIManagerBlocks : GUIManager
 				Mode=Modes.VoiceMode;
 			}
 			mCurrentBlockTime = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
+			mLastBlockTime = mCurrentBlockTime;
 			SetTime(mCurrentBlockTime);
 			mTextTime.GetComponent<GUITextController>().Show();
 			mTextTimeShadow.GetComponent<GUITextController>().Show();
@@ -268,8 +269,8 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(sender.Checked){
 			ChangeButtonState(true, false);
-			mLastBlockTime = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
-			mCurrentBlockTime = mLastBlockTime;
+			mCurrentBlockTime = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
+			mLastBlockTime = mCurrentBlockTime;
 			Mode=Modes.TimeMode;
 		}
 	}
@@ -281,8 +282,8 @@ public class GUIManagerBlocks : GUIManager
 		if(sender.Checked){
 			soundRecorder.SetAudioClip();
 			ChangeButtonState(false, true);
-			mLastBlockTime = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
-			mCurrentBlockTime = mLastBlockTime;
+			mCurrentBlockTime = Mathf.RoundToInt(Data.selChapter.selBlock.Frames*Globals.MILISPERFRAME);
+			mLastBlockTime = mCurrentBlockTime;
 			Mode=Modes.VoiceMode;
 		}
 	}
