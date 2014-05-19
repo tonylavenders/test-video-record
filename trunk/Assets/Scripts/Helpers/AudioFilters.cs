@@ -91,42 +91,45 @@ namespace TVR.Utils {
 		#endregion
 
 		#region Echo
-		private const float DECAYRATIO = 1f / 4f; //Echo decay per delay. (>0 - <1)
-		private const float DELAY = 0.4f; //Echo delay in seconds.
-		private const float DRYMIX = 1f; //Volume of original signal to pass to output.
-		private const float WETMIX = 0.8f; //Volume of echo signal to pass to output.
+		private const float DECAYRATIOECHO = 1f / 4f; //Echo decay per delay. (>0 - <1)
+		private const float DELAYECHO = 0.4f; //Echo delay in seconds.
+		private const float DRYMIXECHO = 1f; //Volume of original signal to pass to output.
+		private const float WETMIXECHO = 0.8f; //Volume of echo signal to pass to output.
 		private bool AddSamples = true;
 
-		private const float INITVOLUME = 1f - DECAYRATIO;
-		private int ECHOS = Mathf.CeilToInt(1 / DECAYRATIO) - 1;
-
 		public void Echo(float[] indata, out float[] outdata) {
+			Echo(indata, out outdata, DECAYRATIOECHO, DELAYECHO, DRYMIXECHO, WETMIXECHO);
+		}
+
+		public void Echo(float[] indata, out float[] outdata, float decayFactor, float delay, float dryMix, float wetMix) {
+			float initVolume = 1f - decayFactor;
+			int echos = Mathf.CeilToInt(1 / decayFactor) - 1;
 			float maxValue = 0;
-			int[] delay = new int[ECHOS];
-			int[] initDelay = new int[ECHOS];
+			int[] delays = new int[echos];
+			int[] initDelay = new int[echos];
 			float value = 0f;
 
-			for(int i = 0; i < ECHOS; ++i) {
-				delay[i] = (int)(-1 * DELAY * Globals.OUTPUTRATEPERSECOND * (i + 1));
-				initDelay[i] = delay[i];
+			for(int i = 0; i < echos; ++i) {
+				delays[i] = (int)(-1 * delay * Globals.OUTPUTRATEPERSECOND * (i + 1));
+				initDelay[i] = delays[i];
 			}
 
 			if(AddSamples)
-				outdata = new float[indata.Length + (int)(ECHOS * DELAY * Globals.OUTPUTRATEPERSECOND)];
+				outdata = new float[indata.Length + (int)(echos * delay * Globals.OUTPUTRATEPERSECOND)];
 			else
 				outdata = new float[indata.Length];
 
 			for(int i = 0; i < outdata.Length; ++i) {
 				value = 0;
-				for(int j = 0; j < ECHOS; ++j) {
-					if(delay[j] >= 0 && i + initDelay[j] < indata.Length) {
-						value += indata[i + initDelay[j]] * (INITVOLUME - (DECAYRATIO * j));
+				for(int j = 0; j < echos; ++j) {
+					if(delays[j] >= 0 && i + initDelay[j] < indata.Length) {
+						value += indata[i + initDelay[j]] * (initVolume - (decayFactor * j));
 					}
-					delay[j]++;
+					delays[j]++;
 				}
-				value *= WETMIX;
+				value *= wetMix;
 				if(i < indata.Length)
-					value += (indata[i] * DRYMIX);
+					value += (indata[i] * dryMix);
 				if(maxValue < Mathf.Abs(value))
 					maxValue = Mathf.Abs(value);
 				outdata[i] = value;
@@ -142,11 +145,20 @@ namespace TVR.Utils {
 		#region Robot
 		private const int ROBOTSAMPLES = 7;
 		private const int ROBOTRATIO = 32768 >> 2;
+
 		private const int SHIFTROBOT = 5;
+
+		private const float DECAYRATIOROBOT = 0.6f;
+		private const float DELAYROBOT = 0.04f;
+		private const float DRYMIXROBOT = 1f;
+		private const float WETMIXROBOT = 1f;
+		private const int REVERBROBOT = 3;
 
 		public void Robot(float[] indata, out float[] outdata) {
 			Compression(indata, out outdata, ROBOTSAMPLES, ROBOTRATIO);
 			Mosquito(outdata, out outdata, SHIFTROBOT);
+			for(int i = 0; i < REVERBROBOT; ++i)
+				Echo(outdata, out outdata, DECAYRATIOROBOT, DELAYROBOT, DRYMIXROBOT, WETMIXROBOT);
 		}
 		#endregion
 
@@ -206,7 +218,6 @@ namespace TVR.Utils {
 		}
 
 		private void Compression(float[] indata, out float[] outdata, int compressionSamples, int compressionRatio) {
-			Debug.Log(compressionRatio);
 			outdata = new float[indata.Length];
 			float value;
 			for(int i = 0; i < indata.Length; i += compressionSamples) {
