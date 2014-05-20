@@ -40,6 +40,8 @@ public class SoundRecorder : MonoBehaviour
 
 	public bool bLastSaved=true;
 
+	string[] filterNames = new string[]{"<none>", "Monster", "Smurf", "Echo", "M-Pro", "S-Pro", "Robot", "Dist", "Noise", "Compress"};
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Start()
@@ -60,7 +62,6 @@ public class SoundRecorder : MonoBehaviour
 	public void InitButtons()
 	{
 		//Voice: Play button
-		//float pos_x = ButtonProperties.buttonBarScaleX*2.0f+ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize/2.0f;
 		float pos_x = (ButtonProperties.buttonBarScaleX/2.0f) + ButtonProperties.buttonBarScaleX*2.0f;
 		float pos_y = 4*(ButtonProperties.buttonSize/2+ButtonProperties.buttonMargin/2) + Screen.height/2;
 		pos_y -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize; 
@@ -69,19 +70,16 @@ public class SoundRecorder : MonoBehaviour
 		mVoicePlayButton.Init(pos, scale);
 		
 		//Voice: Rec button
-		//pos_x += ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
 		pos_x += ButtonProperties.buttonBarScaleX;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 		mVoiceRecButton.Init(pos, scale);
 		
 		//Voice: Fx button
-		//pos_x += ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
 		pos_x += ButtonProperties.buttonBarScaleX;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 		mVoiceFxButton.Init(pos, scale);
 		
 		//Voice: Save button
-		//pos_x += ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
 		pos_x += ButtonProperties.buttonBarScaleX;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 		mVoiceSaveButton.Init(pos, scale);
@@ -91,7 +89,7 @@ public class SoundRecorder : MonoBehaviour
 
 	public void SetAudioClip()
 	{
-		SetTextBottom();
+		mVoiceFxButton.SetTextBottom(filterNames[mCurrentFilter]);
 
 		if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Voice)
 		{
@@ -104,42 +102,6 @@ public class SoundRecorder : MonoBehaviour
 			if(Data.selChapter.selBlock.FilterType!=Data.Chapter.Block.filterType.Off){
 				audioClips[0] = Data.selChapter.selBlock.OriginalSound;
 			}
-		}
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void SetTextBottom()
-	{
-		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Off){
-			mVoiceFxButton.SetTextBottom("<none>");
-		}
-		else if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Monster){
-			mVoiceFxButton.SetTextBottom("Monster");
-		}
-		else if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Mosquito){
-			mVoiceFxButton.SetTextBottom("Smurf");
-		}
-		else if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Echo){
-			mVoiceFxButton.SetTextBottom("Echo");
-		}
-		else if(mCurrentFilter==(int)Data.Chapter.Block.filterType.MonsterPro){
-			mVoiceFxButton.SetTextBottom("M-Pro");
-		}
-		else if(mCurrentFilter==(int)Data.Chapter.Block.filterType.MosquitoPro){
-			mVoiceFxButton.SetTextBottom("S-Pro");
-		}
-		else if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Robot){
-			mVoiceFxButton.SetTextBottom("Robot");
-		}
-		else if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Distorsion){
-			mVoiceFxButton.SetTextBottom("Dist");
-		}
-		else if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Noise){
-			mVoiceFxButton.SetTextBottom("Noise");
-		}
-		else if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Compression){
-			mVoiceFxButton.SetTextBottom("Compress");
 		}
 	}
 
@@ -197,6 +159,7 @@ public class SoundRecorder : MonoBehaviour
 			mVoiceRecButton.Hide();
 			mVoiceFxButton.Hide();
 			mVoiceSaveButton.Hide();
+			guiManagerBlocks.mVoiceFxButtonBar.Hide();
 
 			if(audioSource.isPlaying)
 				audioSource.Stop();
@@ -257,6 +220,27 @@ public class SoundRecorder : MonoBehaviour
 			button.SetTextBottom();
 			bLastSaved=true;
 		}
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	void ResetFilters()
+	{
+		for(int i=1;i<audioClips.Length;i++){
+			audioClips[i]=null;
+		}
+		mCurrentFilter=0;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void CloseButtonBar()
+	{
+		guiManagerBlocks.mVoiceFxButtonBar.Hide();
+		mVoiceFxButton.Show(0.2f,0.2f,true);
+		mVoiceFxButton.Checked=false;
+		mVoiceFxButton.SetTextBottom(filterNames[mCurrentFilter]);
+		guiManagerBlocks.ShowTime();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,173 +310,50 @@ public class SoundRecorder : MonoBehaviour
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void ResetFilters()
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//APPLY EFFECT
+	public void OnButtonTimeVoiceFxEffectPressed(BasicButton sender)
 	{
-		for(int i=1;i<audioClips.Length;i++){
-			audioClips[i]=null;
+		if(mCurrentFilter==sender.ID)
+			return;
+		
+		float[] indata, outdata;
+		indata = new float[audioClips[0].samples * audioClips[0].channels];
+		outdata = new float[audioClips[0].samples * audioClips[0].channels];
+		audioClips[0].GetData(indata, 0);
+
+		if(sender.ID==(int)Data.Chapter.Block.filterType.Monster)
+			filter.Monster(indata, out outdata);
+		else if(sender.ID==(int)Data.Chapter.Block.filterType.Mosquito)
+			filter.Mosquito(indata, out outdata);
+		else if(sender.ID==(int)Data.Chapter.Block.filterType.MonsterPro)
+			filter.MonsterPro(indata, out outdata);
+		else if(sender.ID==(int)Data.Chapter.Block.filterType.MosquitoPro)
+			filter.MosquitoPro(indata, out outdata);
+		else if(sender.ID==(int)Data.Chapter.Block.filterType.Echo)
+			filter.Echo(indata, out outdata);
+		else if(sender.ID==(int)Data.Chapter.Block.filterType.Compression)
+			filter.Compression(indata, out outdata);
+		else if(sender.ID==(int)Data.Chapter.Block.filterType.Distorsion)
+			filter.Distorsion(indata, out outdata);
+		else if(sender.ID==(int)Data.Chapter.Block.filterType.Robot)
+			filter.Robot(indata, out outdata);
+		else if(sender.ID==(int)Data.Chapter.Block.filterType.Noise)
+			filter.Noise(indata, out outdata);
+
+		mCurrentFilter = sender.ID;
+
+		if(sender.ID!=(int)Data.Chapter.Block.filterType.Off){
+			audioClips[mCurrentFilter]= AudioClip.Create("sound", outdata.Length, channels, frequency, false, false);
+			audioClips[mCurrentFilter].SetData(outdata,0);
 		}
-		mCurrentFilter=0;
-	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public void CloseButtonBar()
-	{
-		guiManagerBlocks.mVoiceFxButtonBar.Hide();
-		mVoiceFxButton.Show(0.2f,0.2f,true);
-		mVoiceFxButton.Checked=false;
-		SetTextBottom();
-		guiManagerBlocks.ShowTime();
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void ApplyFilter(float[] outdata)
-	{
 		CloseButtonBar();
-		audioClips[mCurrentFilter]= AudioClip.Create("sound", outdata.Length, channels, frequency, false, false);
-		audioClips[mCurrentFilter].SetData(outdata,0);
 		audioSource.clip = audioClips[mCurrentFilter];
 		CurrentTime = (int)audioSource.clip.length;
+		bLastSaved=false;
 	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//MONSTER
-	public void OnButtonVoiceFxMonsterPressed(BasicButton sender)
-	{
-		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Monster)
-			return;
-
-		float[] indata, outdata;
-		indata = new float[audioClips[0].samples * audioClips[0].channels];
-		audioClips[0].GetData(indata, 0);
-		filter.Monster(indata, out outdata);
-		mCurrentFilter = (int)Data.Chapter.Block.filterType.Monster;
-		ApplyFilter(outdata);
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//SMURF
-	public void OnButtonVoiceFxSmurfPressed(BasicButton sender)
-	{
-		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Mosquito)
-			return;
-
-		float[] indata, outdata;
-		indata = new float[audioClips[0].samples * audioClips[0].channels];
-		audioClips[0].GetData(indata, 0);
-		filter.Mosquito(indata, out outdata);
-		mCurrentFilter = (int)Data.Chapter.Block.filterType.Mosquito;
-		ApplyFilter(outdata);
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//ECHO
-	public void OnButtonVoiceFxEchoPressed(BasicButton sender)
-	{
-		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Echo)
-			return;
-
-		float[] indata, outdata;
-		indata = new float[audioClips[0].samples * audioClips[0].channels];
-		audioClips[0].GetData(indata, 0);
-		filter.Echo(indata, out outdata);
-		mCurrentFilter = (int)Data.Chapter.Block.filterType.Echo;
-		ApplyFilter(outdata);
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//MONSTER PRO
-	public void OnButtonVoiceFxMonsterProPressed(BasicButton sender)
-	{
-		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.MonsterPro)
-			return;
-
-		float[] indata, outdata;
-		indata = new float[audioClips[0].samples * audioClips[0].channels];
-		audioClips[0].GetData(indata, 0);
-		filter.MonsterPro(indata, out outdata);
-		mCurrentFilter = (int)Data.Chapter.Block.filterType.MonsterPro;
-		ApplyFilter(outdata);
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//SMURF PRO
-	public void OnButtonVoiceFxSmurfProPressed(BasicButton sender)
-	{
-		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.MosquitoPro)
-			return;
-
-		float[] indata, outdata;
-		indata = new float[audioClips[0].samples * audioClips[0].channels];
-		audioClips[0].GetData(indata, 0);
-		filter.MosquitoPro(indata, out outdata);
-		mCurrentFilter = (int)Data.Chapter.Block.filterType.MosquitoPro;
-		ApplyFilter(outdata);
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//ROBOT
-	public void OnButtonVoiceFxRobotPressed(BasicButton sender)
-	{
-		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Robot)
-			return;
-
-		float[] indata, outdata;
-		indata = new float[audioClips[0].samples * audioClips[0].channels];
-		audioClips[0].GetData(indata, 0);
-		filter.Robot(indata, out outdata);
-		mCurrentFilter = (int)Data.Chapter.Block.filterType.Robot;
-		ApplyFilter(outdata);
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//DISTORTION
-	public void OnButtonVoiceFxDistortionPressed(BasicButton sender)
-	{
-		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Distorsion)
-			return;
-
-		float[] indata, outdata;
-		indata = new float[audioClips[0].samples * audioClips[0].channels];
-		audioClips[0].GetData(indata, 0);
-		filter.Distorsion(indata, out outdata);
-		mCurrentFilter = (int)Data.Chapter.Block.filterType.Distorsion;
-		ApplyFilter(outdata);
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//NOISE
-	public void OnButtonVoiceFxNoisePressed(BasicButton sender)
-	{
-		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Noise)
-			return;
-
-		float[] indata, outdata;
-		indata = new float[audioClips[0].samples * audioClips[0].channels];
-		audioClips[0].GetData(indata, 0);
-		filter.Noise(indata, out outdata);
-		mCurrentFilter = (int)Data.Chapter.Block.filterType.Noise;
-		ApplyFilter(outdata);
-	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//COMPRESSION
-	public void OnButtonVoiceFxCompressionPressed(BasicButton sender)
-	{
-		if(mCurrentFilter==(int)Data.Chapter.Block.filterType.Compression)
-			return;
-
-		float[] indata, outdata;
-		indata = new float[audioClips[0].samples * audioClips[0].channels];
-		audioClips[0].GetData(indata, 0);
-		filter.Compression(indata, out outdata);
-		mCurrentFilter = (int)Data.Chapter.Block.filterType.Compression;
-		ApplyFilter(outdata);
-	}
-	
+	/*
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//OFF
 	public void OnButtonVoiceFxOffPressed(BasicButton sender)
@@ -506,13 +367,14 @@ public class SoundRecorder : MonoBehaviour
 		mCurrentFilter = (int)Data.Chapter.Block.filterType.Off;
 		SetTextBottom();
 	}
-
+	*/
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//SAVE
 	public void OnButtonTimeVoiceSavePressed(BasicButton sender)
 	{
 		SaveAudioData(null,null);
 		guiManagerBlocks.HideAllButtonBars();
+		bLastSaved=true;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

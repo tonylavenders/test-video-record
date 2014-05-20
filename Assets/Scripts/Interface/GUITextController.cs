@@ -86,6 +86,9 @@ public class GUITextController : MonoBehaviour
 	
 	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION, float fAlpha=1.0f)
 	{
+		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+			return;
+
 		mFade.Reset(fAlpha, duration, true, delay);
 	}
 	
@@ -93,6 +96,9 @@ public class GUITextController : MonoBehaviour
 	
 	public void Hide(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
+		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+			return;
+
 		mFade.Reset(0.0f, duration, true, delay);
 	}
 }
