@@ -226,10 +226,12 @@ public class SoundRecorder : MonoBehaviour
 	
 	void ResetFilters()
 	{
-		for(int i=1;i<audioClips.Length;i++){
-			audioClips[i]=null;
+		for(int i = 1; i < audioClips.Length; i++) {
+			if(audioClips[i] != null)
+				DestroyImmediate(audioClips[i]);
+			audioClips[i] = null;
 		}
-		mCurrentFilter=0;
+		mCurrentFilter = 0;
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
