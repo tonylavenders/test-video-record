@@ -210,6 +210,7 @@ public class GUIManagerChapters : GUIManager
 	//Chapter button
 	public void OnButtonChapterPressed(BasicButton sender)
 	{
+		Data.selChapter = sender.iObj as Data.Chapter;
 		HideAllButtonBars();
 		SetCurrentChapterElements();
 	}

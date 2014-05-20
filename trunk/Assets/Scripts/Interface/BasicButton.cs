@@ -30,6 +30,7 @@ public class BasicButton : MonoBehaviour
 	public Texture texDisabled;
 	public bool bKeepSt = true;
 	public bool bUnselectable = true;
+	public bool bClickable = true;
 
 	public float fAlphaDisabled=0.3f;
 	bool bReactivate=true;
@@ -121,8 +122,8 @@ public class BasicButton : MonoBehaviour
 	public int ID;
 
 	public string sPrefab;
-	ButtonBar mButtonBar;
-	GUIManager mGUIManager;
+	public ButtonBar mButtonBar;
+	public GUIManager mGUIManager;
 	Transform mGUIText;
 	Transform mGUITextBottom;
 	//TextMesh mText3D;
@@ -180,6 +181,9 @@ public class BasicButton : MonoBehaviour
 	
 	void Update()
 	{
+		if(!bClickable)
+			return;
+
 		if(state == States.hidden || Camera.main == null)
 			return;
 
@@ -306,16 +310,16 @@ public class BasicButton : MonoBehaviour
 			clickedCallback = ((ButtonBarElements)mButtonBar).OnButtonAddElementPressed;
 		}
 		else if(buttonType == ButtonType.CHAPTER) {
-			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonChapterPressed;
+			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonChapterPressed;
 		}
 		else if(buttonType == ButtonType.CHAR) {
-			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonCharacterPressed;
+			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonCharacterPressed;
 		}
 		else if(buttonType == ButtonType.BACKGROUND) {
-			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonBackgroundPressed;
+			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonBackgroundPressed;
 		}
 		else if(buttonType == ButtonType.MUSIC) {
-			clickedCallback = ((GUIManagerChapters)mGUIManager).OnButtonMusicPressed;
+			checkedCallback = ((GUIManagerChapters)mGUIManager).OnButtonMusicPressed;
 		}
 		else if(buttonType == ButtonType.MAIN_EDIT) {
 			clickedCallback = mGUIManager.OnButtonEditPressed;
@@ -324,7 +328,7 @@ public class BasicButton : MonoBehaviour
 			clickedCallback = mGUIManager.OnButtonPlayPressed;
 		}
 		else if(buttonType == ButtonType.BLOCK) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonBlockPressed;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonBlockPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_ANIM) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonAnimationsPressed;
@@ -332,7 +336,9 @@ public class BasicButton : MonoBehaviour
 		else if(buttonType == ButtonType.EDIT_EXPR) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonExpressionsPressed;
 		}
+
 		//TIME SECTION ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 		else if(buttonType == ButtonType.EDIT_TIME) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimePressed;
 		}
@@ -351,6 +357,9 @@ public class BasicButton : MonoBehaviour
 		else if(buttonType == ButtonType.EDIT_TIME_TIME_SAVE) {
 			clickedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonTimeTimeSavePressed;
 		}
+
+		//VOICE ////////////
+
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_PLAY) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoicePlayPressed;
 		}
@@ -363,36 +372,38 @@ public class BasicButton : MonoBehaviour
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_SAVE) {
 			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceSavePressed;
 		}
+
 		//SOUND FILTERS ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_MONSTER) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxMonsterPressed;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_SMURF) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxSmurfPressed;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_ECHO) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxEchoPressed;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_MONSTER_PRO) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxMonsterProPressed;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_SMURF_PRO) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxSmurfProPressed;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_ROBOT) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxRobotPressed;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_DIST) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxDistortionPressed;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_NOISE) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxNoisePressed;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_COMPRESS) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxCompressionPressed;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectPressed;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_OFF) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonVoiceFxOffPressed;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectPressed;
 		}
 	}
 	
@@ -400,6 +411,9 @@ public class BasicButton : MonoBehaviour
 	
 	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION, bool reactivate=true)
 	{
+		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+			return;
+
 		bReactivate = reactivate;
 
 		if(texDisabled!=null){
@@ -429,6 +443,9 @@ public class BasicButton : MonoBehaviour
 	
 	public void Hide(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
+		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+			return;
+
 		mFade.Reset(0f, duration, true, delay);
 
 		if(mGUIText)

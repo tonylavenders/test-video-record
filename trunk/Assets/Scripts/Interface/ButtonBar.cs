@@ -65,7 +65,7 @@ public class ButtonBar : MonoBehaviour
 					if(Data.selChapter!=null){
 						Data.selChapter.Save();
 					}
-					Data.selChapter = value.iObj as Data.Chapter;
+					//Data.selChapter = value.iObj as Data.Chapter;
 					mGUIManager.inputText.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
 					mGUIManager.inputText.Text = Data.selChapter.Title;
 				}
@@ -73,16 +73,16 @@ public class ButtonBar : MonoBehaviour
 				else if(elementType==ElementTypes.blocks){
 					if(Data.selChapter!=null){
 						if(Data.selChapter.selBlock!=null){
-							mGUIManager.SaveWarning(Data.selChapter.selBlock, mCurrentSelected); //save the previous block
+							//mGUIManager.SaveWarning(Data.selChapter.selBlock, mCurrentSelected); //save the previous block
 							Data.selChapter.selBlock.Save();
 						}
 						Data.selChapter.selBlock = value.iObj as Data.Chapter.Block;
 					}
 				}
 				//Current category has changed
-				else if((elementType==ElementTypes.main || elementType==ElementTypes.time) && mGUIManager is GUIManagerBlocks){
-					mGUIManager.SaveWarning(null, null);
-				}
+				//else if((elementType==ElementTypes.main || elementType==ElementTypes.time) && mGUIManager is GUIManagerBlocks){
+				//	mGUIManager.SaveWarning(null, null);
+				//}
 			}//currentSelected=null
 			else{
 				if(elementType==ElementTypes.chapters){
@@ -376,6 +376,9 @@ public class ButtonBar : MonoBehaviour
 	
 	public virtual void Show(bool bReactivate)
 	{
+		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+			return;
+
 		if(!bInit)
 			Init();
 
@@ -411,6 +414,9 @@ public class ButtonBar : MonoBehaviour
 
 	public void Hide()
 	{
+		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+			return;
+
 		//There is no other buttonbar opened --> fade out buttonbar
 		if(mGUIManager.Counter==1){
 			mFade.Reset(0f, Globals.ANIMATIONDURATION);
