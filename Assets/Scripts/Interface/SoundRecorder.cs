@@ -314,38 +314,69 @@ public class SoundRecorder : MonoBehaviour
 	//APPLY EFFECT
 	public void OnButtonTimeVoiceFxEffectPressed(BasicButton sender)
 	{
-		if(mCurrentFilter==sender.ID)
-			return;
-		
-		float[] indata, outdata;
-		indata = new float[audioClips[0].samples * audioClips[0].channels];
-		outdata = new float[audioClips[0].samples * audioClips[0].channels];
-		audioClips[0].GetData(indata, 0);
-
-		if(sender.ID==(int)Data.Chapter.Block.filterType.Monster)
-			filter.Monster(indata, out outdata);
-		else if(sender.ID==(int)Data.Chapter.Block.filterType.Mosquito)
-			filter.Mosquito(indata, out outdata);
-		else if(sender.ID==(int)Data.Chapter.Block.filterType.MonsterPro)
-			filter.MonsterPro(indata, out outdata);
-		else if(sender.ID==(int)Data.Chapter.Block.filterType.MosquitoPro)
-			filter.MosquitoPro(indata, out outdata);
-		else if(sender.ID==(int)Data.Chapter.Block.filterType.Echo)
-			filter.Echo(indata, out outdata);
-		else if(sender.ID==(int)Data.Chapter.Block.filterType.Compression)
-			filter.Compression(indata, out outdata);
-		else if(sender.ID==(int)Data.Chapter.Block.filterType.Distorsion)
-			filter.Distorsion(indata, out outdata);
-		else if(sender.ID==(int)Data.Chapter.Block.filterType.Robot)
-			filter.Robot(indata, out outdata);
-		else if(sender.ID==(int)Data.Chapter.Block.filterType.Noise)
-			filter.Noise(indata, out outdata);
+		/*if(mCurrentFilter==sender.ID)
+			return;*/
 
 		mCurrentFilter = sender.ID;
 
-		if(sender.ID!=(int)Data.Chapter.Block.filterType.Off){
-			audioClips[mCurrentFilter]= AudioClip.Create("sound", outdata.Length, channels, frequency, false, false);
-			audioClips[mCurrentFilter].SetData(outdata,0);
+		if(audioClips[sender.ID] == null) {
+			float[] indata, outdata;
+			indata = new float[audioClips[0].samples * audioClips[0].channels];
+			outdata = new float[audioClips[0].samples * audioClips[0].channels];
+			audioClips[0].GetData(indata, 0);
+
+			switch((Data.Chapter.Block.filterType)sender.ID) {
+			case Data.Chapter.Block.filterType.Monster:
+				filter.Monster(indata, out outdata);
+				break;
+			case Data.Chapter.Block.filterType.Mosquito:
+				filter.Mosquito(indata, out outdata);
+				break;
+			case Data.Chapter.Block.filterType.MonsterPro:
+				filter.MonsterPro(indata, out outdata);
+				break;
+			case Data.Chapter.Block.filterType.MosquitoPro:
+				filter.MosquitoPro(indata, out outdata);
+				break;
+			case Data.Chapter.Block.filterType.Echo:
+				filter.Echo(indata, out outdata);
+				break;
+			case Data.Chapter.Block.filterType.Compression:
+				filter.Compression(indata, out outdata);
+				break;
+			case Data.Chapter.Block.filterType.Distorsion:
+				filter.Distorsion(indata, out outdata);
+				break;
+			case Data.Chapter.Block.filterType.Robot:
+				filter.Robot(indata, out outdata);
+				break;
+			case Data.Chapter.Block.filterType.Noise:
+				filter.Noise(indata, out outdata);
+				break;
+			}
+			/*if(sender.ID == (int)Data.Chapter.Block.filterType.Monster)
+				filter.Monster(indata, out outdata);
+			else if(sender.ID == (int)Data.Chapter.Block.filterType.Mosquito)
+				filter.Mosquito(indata, out outdata);
+			else if(sender.ID == (int)Data.Chapter.Block.filterType.MonsterPro)
+				filter.MonsterPro(indata, out outdata);
+			else if(sender.ID == (int)Data.Chapter.Block.filterType.MosquitoPro)
+				filter.MosquitoPro(indata, out outdata);
+			else if(sender.ID == (int)Data.Chapter.Block.filterType.Echo)
+				filter.Echo(indata, out outdata);
+			else if(sender.ID == (int)Data.Chapter.Block.filterType.Compression)
+				filter.Compression(indata, out outdata);
+			else if(sender.ID == (int)Data.Chapter.Block.filterType.Distorsion)
+				filter.Distorsion(indata, out outdata);
+			else if(sender.ID == (int)Data.Chapter.Block.filterType.Robot)
+				filter.Robot(indata, out outdata);
+			else if(sender.ID == (int)Data.Chapter.Block.filterType.Noise)
+				filter.Noise(indata, out outdata);*/
+
+			//if(sender.ID != (int)Data.Chapter.Block.filterType.Off) {
+				audioClips[mCurrentFilter] = AudioClip.Create("sound", outdata.Length, channels, frequency, false, false);
+				audioClips[mCurrentFilter].SetData(outdata, 0);
+			//}
 		}
 
 		CloseButtonBar();
