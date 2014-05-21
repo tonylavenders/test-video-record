@@ -337,7 +337,7 @@ namespace TVR {
 				}
 			}
 
-			public void forceNumber(int newNumber) {
+			internal void forceNumber(int newNumber) {
 				if(mNumber != newNumber) {
 					if(newNumber <= 0 || newNumber > Data.mChapters.Count)
 						throw new System.Exception("The new number must be between 0 and number of Chapters.");
@@ -614,7 +614,7 @@ namespace TVR {
 					}
 				}
 
-				public void forceNumber(int newNumber) {
+				internal void forceNumber(int newNumber) {
 					if(mNumber != newNumber) {
 						if(newNumber <= 0 || newNumber > mParent.mBlocks.Count)
 							throw new System.Exception("The new number must be between 0 and number of Blocks.");
@@ -3976,5 +3976,6 @@ namespace TVR {
 		void Delete();
 		bool Change();
 		void Revert();
+		void Renumber(int newNumber);
 	}
 }
