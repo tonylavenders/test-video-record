@@ -142,11 +142,11 @@ public class GUIManager : MonoBehaviour
 		TVR.Utils.Message.OnGUI();
 		//This is necessary for the Samsung Galaxy S (Android 2.3)
 		//Pressing HOME button freezes the device
-		if(Application.platform == RuntimePlatform.Android) {
-			if(GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height - 120, 100, 100), "QUIT")) {
-				Application.Quit();
-			}
-		}
+		//if(Application.platform == RuntimePlatform.Android) {
+		//	if(GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height - 120, 100, 100), "QUIT")) {
+		//		Application.Quit();
+		//	}
+		//}
 		//if(GUI.Button(new Rect(Screen.width / 2 - 50, 70, 100, 50), "Blur")) {
 		//	blur = !blur;
 		//}

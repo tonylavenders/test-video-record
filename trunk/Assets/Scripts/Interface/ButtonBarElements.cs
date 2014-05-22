@@ -166,8 +166,11 @@ public class ButtonBarElements : ButtonBar
 		mGUIManager.blur = true;
 	}
 
-	private void Message_Delete(TVR.Utils.Message.ButtonClicked buttonClicked, int Identifier) {
-		if(buttonClicked == TVR.Utils.Message.ButtonClicked.Yes) {
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	private void Message_Delete(TVR.Utils.Message.ButtonClicked buttonClicked, int Identifier)
+	{
+		if(buttonClicked == TVR.Utils.Message.ButtonClicked.Yes){
 			currentSelected.Hide(0, 0.2f);
 			currentSelected.iObj.Delete();
 			MoveButtonsAfterDelete();

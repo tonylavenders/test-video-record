@@ -46,7 +46,8 @@ public class SeparatorController : MonoBehaviour
 	
 	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
-		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
 		mFade.Reset(1f, duration, true, delay);
@@ -57,7 +58,8 @@ public class SeparatorController : MonoBehaviour
 	
 	public void Hide(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
-		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
 		mFade.Reset(0f, duration, true, delay);

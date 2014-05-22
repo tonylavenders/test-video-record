@@ -187,7 +187,8 @@ public class BasicButton : MonoBehaviour
 		if(state == States.hidden || Camera.main == null)
 			return;
 
-		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
 		if(mGUIManager is GUIManagerBlocks && buttonType!=ButtonType.EDIT_TIME_VOICE_PLAY && buttonType!=ButtonType.EDIT_TIME_VOICE_REC){
@@ -411,7 +412,8 @@ public class BasicButton : MonoBehaviour
 	
 	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION, bool reactivate=true)
 	{
-		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
 		bReactivate = reactivate;
@@ -443,7 +445,8 @@ public class BasicButton : MonoBehaviour
 	
 	public void Hide(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
-		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
 		mFade.Reset(0f, duration, true, delay);
