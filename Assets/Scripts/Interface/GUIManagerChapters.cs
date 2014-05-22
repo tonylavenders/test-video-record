@@ -210,21 +210,24 @@ public class GUIManagerChapters : GUIManager
 	//Chapter button
 	public void OnButtonChapterPressed(BasicButton sender)
 	{
-		Data.selChapter = sender.iObj as Data.Chapter;
-		HideAllButtonBars();
-		SetCurrentChapterElements();
+		if(sender.Checked){
+			Data.selChapter = sender.iObj as Data.Chapter;
+			HideAllButtonBars();
+			SetCurrentChapterElements();
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Character button
 	public void OnButtonCharacterPressed(BasicButton sender)
 	{
-		if(sender.sPrefab!=""){
-			Data.selChapter.IdCharacter = sender.ID;
-			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
-		}
-		else{
-			Debug.Log("El boton no tiene prefab asociado!");
+		if(sender.Checked){
+			if(sender.sPrefab!=""){
+				Data.selChapter.IdCharacter = sender.ID;
+				CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
+			}else{
+				Debug.Log("El boton no tiene prefab asociado!");
+			}
 		}
 	}
 	
@@ -232,12 +235,13 @@ public class GUIManagerChapters : GUIManager
 	//Background button
 	public void OnButtonBackgroundPressed(BasicButton sender)
 	{
-		if(sender.sPrefab!=""){
-			Data.selChapter.IdBackground = sender.ID;
-			CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
-		}
-		else{
-			Debug.Log("El boton no tiene prefab asociado!");
+		if(sender.Checked){
+			if(sender.sPrefab!=""){
+				Data.selChapter.IdBackground = sender.ID;
+				CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
+			}else{
+				Debug.Log("El boton no tiene prefab asociado!");
+			}
 		}
 	}
 	
@@ -246,6 +250,8 @@ public class GUIManagerChapters : GUIManager
 	public void OnButtonMusicPressed(BasicButton sender)
 	{
 		//Debug.Log("music: " + sender.iObj.Number);
+		if(sender.Checked){
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

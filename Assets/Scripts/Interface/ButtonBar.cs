@@ -64,10 +64,10 @@ public class ButtonBar : MonoBehaviour
 				if(elementType==ElementTypes.chapters){
 					if(Data.selChapter!=null){
 						Data.selChapter.Save();
+						//Data.selChapter = value.iObj as Data.Chapter;
+						mGUIManager.inputText.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
+						mGUIManager.inputText.Text = Data.selChapter.Title;
 					}
-					//Data.selChapter = value.iObj as Data.Chapter;
-					mGUIManager.inputText.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
-					mGUIManager.inputText.Text = Data.selChapter.Title;
 				}
 				//Current block has changed
 				else if(elementType==ElementTypes.blocks){
@@ -83,7 +83,7 @@ public class ButtonBar : MonoBehaviour
 				//else if((elementType==ElementTypes.main || elementType==ElementTypes.time) && mGUIManager is GUIManagerBlocks){
 				//	mGUIManager.SaveWarning(null, null);
 				//}
-			}//currentSelected=null
+			}//currentSelected ---> null
 			else{
 				if(elementType==ElementTypes.chapters){
 					mGUIManager.inputText.Fade(0, Globals.ANIMATIONDURATION, true, false);
@@ -216,14 +216,16 @@ public class ButtonBar : MonoBehaviour
 		if(state==States.hidden || Camera.main == null)
 			return;
 
-		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
+		/* Si lo activamos, cuando tenemos la botonera abierta y pulsamos en PLAY o REC la botonera no se cierra
 		if(mGUIManager is GUIManagerBlocks){
 			if(((GUIManagerBlocks)mGUIManager).soundRecorder.mMode!=SoundRecorder.Modes.Idle)
 				return;
 		}
-
+		*/
 		//MoveY
 		SmoothStep.State SSState = mMoveY.Update();
 		if(SSState == SmoothStep.State.inFade || SSState == SmoothStep.State.justEnd) {
@@ -376,7 +378,8 @@ public class ButtonBar : MonoBehaviour
 	
 	public virtual void Show(bool bReactivate)
 	{
-		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
 		if(!bInit)
@@ -414,7 +417,8 @@ public class ButtonBar : MonoBehaviour
 
 	public void Hide()
 	{
-		if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
+		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
 		//There is no other buttonbar opened --> fade out buttonbar
