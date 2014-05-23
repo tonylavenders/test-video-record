@@ -116,7 +116,7 @@ public class ButtonBarElements : ButtonBar
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void OnButtonAddElementPressed(BasicButton sender)
+	public void OnButtonAddElementClicked(BasicButton sender)
 	{
 		int counter=0;
 
@@ -154,7 +154,7 @@ public class ButtonBarElements : ButtonBar
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void OnButtonDeleteElementPressed(BasicButton sender)
+	public void OnButtonDeleteElementClicked(BasicButton sender)
 	{
 		if(currentSelected==null)
 			return;

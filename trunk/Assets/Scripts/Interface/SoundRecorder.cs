@@ -225,9 +225,9 @@ public class SoundRecorder : MonoBehaviour
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	void ResetFilters()
+	public void ResetAudio()
 	{
-		for(int i = 1; i < audioClips.Length; i++) {
+		for(int i=0;i<audioClips.Length;i++) {
 			if(audioClips[i] != null)
 				DestroyImmediate(audioClips[i]);
 			audioClips[i] = null;
@@ -249,7 +249,7 @@ public class SoundRecorder : MonoBehaviour
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//PLAY
-	public void OnButtonTimeVoicePlayPressed(BasicButton sender)
+	public void OnButtonTimeVoicePlayChecked(BasicButton sender)
 	{
 		//Start playing
 		if(mMode==Modes.Idle){
@@ -274,11 +274,11 @@ public class SoundRecorder : MonoBehaviour
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//REC
-	public void OnButtonTimeVoiceRecPressed(BasicButton sender)
+	public void OnButtonTimeVoiceRecChecked(BasicButton sender)
 	{
 		//Start recording
 		if(mMode==Modes.Idle){
-			ResetFilters();
+			ResetAudio();
 			audioClips[0] = Microphone.Start(null, false, totalTime, frequency);
 			mVoicePlayButton.Show(0, Globals.ANIMATIONDURATION, false);
 			mVoiceFxButton.Show(0, Globals.ANIMATIONDURATION, false);
@@ -305,7 +305,7 @@ public class SoundRecorder : MonoBehaviour
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//FX
-	public void OnButtonTimeVoiceFxPressed(BasicButton sender)
+	public void OnButtonTimeVoiceFxChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			guiManagerBlocks.mVoiceFxButtonBar.Show(true);
@@ -316,7 +316,7 @@ public class SoundRecorder : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//APPLY EFFECT
-	public void OnButtonTimeVoiceFxEffectPressed(BasicButton sender)
+	public void OnButtonTimeVoiceFxEffectClicked(BasicButton sender)
 	{
 		mCurrentFilter = sender.ID;
 
@@ -368,7 +368,7 @@ public class SoundRecorder : MonoBehaviour
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//SAVE
-	public void OnButtonTimeVoiceSavePressed(BasicButton sender)
+	public void OnButtonTimeVoiceSaveClicked(BasicButton sender)
 	{
 		SaveAudioData(null,null);
 		guiManagerBlocks.HideAllButtonBars();
