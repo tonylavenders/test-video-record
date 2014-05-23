@@ -96,6 +96,9 @@ public class SoundRecorder : MonoBehaviour
 			mCurrentFilter=(int)Data.selChapter.selBlock.FilterType;
 			audioClips[mCurrentFilter] = Data.selChapter.selBlock.Sound;
 			audioSource.clip = Data.selChapter.selBlock.Sound;
+			if(Data.selChapter.selBlock.Sound==null){
+				Debug.Log("error en el sonido");
+			}
 			CurrentTime = (int)Data.selChapter.selBlock.Sound.length;
 			guiManagerBlocks.mVoiceFxButtonBar.SetCurrentButton(mCurrentFilter);
 
