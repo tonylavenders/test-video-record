@@ -143,7 +143,7 @@ public class GUIManagerChapters : GUIManager
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Characters button
-	public void OnButtonCharactersPressed(BasicButton sender)
+	public void OnButtonCharactersChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			mCharactersButtonBar.Show(true);
@@ -155,7 +155,7 @@ public class GUIManagerChapters : GUIManager
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Backgrounds button
-	public void OnButtonBackgroundsPressed(BasicButton sender)
+	public void OnButtonBackgroundsChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			mBackgroundsButtonBar.Show(true);
@@ -167,7 +167,7 @@ public class GUIManagerChapters : GUIManager
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Music button
-	public void OnButtonMusicsPressed(BasicButton sender)
+	public void OnButtonMusicsChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			mMusicButtonBar.Show(true);
@@ -179,14 +179,14 @@ public class GUIManagerChapters : GUIManager
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Share button
-	public void OnButtonSharePressed(BasicButton sender)
+	public void OnButtonShareClicked(BasicButton sender)
 	{
 		Debug.Log("share");
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Edit button
-	public override void OnButtonEditPressed(BasicButton sender)
+	public override void OnButtonEditClicked(BasicButton sender)
 	{
 		if(Data.selChapter!=null){
 			Data.selChapter.Save();
@@ -198,7 +198,7 @@ public class GUIManagerChapters : GUIManager
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Play button
-	public override void OnButtonPlayPressed(BasicButton sender)
+	public override void OnButtonPlayClicked(BasicButton sender)
 	{
 		if(Data.selChapter!=null){
 			Data.selChapter.Save();
@@ -208,7 +208,7 @@ public class GUIManagerChapters : GUIManager
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Chapter button
-	public void OnButtonChapterPressed(BasicButton sender)
+	public void OnButtonChapterChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			Data.selChapter = sender.iObj as Data.Chapter;
@@ -219,7 +219,7 @@ public class GUIManagerChapters : GUIManager
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Character button
-	public void OnButtonCharacterPressed(BasicButton sender)
+	public void OnButtonCharacterChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			if(sender.sPrefab!=""){
@@ -233,7 +233,7 @@ public class GUIManagerChapters : GUIManager
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Background button
-	public void OnButtonBackgroundPressed(BasicButton sender)
+	public void OnButtonBackgroundChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			if(sender.sPrefab!=""){
@@ -247,7 +247,7 @@ public class GUIManagerChapters : GUIManager
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Music button
-	public void OnButtonMusicPressed(BasicButton sender)
+	public void OnButtonMusicChecked(BasicButton sender)
 	{
 		//Debug.Log("music: " + sender.iObj.Number);
 		if(sender.Checked){

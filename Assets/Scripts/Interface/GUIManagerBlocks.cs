@@ -74,6 +74,7 @@ public class GUIManagerBlocks : GUIManager
 		TVR.Utils.Message.Show(1, "AVISO", "No ha guardado los cambios. \u00BFDesea guardar?", TVR.Utils.Message.Type.YesNo, "S\u00ED", "No", Message_Save);
 		mPreviousBlock = previousBlock;
 		mPreviousButton = previousButton;
+		blur = true;
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,6 +92,7 @@ public class GUIManagerBlocks : GUIManager
 		}
 		bLastSaved=true;
 		soundRecorder.bLastSaved=true;
+		blur = false;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -223,7 +225,7 @@ public class GUIManagerBlocks : GUIManager
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Animations button
-	public void OnButtonAnimationsPressed(BasicButton sender)
+	public void OnButtonAnimationsChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			mAnimationsButtonBar.Show(true);
@@ -235,7 +237,7 @@ public class GUIManagerBlocks : GUIManager
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Expressions button
-	public void OnButtonExpressionsPressed(BasicButton sender)
+	public void OnButtonExpressionsChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			mExpressionsButtonBar.Show(true);
@@ -247,7 +249,7 @@ public class GUIManagerBlocks : GUIManager
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Time button
-	public void OnButtonTimePressed(BasicButton sender)
+	public void OnButtonTimeChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			mTimeButtonBar.Show(true);
@@ -280,7 +282,7 @@ public class GUIManagerBlocks : GUIManager
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Time-Time button
-	public void OnButtonTimeTimePressed(BasicButton sender)
+	public void OnButtonTimeTimeChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			ChangeButtonState(true, false);
@@ -292,7 +294,7 @@ public class GUIManagerBlocks : GUIManager
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Time-Voice button
-	public void OnButtonTimeVoicePressed(BasicButton sender)
+	public void OnButtonTimeVoiceChecked(BasicButton sender)
 	{
 		if(sender.Checked){
 			soundRecorder.SetAudioClip();
@@ -305,7 +307,7 @@ public class GUIManagerBlocks : GUIManager
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void OnButtonTimeTimeDecrPressed(BasicButton sender)
+	public void OnButtonTimeTimeDecrClicked(BasicButton sender)
 	{
 		if(CurrentBlockTime > Globals.MIN_SEC_BLOCK){
 			CurrentBlockTime--;
@@ -315,7 +317,7 @@ public class GUIManagerBlocks : GUIManager
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void OnButtonTimeTimeIncrPressed(BasicButton sender)
+	public void OnButtonTimeTimeIncrClicked(BasicButton sender)
 	{
 		if(CurrentBlockTime < Globals.MAX_SEC_BLOCK){
 			CurrentBlockTime++;
@@ -325,7 +327,7 @@ public class GUIManagerBlocks : GUIManager
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void OnButtonTimeTimeSavePressed(BasicButton sender)
+	public void OnButtonTimeTimeSaveClicked(BasicButton sender)
 	{
 		SaveBlockTime();
 		HideAllButtonBars();
@@ -334,20 +336,23 @@ public class GUIManagerBlocks : GUIManager
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Camera button
-	public void OnButtonCamerasPressed(BasicButton sender)
+	public void OnButtonCamerasChecked(BasicButton sender)
 	{
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void OnButtonBlockPressed(BasicButton sender)
+	public void OnButtonBlockChecked(BasicButton sender)
 	{
-		HideAllButtonBars();
+		if(sender.Checked){
+			HideAllButtonBars();
+			soundRecorder.ResetAudio();
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Edit button
-	public override void OnButtonEditPressed(BasicButton sender)
+	public override void OnButtonEditClicked(BasicButton sender)
 	{
 		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
 			Data.selChapter.selBlock.Save();
@@ -361,7 +366,7 @@ public class GUIManagerBlocks : GUIManager
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Play button
-	public override void OnButtonPlayPressed(BasicButton sender)
+	public override void OnButtonPlayClicked(BasicButton sender)
 	{
 		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
 			Data.selChapter.selBlock.Save();
