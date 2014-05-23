@@ -191,11 +191,6 @@ public class BasicButton : MonoBehaviour
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
-		if(mGUIManager is GUIManagerBlocks && buttonType!=ButtonType.EDIT_TIME_VOICE_PLAY && buttonType!=ButtonType.EDIT_TIME_VOICE_REC){
-			if(((GUIManagerBlocks)mGUIManager).soundRecorder.mMode!=SoundRecorder.Modes.Idle)
-				return;
-		}
-
 		//MoveY
 		SmoothStep.State SSState = mMoveY.Update();
 		if(SSState == SmoothStep.State.inFade || SSState==SmoothStep.State.justEnd) {
@@ -218,6 +213,11 @@ public class BasicButton : MonoBehaviour
 			}
 			Color c = renderer.material.color;
 			renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
+		}
+
+		if(mGUIManager is GUIManagerBlocks && buttonType!=ButtonType.EDIT_TIME_VOICE_PLAY && buttonType!=ButtonType.EDIT_TIME_VOICE_REC){
+			if(((GUIManagerBlocks)mGUIManager).soundRecorder.mMode!=SoundRecorder.Modes.Idle)
+				return;
 		}
 
 		//Check if user is touching the button

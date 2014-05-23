@@ -220,12 +220,6 @@ public class ButtonBar : MonoBehaviour
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
-		/* Si lo activamos, cuando tenemos la botonera abierta y pulsamos en PLAY o REC la botonera no se cierra
-		if(mGUIManager is GUIManagerBlocks){
-			if(((GUIManagerBlocks)mGUIManager).soundRecorder.mMode!=SoundRecorder.Modes.Idle)
-				return;
-		}
-		*/
 		//MoveY
 		SmoothStep.State SSState = mMoveY.Update();
 		if(SSState == SmoothStep.State.inFade || SSState == SmoothStep.State.justEnd) {
@@ -243,6 +237,12 @@ public class ButtonBar : MonoBehaviour
 			Color c = renderer.material.color;
 			renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 		}
+
+		if(mGUIManager is GUIManagerBlocks){
+			if(((GUIManagerBlocks)mGUIManager).soundRecorder.mMode!=SoundRecorder.Modes.Idle)
+				return;
+		}
+
 		//Check if user is touching the button bar
 		if(state == States.idle && Input.GetMouseButtonDown(0)){
 			RaycastHit hit;

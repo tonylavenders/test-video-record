@@ -29,6 +29,11 @@ public class ButtonCheckSave : MonoBehaviour
 			return;
 		}
 
+		if(mBasicButton.mGUIManager is GUIManagerBlocks && mBasicButton.buttonType!=ButtonType.EDIT_TIME_VOICE_PLAY && mBasicButton.buttonType!=ButtonType.EDIT_TIME_VOICE_REC){
+			if(((GUIManagerBlocks)mBasicButton.mGUIManager).soundRecorder.mMode!=SoundRecorder.Modes.Idle)
+				return;
+		}
+
 		if(!mBasicButton.bClickable && TVR.Utils.Message.State==TVR.Utils.Message.States.Hide){
 			if(((GUIManagerBlocks)mBasicButton.mGUIManager).LastSaved){
 				mBasicButton.bClickable=true;
