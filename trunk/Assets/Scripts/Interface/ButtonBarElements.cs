@@ -26,7 +26,7 @@ public class ButtonBarElements : ButtonBar
 			currentSelected.Checked=true;
 			GoToButtonPosition(currentSelected.transform);
 		}
-		else if(elementType==ElementTypes.blocks){
+		else if(elementType==ElementTypes.blocks && listButtons.Count>1){
 			currentSelected=listButtons[1].GetComponent<BasicButton>();
 			currentSelected.Checked=true;
 		}
