@@ -26,6 +26,10 @@ public class ButtonBarElements : ButtonBar
 			currentSelected.Checked=true;
 			GoToButtonPosition(currentSelected.transform);
 		}
+		else if(elementType==ElementTypes.blocks){
+			currentSelected=listButtons[1].GetComponent<BasicButton>();
+			currentSelected.Checked=true;
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

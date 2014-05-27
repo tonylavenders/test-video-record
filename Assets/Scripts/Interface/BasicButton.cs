@@ -16,7 +16,8 @@ public enum ButtonType{
 	EDIT_TIME_VOICE_PLAY, EDIT_TIME_VOICE_REC, EDIT_TIME_VOICE_FX, EDIT_TIME_VOICE_SAVE,
 	EDIT_TIME_VOICE_FX_MONSTER, EDIT_TIME_VOICE_FX_SMURF, EDIT_TIME_VOICE_FX_ECHO, EDIT_TIME_VOICE_FX_OFF,
 	EDIT_TIME_VOICE_FX_MONSTER_PRO, EDIT_TIME_VOICE_FX_SMURF_PRO, EDIT_TIME_VOICE_FX_ROBOT, EDIT_TIME_VOICE_FX_DIST,
-	EDIT_TIME_VOICE_FX_NOISE, EDIT_TIME_VOICE_FX_COMPRESS
+	EDIT_TIME_VOICE_FX_NOISE, EDIT_TIME_VOICE_FX_COMPRESS,
+	CAM_PARAM
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +62,7 @@ public class BasicButton : MonoBehaviour
 		get { return bChecked; }
 		set {
 			if(bChecked!=value){
+				Init();
 				bChecked=value;
 				if(checkedCallback!=null)
 					checkedCallback(this);
@@ -121,6 +123,8 @@ public class BasicButton : MonoBehaviour
 	public iObject iObj;
 	public int ID;
 
+	bool bInit=false;
+
 	public string sPrefab;
 	public ButtonBar mButtonBar;
 	public GUIManager mGUIManager;
@@ -167,14 +171,24 @@ public class BasicButton : MonoBehaviour
 
 	void Start()
 	{
-		mButtonBar = transform.parent.GetComponent<ButtonBar>();
+		Init();
+	}
 
-		if(mButtonBar!=null)
-			mGUIManager = mButtonBar.mGUIManager;
-		else
-			mGUIManager = transform.parent.GetComponent<GUIManager>();
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		SetCallback();
+	void Init()
+	{
+		if(!bInit){
+			mButtonBar = transform.parent.GetComponent<ButtonBar>();
+			
+			if(mButtonBar!=null){
+				mGUIManager = mButtonBar.mGUIManager;
+			}else{
+				mGUIManager = transform.parent.GetComponent<GUIManager>();
+			}
+			SetCallback();
+			bInit=true;
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -336,6 +350,18 @@ public class BasicButton : MonoBehaviour
 		}
 		else if(buttonType == ButtonType.EDIT_EXPR) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonExpressionsChecked;
+		}
+		else if(buttonType == ButtonType.EDIT_CAM) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonCamerasChecked;
+		}
+		else if(buttonType == ButtonType.ANIM) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonAnimationChecked;
+		}
+		else if(buttonType == ButtonType.EXPR) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonExpressionChecked;
+		}
+		else if(buttonType == ButtonType.CAM_PARAM) {
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonCameraChecked;
 		}
 
 		//TIME SECTION ////////////////////////////////////////////////////////////////////////////////////////////////////////
