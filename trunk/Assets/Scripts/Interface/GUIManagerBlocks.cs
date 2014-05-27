@@ -461,9 +461,15 @@ public class GUIManagerBlocks : GUIManager
 	public void OnButtonBlockChecked(BasicButton sender)
 	{
 		if(sender.Checked){
+			if(Data.selChapter.selBlock!=null){
+				if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Voice){
+					soundRecorder.ResetAudio((int)Data.selChapter.selBlock.FilterType);
+				}else{
+					soundRecorder.ResetAudio();
+				}
+			}
 			Data.selChapter.selBlock = sender.iObj as Data.Chapter.Block;
 			HideAllButtonBars();
-			soundRecorder.ResetAudio();
 			SetCurrentBlockElements();
 		}
 	}
