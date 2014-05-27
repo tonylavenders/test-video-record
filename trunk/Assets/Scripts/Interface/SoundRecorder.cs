@@ -44,7 +44,7 @@ public class SoundRecorder : MonoBehaviour
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void Start()
+	void Awake()
 	{
 		mMode = Modes.Idle;
 
@@ -165,7 +165,7 @@ public class SoundRecorder : MonoBehaviour
 			mVoiceSaveButton.Hide();
 			guiManagerBlocks.mVoiceFxButtonBar.Hide();
 
-			if(audioSource.isPlaying)
+			if(audioSource!=null && audioSource.isPlaying)
 				audioSource.Stop();
 		}
 	}

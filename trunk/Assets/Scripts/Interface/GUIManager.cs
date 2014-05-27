@@ -65,17 +65,17 @@ public class GUIManager : MonoBehaviour
 		QueueManager.pauseOnButtonDown = true;
 		SetGUICamera();
 
-		LeftButtonBar.Show(false);
-		RightButtonBar.Show(true);
-
-		InitButtons();
-
 		if(Data.selChapter!=null && Data.selChapter.IdCharacter!=-1){
 			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
 		}
 		if(Data.selChapter!=null && Data.selChapter.IdBackground!=-1){
 			CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
 		}
+
+		LeftButtonBar.Show(false);
+		RightButtonBar.Show(true);
+
+		InitButtons();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

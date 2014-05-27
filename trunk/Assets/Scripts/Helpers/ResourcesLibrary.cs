@@ -9,7 +9,7 @@ namespace TVR
 		public static Folder Backgrounds;
 		public static Folder Characters;
 		public static Folder Animations;
-		public static Folder Expresions;
+		public static Folder Expressions;
 		public static Folder Cameras;
 		public static Folder Music;
 
@@ -21,12 +21,14 @@ namespace TVR
 			initBackgrounds();
 			initCharacters();
 			initMusic();
+			initAnimations();
+			initExpressions();
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		public static Resource getCamera(int ID) {
-			return Cameras.getItem(ID);
+		public static CameraParams getCamera(int ID) {
+			return Cameras.getItem(ID) as CameraParams;
 		}
 		
 		public static Resource getBackground(int ID) {
@@ -42,7 +44,7 @@ namespace TVR
 		}
 		
 		public static Resource getExpression(int ID){
-			return Expresions.getItem(ID);
+			return Expressions.getItem(ID);
 		}
 		
 		public static Resource getMusic(int ID) {
@@ -65,7 +67,9 @@ namespace TVR
 		{
 			Cameras = new Folder(null);
 
-			//Cameras.addResource(1, "Scene/Timeline/Micro shots/timeline_cam_icon", "Scene/Timeline/Micro shots/timeline_cam_icon", "SceneCamera", "Scene/Camera/SceneCamera");
+			Cameras.addCameraParams(1, "Front", new Vector3(0.0f,0.0f,0.0f), new Vector3(15,0,0), 50);
+			Cameras.addCameraParams(2, "Side", new Vector3(-1.4f,-0.2f,0.9f), new Vector3(12,34,-2), 50);
+			Cameras.addCameraParams(3, "Full", new Vector3(0.0f,1.0f,-0.8f), new Vector3(27,0,0), 50);
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,16 +88,22 @@ namespace TVR
 		{
 			Animations = new Folder(null);
 			
-			//...
+			Animations.addResource(1, "idle", "");
+			Animations.addResource(2, "wave", "");
+			Animations.addResource(3, "talk", "");
+			Animations.addResource(4, "walk", "");
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//EXPRESIONS
-		private static void initExpresions()
+		//EXPRESSIONS
+		private static void initExpressions()
 		{
-			Expresions = new Folder(null);
-			
-			//...
+			Expressions = new Folder(null);
+
+			Expressions.addResource(1, "base", "");
+			Expressions.addResource(2, "bostezo", "");
+			Expressions.addResource(3, "indignado_c", "");
+			Expressions.addResource(4, "ouch", "");
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +140,16 @@ namespace TVR
 				else return 0;
 			}
 		}
-		
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		public class CameraParams : Resource
+		{
+			public Vector3 Position;
+			public Vector3 EulerAngles;
+			public int DoF;
+		}
+
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//FOLDER
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +171,7 @@ namespace TVR
 			public Resource getItem(int ID)
 			{
 				return dicContent[ID];
-			}	
+			}
 			
 			////////////////////////////////////////////////////////////////////////////////////////
 			
@@ -162,9 +181,25 @@ namespace TVR
 				r.ID = ID;
 				r.Name = sName;
 				r.ResourceName = sResourceName;
-				r.Number=number;
+				r.Number = number;
 				Content.Add(r);
 				dicContent.Add(r.ID, r);
+			}
+			
+			
+			////////////////////////////////////////////////////////////////////////////////////////
+			
+			public void addCameraParams(int ID, string sName, Vector3 vPos, Vector3 vRot, int iDof, int number=0)
+			{
+				CameraParams c = new CameraParams();
+				c.ID = ID;
+				c.Name = sName;
+				c.Position = vPos;
+				c.EulerAngles = vRot;
+				c.DoF = iDof;
+				c.Number = number;
+				Content.Add(c);
+				dicContent.Add(c.ID, c);
 			}
 		}
 	}

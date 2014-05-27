@@ -76,7 +76,7 @@ public class ButtonBar : MonoBehaviour
 							//mGUIManager.SaveWarning(Data.selChapter.selBlock, mCurrentSelected); //save the previous block
 							Data.selChapter.selBlock.Save();
 						}
-						Data.selChapter.selBlock = value.iObj as Data.Chapter.Block;
+						//Data.selChapter.selBlock = value.iObj as Data.Chapter.Block;
 					}
 				}
 				//Current category has changed

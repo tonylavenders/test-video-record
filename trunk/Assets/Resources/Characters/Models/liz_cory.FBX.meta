@@ -153,8 +153,12 @@ ModelImporter:
     4300038: Rig_LizCoryHub001Bone001Bone001
     4300040: exp_base_m
     4300042: exp_base
-    7400000: Take 001
+    7400000: idle
+    7400002: wave
+    7400004: talk
+    7400006: walk
     9500000: //RootNode
+    11100000: //RootNode
     13700000: personaje
   materials:
     importMaterials: 1
@@ -170,7 +174,459 @@ ModelImporter:
     animationScaleError: .5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: idle
+      takeName: Take 001
+      firstFrame: 29
+      lastFrame: 80
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: personaje
+        weight: 1
+      - path: Rig_LizCory
+        weight: 1
+      - path: Rig_LizCoryHub001
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Face
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Pelvis
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Ribcage
+        weight: 1
+      - path: Rig_LizCoryHub001/exp_base
+        weight: 1
+      - path: Rig_LizCoryHub001/exp_base_m
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001/Rig_LizCoryHub001Bone001Bone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001/Rig_LizCoryHub001Bone001Bone001/Dummy_Head
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Dummy_LUpperarm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Dummy_LForearm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Rig_LizCoryLArmPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Rig_LizCoryLArmPalm/Dummy_LPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Dummy_LThigh
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Dummy_LCalf
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle/Dummy_LFoot
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle/Rig_LizCoryAnkleBone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Dummy_RUpperarm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Dummy_RForearm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Rig_LizCoryRArmPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Rig_LizCoryRArmPalm/Dummy_RPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Dummy_RThigh
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Dummy_RCalf
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle/Dummy_RFoot
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle/Rig_LizCoryAnkleBone001
+          1
+        weight: 1
+      - path: Rig_LizCoryLArmIKTarget
+        weight: 1
+      - path: Rig_LizCoryLLegPlatform
+        weight: 1
+      - path: Rig_LizCoryRLegPlatform
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: wave
+      takeName: Take 001
+      firstFrame: 107
+      lastFrame: 170
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: personaje
+        weight: 1
+      - path: Rig_LizCory
+        weight: 1
+      - path: Rig_LizCoryHub001
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Face
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Pelvis
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Ribcage
+        weight: 1
+      - path: Rig_LizCoryHub001/exp_base
+        weight: 1
+      - path: Rig_LizCoryHub001/exp_base_m
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001/Rig_LizCoryHub001Bone001Bone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001/Rig_LizCoryHub001Bone001Bone001/Dummy_Head
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Dummy_LUpperarm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Dummy_LForearm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Rig_LizCoryLArmPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Rig_LizCoryLArmPalm/Dummy_LPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Dummy_LThigh
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Dummy_LCalf
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle/Dummy_LFoot
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle/Rig_LizCoryAnkleBone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Dummy_RUpperarm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Dummy_RForearm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Rig_LizCoryRArmPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Rig_LizCoryRArmPalm/Dummy_RPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Dummy_RThigh
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Dummy_RCalf
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle/Dummy_RFoot
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle/Rig_LizCoryAnkleBone001
+          1
+        weight: 1
+      - path: Rig_LizCoryLArmIKTarget
+        weight: 1
+      - path: Rig_LizCoryLLegPlatform
+        weight: 1
+      - path: Rig_LizCoryRLegPlatform
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: talk
+      takeName: Take 001
+      firstFrame: 173
+      lastFrame: 219
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: personaje
+        weight: 1
+      - path: Rig_LizCory
+        weight: 1
+      - path: Rig_LizCoryHub001
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Face
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Pelvis
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Ribcage
+        weight: 1
+      - path: Rig_LizCoryHub001/exp_base
+        weight: 1
+      - path: Rig_LizCoryHub001/exp_base_m
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001/Rig_LizCoryHub001Bone001Bone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001/Rig_LizCoryHub001Bone001Bone001/Dummy_Head
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Dummy_LUpperarm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Dummy_LForearm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Rig_LizCoryLArmPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Rig_LizCoryLArmPalm/Dummy_LPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Dummy_LThigh
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Dummy_LCalf
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle/Dummy_LFoot
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle/Rig_LizCoryAnkleBone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Dummy_RUpperarm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Dummy_RForearm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Rig_LizCoryRArmPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Rig_LizCoryRArmPalm/Dummy_RPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Dummy_RThigh
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Dummy_RCalf
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle/Dummy_RFoot
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle/Rig_LizCoryAnkleBone001
+          1
+        weight: 1
+      - path: Rig_LizCoryLArmIKTarget
+        weight: 1
+      - path: Rig_LizCoryLLegPlatform
+        weight: 1
+      - path: Rig_LizCoryRLegPlatform
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: walk
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 25
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: personaje
+        weight: 1
+      - path: Rig_LizCory
+        weight: 1
+      - path: Rig_LizCoryHub001
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Face
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Pelvis
+        weight: 1
+      - path: Rig_LizCoryHub001/Dummy_Ribcage
+        weight: 1
+      - path: Rig_LizCoryHub001/exp_base
+        weight: 1
+      - path: Rig_LizCoryHub001/exp_base_m
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001/Rig_LizCoryHub001Bone001Bone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryHub001Bone001/Rig_LizCoryHub001Bone001Bone001/Dummy_Head
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Dummy_LUpperarm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Dummy_LForearm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Rig_LizCoryLArmPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLArmCollarbone/Rig_LizCoryLArm1/Rig_LizCoryLArm2/Rig_LizCoryLArmPalm/Dummy_LPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Dummy_LThigh
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Dummy_LCalf
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle/Dummy_LFoot
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryLLeg1/Rig_LizCoryLLeg2/Rig_LizCoryLLegAnkle/Rig_LizCoryAnkleBone001
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Dummy_RUpperarm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Dummy_RForearm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Rig_LizCoryRArmPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRArmCollarbone/Rig_LizCoryRArm1/Rig_LizCoryRArm2/Rig_LizCoryRArmPalm/Dummy_RPalm
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Dummy_RThigh
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Dummy_RCalf
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle/Dummy_RFoot
+        weight: 1
+      - path: Rig_LizCoryHub001/Rig_LizCoryRLeg1/Rig_LizCoryRLeg2/Rig_LizCoryRLegAnkle/Rig_LizCoryAnkleBone001
+          1
+        weight: 1
+      - path: Rig_LizCoryLArmIKTarget
+        weight: 1
+      - path: Rig_LizCoryLLegPlatform
+        weight: 1
+      - path: Rig_LizCoryRLegPlatform
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -206,6 +662,6 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 1
   additionalBone: 0
   userData: 

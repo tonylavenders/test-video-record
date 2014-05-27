@@ -436,8 +436,12 @@ ModelImporter:
     4300152: Q_RForearm
     4300154: Q_RPalm
     4300156: personaje
-    7400000: Take 001
+    7400000: idle
+    7400002: wave
+    7400004: talk
+    7400006: walk
     9500000: //RootNode
+    11100000: //RootNode
     13700000: personaje
   materials:
     importMaterials: 1
@@ -453,7 +457,923 @@ ModelImporter:
     animationScaleError: .5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: idle
+      takeName: Take 001
+      firstFrame: 28
+      lastFrame: 80
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: personaje
+        weight: 1
+      - path: Q_
+        weight: 1
+      - path: Q_LPlatform
+        weight: 1
+      - path: Q_Pelvis
+        weight: 1
+      - path: Q_Pelvis/Dummy_Pelvis
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Dummy_LThigh
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Dummy_LCalf
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Dummy_LFoot
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Q_cords_01
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Q_LDigit11
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Dummy_RThigh
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Dummy_RCalf
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Dummy_RFoot
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Q_cords_02
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Q_RDigit11
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Dummy_Ribcage
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Dummy_LUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Dummy_LForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Q_LPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Q_LPalm/Dummy_LPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Dummy_Face
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Dummy_Head
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_base
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_base_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_bostezo
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_bostezo_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_culo_torcido
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_culo_torcido_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_descolocao
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_descolocao_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_extra__ado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_extra__ado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_felizmente_emocionado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_felizmente_emocionado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_indignado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_indignado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_majete_atento_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_majete_atento_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_maquinando
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_maquinando_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_ouch
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_ouch_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_panico_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_panico_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_preocupado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_preocupado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sobado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sobado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_burlona
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_burlona_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_forzada
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_forzada_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sorpresa_o_asustado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sorpresa_o_asustado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_00
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_01
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_02
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_03
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_04
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_05
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_06
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_07
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_08
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_09
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone001
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone001/Q_HeadBone001Bone001
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone002
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone002/Q_HeadBone001Bone001
+          1
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone003
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone003/Q_HeadBone001Bone001
+          2
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone004
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone004/Q_HeadBone001Bone001
+          3
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone005
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone005/Q_HeadBone001Bone001
+          4
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone006
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone006/Q_HeadBone001Bone001
+          5
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Dummy_RUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Dummy_RForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Q_RPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Q_RPalm/Dummy_RPalm
+        weight: 1
+      - path: Q_RPlatform
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: wave
+      takeName: Take 001
+      firstFrame: 196
+      lastFrame: 242
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: personaje
+        weight: 1
+      - path: Q_
+        weight: 1
+      - path: Q_LPlatform
+        weight: 1
+      - path: Q_Pelvis
+        weight: 1
+      - path: Q_Pelvis/Dummy_Pelvis
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Dummy_LThigh
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Dummy_LCalf
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Dummy_LFoot
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Q_cords_01
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Q_LDigit11
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Dummy_RThigh
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Dummy_RCalf
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Dummy_RFoot
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Q_cords_02
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Q_RDigit11
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Dummy_Ribcage
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Dummy_LUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Dummy_LForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Q_LPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Q_LPalm/Dummy_LPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Dummy_Face
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Dummy_Head
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_base
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_base_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_bostezo
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_bostezo_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_culo_torcido
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_culo_torcido_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_descolocao
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_descolocao_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_extra__ado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_extra__ado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_felizmente_emocionado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_felizmente_emocionado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_indignado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_indignado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_majete_atento_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_majete_atento_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_maquinando
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_maquinando_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_ouch
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_ouch_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_panico_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_panico_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_preocupado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_preocupado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sobado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sobado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_burlona
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_burlona_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_forzada
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_forzada_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sorpresa_o_asustado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sorpresa_o_asustado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_00
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_01
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_02
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_03
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_04
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_05
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_06
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_07
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_08
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_09
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone001
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone001/Q_HeadBone001Bone001
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone002
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone002/Q_HeadBone001Bone001
+          1
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone003
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone003/Q_HeadBone001Bone001
+          2
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone004
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone004/Q_HeadBone001Bone001
+          3
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone005
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone005/Q_HeadBone001Bone001
+          4
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone006
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone006/Q_HeadBone001Bone001
+          5
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Dummy_RUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Dummy_RForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Q_RPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Q_RPalm/Dummy_RPalm
+        weight: 1
+      - path: Q_RPlatform
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: talk
+      takeName: Take 001
+      firstFrame: 339
+      lastFrame: 385
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: personaje
+        weight: 1
+      - path: Q_
+        weight: 1
+      - path: Q_LPlatform
+        weight: 1
+      - path: Q_Pelvis
+        weight: 1
+      - path: Q_Pelvis/Dummy_Pelvis
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Dummy_LThigh
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Dummy_LCalf
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Dummy_LFoot
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Q_cords_01
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Q_LDigit11
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Dummy_RThigh
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Dummy_RCalf
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Dummy_RFoot
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Q_cords_02
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Q_RDigit11
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Dummy_Ribcage
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Dummy_LUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Dummy_LForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Q_LPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Q_LPalm/Dummy_LPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Dummy_Face
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Dummy_Head
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_base
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_base_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_bostezo
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_bostezo_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_culo_torcido
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_culo_torcido_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_descolocao
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_descolocao_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_extra__ado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_extra__ado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_felizmente_emocionado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_felizmente_emocionado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_indignado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_indignado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_majete_atento_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_majete_atento_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_maquinando
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_maquinando_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_ouch
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_ouch_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_panico_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_panico_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_preocupado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_preocupado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sobado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sobado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_burlona
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_burlona_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_forzada
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_forzada_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sorpresa_o_asustado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sorpresa_o_asustado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_00
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_01
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_02
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_03
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_04
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_05
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_06
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_07
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_08
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_09
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone001
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone001/Q_HeadBone001Bone001
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone002
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone002/Q_HeadBone001Bone001
+          1
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone003
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone003/Q_HeadBone001Bone001
+          2
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone004
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone004/Q_HeadBone001Bone001
+          3
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone005
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone005/Q_HeadBone001Bone001
+          4
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone006
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone006/Q_HeadBone001Bone001
+          5
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Dummy_RUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Dummy_RForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Q_RPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Q_RPalm/Dummy_RPalm
+        weight: 1
+      - path: Q_RPlatform
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: walk
+      takeName: Take 001
+      firstFrame: 441
+      lastFrame: 465
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: personaje
+        weight: 1
+      - path: Q_
+        weight: 1
+      - path: Q_LPlatform
+        weight: 1
+      - path: Q_Pelvis
+        weight: 1
+      - path: Q_Pelvis/Dummy_Pelvis
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Dummy_LThigh
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Dummy_LCalf
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Dummy_LFoot
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Q_cords_01
+        weight: 1
+      - path: Q_Pelvis/Q_LThigh/Q_LCalf/Q_LFoot/Q_LDigit11
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Dummy_RThigh
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Dummy_RCalf
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Dummy_RFoot
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Q_cords_02
+        weight: 1
+      - path: Q_Pelvis/Q_RThigh/Q_RCalf/Q_RFoot/Q_RDigit11
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Dummy_Ribcage
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Dummy_LUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Dummy_LForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Q_LPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_LCollarbone/Q_LUpperarm/Q_LForearm/Q_LPalm/Dummy_LPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Dummy_Face
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Dummy_Head
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_base
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_base_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_bostezo
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_bostezo_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_culo_torcido
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_culo_torcido_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_descolocao
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_descolocao_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_extra__ado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_extra__ado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_felizmente_emocionado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_felizmente_emocionado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_indignado_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_indignado_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_majete_atento_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_majete_atento_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_maquinando
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_maquinando_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_ouch
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_ouch_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_panico_c
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_panico_c_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_preocupado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_preocupado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sobado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sobado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_burlona
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_burlona_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_forzada
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sonrisa_forzada_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sorpresa_o_asustado
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/exp_sorpresa_o_asustado_m
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_00
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_01
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_02
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_03
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_04
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_05
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_06
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_07
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_08
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/lipsync_09
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone001
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone001/Q_HeadBone001Bone001
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone002
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone002/Q_HeadBone001Bone001
+          1
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone003
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone003/Q_HeadBone001Bone001
+          2
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone004
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone004/Q_HeadBone001Bone001
+          3
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone005
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone005/Q_HeadBone001Bone001
+          4
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone006
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_Neck/Q_Head/Q_HeadBone006/Q_HeadBone001Bone001
+          5
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Dummy_RUpperarm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Dummy_RForearm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Q_RPalm
+        weight: 1
+      - path: Q_Pelvis/Q_Spine1/Q_Spine2/Q_Ribcage/Q_RCollarbone/Q_RUpperarm/Q_RForearm/Q_RPalm/Dummy_RPalm
+        weight: 1
+      - path: Q_RPlatform
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -489,6 +1409,6 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 1
   additionalBone: 0
   userData: 

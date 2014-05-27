@@ -11,6 +11,7 @@ public class GUIManagerBlocks : GUIManager
 {
 	public ButtonBar mAnimationsButtonBar;
 	public ButtonBar mExpressionsButtonBar;
+	public ButtonBar mCamerasButtonBar;
 	public ButtonBar mTimeButtonBar;
 	public ButtonBar mVoiceFxButtonBar;
 
@@ -20,6 +21,8 @@ public class GUIManagerBlocks : GUIManager
 
 	public GUIText mTextTime;
 	public GUIText mTextTimeShadow;
+
+	public Transform mCamera;
 
 	public bool bLastSaved=true;
 	public bool LastSaved{
@@ -162,11 +165,13 @@ public class GUIManagerBlocks : GUIManager
 	{
 		mAnimationsButtonBar.Hide();
 		mExpressionsButtonBar.Hide();
+		mCamerasButtonBar.Hide();
 		mTimeButtonBar.Hide();
 		mVoiceFxButtonBar.Hide();
 		
 		mAnimationsButtonBar.UncheckButtons();
 		mExpressionsButtonBar.UncheckButtons();
+		mCamerasButtonBar.UncheckButtons();
 		mTimeButtonBar.UncheckButtons();
 		mVoiceFxButtonBar.UncheckButtons();
 		
@@ -208,6 +213,34 @@ public class GUIManagerBlocks : GUIManager
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	public void SetCamParams()
+	{
+		TVR.ResourcesLibrary.CameraParams mCameraParams = ResourcesLibrary.getCamera((int)Data.selChapter.selBlock.ShotType);
+		mCamera.position = mCameraParams.Position;
+		mCamera.eulerAngles = mCameraParams.EulerAngles;
+		mCamera.camera.fieldOfView = mCameraParams.DoF;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void SetExpression(string sExpression)
+	{
+		Component[] children = CurrentCharacter.GetComponentsInChildren<Component>(true);
+
+		foreach(Component child in children){
+			if(child.name.StartsWith("exp_")){
+				if(child.name == "exp_"+sExpression)
+					child.gameObject.SetActive(true);
+				else if(child.name == "exp_"+sExpression+"_m")
+					child.gameObject.SetActive(true);
+				else
+					child.gameObject.SetActive(false);
+			}
+		}
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	public void ChangeButtonState(bool bTime, bool bVoice)
 	{
 		if(bTime){
@@ -222,6 +255,47 @@ public class GUIManagerBlocks : GUIManager
 		
 		soundRecorder.ChangeButtonState(bVoice);
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void SetCurrentBlockElements()
+	{
+		if(Data.selChapter==null || Data.selChapter.selBlock==null)
+			return;
+
+		//Animation
+		if(Data.selChapter.selBlock.IdAnimation!=-1){
+			mAnimationsButtonBar.SetCurrentButton(Data.selChapter.selBlock.IdAnimation);
+			if(CurrentCharacter!=null){
+				CurrentCharacter.transform.Find("mesh").animation.Stop();
+			}
+		}
+		//Expression
+		if(Data.selChapter.selBlock.IdExpression!=-1){
+			mExpressionsButtonBar.SetCurrentButton(Data.selChapter.selBlock.IdExpression);
+			//if(CurrentCharacter!=null){
+				//SetExpression(ResourcesLibrary.getExpression(Data.selChapter.selBlock.IdExpression).Name);
+			//}
+		}
+		//Camera
+		if((int)Data.selChapter.selBlock.ShotType!=-1){
+			mCamerasButtonBar.SetCurrentButton((int)Data.selChapter.selBlock.ShotType);
+			//SetCamParams();
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void StopAnimation()
+	{
+		Transform mMesh = CurrentCharacter.transform.Find("mesh");
+		mMesh.animation[ResourcesLibrary.getAnimation(mAnimationsButtonBar.currentSelected.ID).Name].enabled = false;
+		mMesh.animation["idle"].time = 0.0f;
+		mMesh.animation["idle"].weight = 1.0f;
+		mMesh.animation["idle"].enabled = true;
+		mMesh.animation.Sample();
+		mMesh.animation["idle"].enabled = false;
+	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Animations button
@@ -229,8 +303,10 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(sender.Checked){
 			mAnimationsButtonBar.Show(true);
+			CurrentCharacter.transform.Find("mesh").animation.Play(ResourcesLibrary.getAnimation(mAnimationsButtonBar.currentSelected.ID).Name);
 		}else{
 			mAnimationsButtonBar.Hide();
+			StopAnimation();
 		}
 		Count(sender.Checked);
 	}
@@ -245,6 +321,52 @@ public class GUIManagerBlocks : GUIManager
 			mExpressionsButtonBar.Hide();
 		}
 		Count(sender.Checked);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Main: Cameras button
+	public void OnButtonCamerasChecked(BasicButton sender)
+	{
+		if(sender.Checked){
+			mCamerasButtonBar.Show(true);
+		}else{
+			mCamerasButtonBar.Hide();
+		}
+		Count(sender.Checked);
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void OnButtonAnimationChecked(BasicButton sender)
+	{
+		if(sender.Checked){
+			if(CurrentCharacter!=null){
+				CurrentCharacter.transform.Find("mesh").animation.Play(ResourcesLibrary.getAnimation(sender.ID).Name);
+			}
+			Data.selChapter.selBlock.IdAnimation=sender.ID;
+		}
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonExpressionChecked(BasicButton sender)
+	{
+		if(sender.Checked){
+			if(CurrentCharacter!=null){
+				SetExpression(ResourcesLibrary.getExpression(sender.ID).Name);
+			}
+			Data.selChapter.selBlock.IdExpression=sender.ID;
+		}
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void OnButtonCameraChecked(BasicButton sender)
+	{
+		if(sender.Checked){
+			Data.selChapter.selBlock.ShotType=(Data.Chapter.Block.shotTypes)sender.ID;
+			SetCamParams();
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,20 +455,16 @@ public class GUIManagerBlocks : GUIManager
 		HideAllButtonBars();
 		bLastSaved=true;
 	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Main: Camera button
-	public void OnButtonCamerasChecked(BasicButton sender)
-	{
-	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public void OnButtonBlockChecked(BasicButton sender)
 	{
 		if(sender.Checked){
+			Data.selChapter.selBlock = sender.iObj as Data.Chapter.Block;
 			HideAllButtonBars();
 			soundRecorder.ResetAudio();
+			SetCurrentBlockElements();
 		}
 	}
 
