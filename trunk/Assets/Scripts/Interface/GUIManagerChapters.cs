@@ -16,6 +16,8 @@ public class GUIManagerChapters : GUIManager
 	public ButtonBar mBackgroundsButtonBar;
 	public ButtonBar mMusicButtonBar;
 
+	AudioSource audioSource;
+
 	public override bool blur {
 		set {
 			inputText.enable = !value;
@@ -58,6 +60,11 @@ public class GUIManagerChapters : GUIManager
 		base.Start();
 
 		SetCurrentChapterElements();
+
+		audioSource = gameObject.AddComponent<AudioSource>();
+		audioSource.loop = false;
+		audioSource.playOnAwake = false;
+		audioSource.clip = null;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +92,7 @@ public class GUIManagerChapters : GUIManager
 	protected override void InitButtons()
 	{
 		base.InitButtons();
-		EditButton.Show(0, Globals.ANIMATIONDURATION, false);
+		EditButton.Show(0, Globals.ANIMATIONDURATION, CurrentCharacter!=null && CurrentBackground!=null);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,6 +146,11 @@ public class GUIManagerChapters : GUIManager
 			CurrentBackground=null;
 			mBackgroundsButtonBar.UncheckButtons();
 		}
+		if(Data.selChapter.IdMusicNotNullable!=-1){
+			mMusicButtonBar.SetCurrentButton(Data.selChapter.IdMusicNotNullable);
+		}else{
+			mBackgroundsButtonBar.UncheckButtons();
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +185,7 @@ public class GUIManagerChapters : GUIManager
 			mMusicButtonBar.Show(true);
 		}else{
 			mMusicButtonBar.Hide();
+			audioSource.Stop();
 		}
 		Count(sender.Checked);
 	}
@@ -249,8 +262,15 @@ public class GUIManagerChapters : GUIManager
 	//Music button
 	public void OnButtonMusicChecked(BasicButton sender)
 	{
-		//Debug.Log("music: " + sender.iObj.Number);
 		if(sender.Checked){
+			Data.selChapter.IdMusicNotNullable = sender.ID;
+			if(Data.selChapter.IdMusicNotNullable>0){
+				audioSource.clip = ResourcesManager.LoadResource(ResourcesLibrary.getMusic(Data.selChapter.IdMusicNotNullable).ResourceName, "Chapter") as AudioClip;
+				//musicAudioSource.clip = ResourcesManager.LoadResource(ResourcesLibrary.getMusic(IdResource).ResourceName, "Scene") as AudioClip;
+				audioSource.Play();
+			}else{
+				audioSource.clip=null;
+			}
 		}
 	}
 

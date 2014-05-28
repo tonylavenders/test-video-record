@@ -89,7 +89,7 @@ public class SoundRecorder : MonoBehaviour
 
 	public void SetAudioClip()
 	{
-		mVoiceFxButton.SetTextBottom(filterNames[mCurrentFilter]);
+		//mVoiceFxButton.SetTextBottom(filterNames[mCurrentFilter]);
 
 		if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Voice)
 		{
@@ -155,6 +155,7 @@ public class SoundRecorder : MonoBehaviour
 		if(bShow){
 			mVoicePlayButton.Show(0, Globals.ANIMATIONDURATION, audioClips[mCurrentFilter]!=null);
 			mVoiceRecButton.Show();
+			mVoiceFxButton.SetTextBottom(filterNames[mCurrentFilter]);
 			mVoiceFxButton.Show(0, Globals.ANIMATIONDURATION, audioClips[mCurrentFilter]!=null);
 			mVoiceSaveButton.Show(0, Globals.ANIMATIONDURATION, audioClips[mCurrentFilter]!=null);
 		}
