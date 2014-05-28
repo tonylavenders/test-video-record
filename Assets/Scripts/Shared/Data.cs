@@ -281,6 +281,8 @@ namespace TVR {
 				set { mSelBlock = value; }
 			}
 
+			public GameObject Character;
+
 			public Chapter(int idChapter, int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
 				mIdChapter = idChapter;
 				mNumber = number;
