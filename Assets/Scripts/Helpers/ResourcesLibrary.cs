@@ -112,7 +112,10 @@ namespace TVR
 		{
 			Music = new Folder(null);
 			
-			//...
+			Music.addResource(1, "fire", "Music/Chariots Of Fire");
+			Music.addResource(2, "funky", "Music/Funky Town");
+			Music.addResource(3, "heavy", "Music/Heavy Metal");
+			Music.addResource(4, "dogs", "Music/Reservoir Dogs Theme");
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

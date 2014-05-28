@@ -143,7 +143,7 @@ namespace TVR.Utils {
 		#endregion
 
 		#region Robot
-		private const int ROBOTSAMPLES = 7;
+		private const int ROBOTSAMPLES = 3;
 		private const int ROBOTRATIO = 32768 >> 2;
 
 		private const int SHIFTROBOT = 5;
@@ -155,8 +155,8 @@ namespace TVR.Utils {
 		private const int REVERBROBOT = 3;
 
 		public void Robot(float[] indata, out float[] outdata) {
-			Compression(indata, out outdata, ROBOTSAMPLES, ROBOTRATIO);
-			Mosquito(outdata, out outdata, SHIFTROBOT);
+			//Compression(indata, out outdata, ROBOTSAMPLES, ROBOTRATIO);
+			Mosquito(indata, out outdata, SHIFTROBOT);
 			for(int i = 0; i < REVERBROBOT; ++i)
 				Echo(outdata, out outdata, DECAYRATIOROBOT, DELAYROBOT, DRYMIXROBOT, WETMIXROBOT);
 		}
