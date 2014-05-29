@@ -201,7 +201,6 @@ public class BasicButton : MonoBehaviour
 		if(state == States.hidden || Camera.main == null)
 			return;
 
-		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
@@ -438,7 +437,6 @@ public class BasicButton : MonoBehaviour
 	
 	public void Show(float delay = 0, float duration = Globals.ANIMATIONDURATION, bool reactivate=true)
 	{
-		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
@@ -471,7 +469,6 @@ public class BasicButton : MonoBehaviour
 	
 	public void Hide(float delay = 0, float duration = Globals.ANIMATIONDURATION)
 	{
-		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 

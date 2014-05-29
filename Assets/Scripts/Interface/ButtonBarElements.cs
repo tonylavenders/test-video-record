@@ -181,14 +181,12 @@ public class ButtonBarElements : ButtonBar
 			stateElements=StatesElements.deleting_element;
 			mSpeed.End();
 
-			mGUIManager.DisableButtons();
+			mGUIManager.DisableButtons(elementType);
 			mGUIManager.HideAllButtonBars();
 
 			if(elementType==ElementTypes.chapters){
 				mGUIManager.CurrentCharacter=null;
 				mGUIManager.CurrentBackground=null;
-				//mGUIManager.mInput.Text="";
-				//mGUIManager.mInput.enable=false;
 			}
 		}
 		mGUIManager.blur = false;

@@ -16,8 +16,6 @@ public class GUIManagerChapters : GUIManager
 	public ButtonBar mBackgroundsButtonBar;
 	public ButtonBar mMusicButtonBar;
 
-	AudioSource audioSource;
-
 	public override bool blur {
 		set {
 			inputText.enable = !value;
@@ -59,12 +57,11 @@ public class GUIManagerChapters : GUIManager
 
 		base.Start();
 
-		SetCurrentChapterElements();
+		audio.loop = true;
+		audio.playOnAwake = false;
+		audio.clip = null;
 
-		audioSource = gameObject.AddComponent<AudioSource>();
-		audioSource.loop = false;
-		audioSource.playOnAwake = false;
-		audioSource.clip = null;
+		SetCurrentChapterElements();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,25 +85,17 @@ public class GUIManagerChapters : GUIManager
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	protected override void InitButtons()
-	{
-		base.InitButtons();
-		EditButton.Show(0, Globals.ANIMATIONDURATION, CurrentCharacter!=null && CurrentBackground!=null);
-	}
 	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	public override void EnableButtons()
+	public override void EnableButtons(ButtonBar.ElementTypes elemType)
 	{
-		base.EnableButtons();
+		base.EnableButtons(elemType);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public override void DisableButtons()
+	public override void DisableButtons(ButtonBar.ElementTypes elemType)
 	{
-		base.DisableButtons();
+		base.DisableButtons(elemType);
 		EditButton.Enable=false;
 	}
 
@@ -132,6 +121,7 @@ public class GUIManagerChapters : GUIManager
 		if(Data.selChapter==null){
 			return;
 		}
+		//Character
 		if(Data.selChapter.IdCharacter!=-1){
 			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
 			mCharactersButtonBar.SetCurrentButton(Data.selChapter.IdCharacter);
@@ -139,6 +129,7 @@ public class GUIManagerChapters : GUIManager
 			CurrentCharacter=null;
 			mCharactersButtonBar.UncheckButtons();
 		}
+		//Background
 		if(Data.selChapter.IdBackground!=-1){
 			CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
 			mBackgroundsButtonBar.SetCurrentButton(Data.selChapter.IdBackground);
@@ -146,10 +137,14 @@ public class GUIManagerChapters : GUIManager
 			CurrentBackground=null;
 			mBackgroundsButtonBar.UncheckButtons();
 		}
+		//Music
 		if(Data.selChapter.IdMusicNotNullable!=-1){
 			mMusicButtonBar.SetCurrentButton(Data.selChapter.IdMusicNotNullable);
+			audio.Stop();
+			audio.clip = ResourcesManager.LoadResource(ResourcesLibrary.getMusic(Data.selChapter.IdMusicNotNullable).ResourceName, "Chapter") as AudioClip;
 		}else{
-			mBackgroundsButtonBar.UncheckButtons();
+			mMusicButtonBar.SetCurrentButton(-1);
+			audio.clip = null;
 		}
 	}
 
@@ -183,9 +178,12 @@ public class GUIManagerChapters : GUIManager
 	{
 		if(sender.Checked){
 			mMusicButtonBar.Show(true);
+			if(audio.clip!=null){
+				audio.Play();
+			}
 		}else{
 			mMusicButtonBar.Hide();
-			audioSource.Stop();
+			audio.Stop();
 		}
 		Count(sender.Checked);
 	}
@@ -265,11 +263,10 @@ public class GUIManagerChapters : GUIManager
 		if(sender.Checked){
 			Data.selChapter.IdMusicNotNullable = sender.ID;
 			if(Data.selChapter.IdMusicNotNullable>0){
-				audioSource.clip = ResourcesManager.LoadResource(ResourcesLibrary.getMusic(Data.selChapter.IdMusicNotNullable).ResourceName, "Chapter") as AudioClip;
-				//musicAudioSource.clip = ResourcesManager.LoadResource(ResourcesLibrary.getMusic(IdResource).ResourceName, "Scene") as AudioClip;
-				audioSource.Play();
+				audio.clip = ResourcesManager.LoadResource(ResourcesLibrary.getMusic(Data.selChapter.IdMusicNotNullable).ResourceName, "Chapter") as AudioClip;
+				audio.Play();
 			}else{
-				audioSource.clip=null;
+				audio.clip=null;
 			}
 		}
 	}
@@ -305,7 +302,7 @@ public class GUIManagerChapters : GUIManager
 	
 	protected override void OnApplicationPause(bool pauseStatus)
 	{
-		base.OnApplicationPause(pauseStatus);
+		//base.OnApplicationPause(pauseStatus);
 
 		if(pauseStatus && Data.selChapter!=null){
 			Data.selChapter.Save();

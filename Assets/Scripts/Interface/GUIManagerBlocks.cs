@@ -70,7 +70,6 @@ public class GUIManagerBlocks : GUIManager
 	//If time has changed and block isn't saved yet then show warning message
 	public override void SaveWarning(Data.Chapter.Block previousBlock, BasicButton previousButton)
 	{
-		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
@@ -139,7 +138,7 @@ public class GUIManagerBlocks : GUIManager
 		base.InitButtons();
 		soundRecorder.InitButtons();
 
-		EditButton.Show();
+		//EditButton.Show();
 
 		//Time: Decrease button
 		float pos_x = ButtonProperties.buttonBarScaleX*2.0f+ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize/2.0f;
@@ -468,9 +467,9 @@ public class GUIManagerBlocks : GUIManager
 					soundRecorder.ResetAudio();
 				}
 			}
+			SetCurrentBlockElements();
 			Data.selChapter.selBlock = sender.iObj as Data.Chapter.Block;
 			HideAllButtonBars();
-			SetCurrentBlockElements();
 		}
 	}
 
@@ -495,14 +494,13 @@ public class GUIManagerBlocks : GUIManager
 		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
 			Data.selChapter.selBlock.Save();
 		}
-		Debug.Log("play blocks");
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	protected override void OnApplicationPause(bool pauseStatus)
 	{
-		base.OnApplicationPause(pauseStatus);
+		//base.OnApplicationPause(pauseStatus);
 		
 		if(pauseStatus && Data.selChapter!=null && Data.selChapter.selBlock!=null){
 			Data.selChapter.selBlock.Save();
