@@ -15,7 +15,6 @@ public class SoundRecorder : MonoBehaviour
 
 	AudioFilters filter;
 	AudioClip[] audioClips;
-	AudioSource audioSource;
 	int mCurrentFilter=0;
 
 	float mCurrentTime;
@@ -48,10 +47,9 @@ public class SoundRecorder : MonoBehaviour
 	{
 		mMode = Modes.Idle;
 
-		audioSource = gameObject.AddComponent<AudioSource>();
-		audioSource.loop = false;
-		audioSource.playOnAwake = false;
-		audioSource.clip = null;
+		audio.loop = false;
+		audio.playOnAwake = false;
+		audio.clip = null;
 
 		audioClips = new AudioClip[Enum.GetNames(typeof(Data.Chapter.Block.filterType)).Length];
 		filter = new AudioFilters();
@@ -89,13 +87,11 @@ public class SoundRecorder : MonoBehaviour
 
 	public void SetAudioClip()
 	{
-		//mVoiceFxButton.SetTextBottom(filterNames[mCurrentFilter]);
-
 		if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Voice)
 		{
 			mCurrentFilter=(int)Data.selChapter.selBlock.FilterType;
 			audioClips[mCurrentFilter] = Data.selChapter.selBlock.Sound;
-			audioSource.clip = Data.selChapter.selBlock.Sound;
+			audio.clip = Data.selChapter.selBlock.Sound;
 			if(Data.selChapter.selBlock.Sound==null){
 				Debug.Log("error en el sonido");
 			}
@@ -112,7 +108,6 @@ public class SoundRecorder : MonoBehaviour
 
 	void Update()
 	{
-		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
@@ -133,7 +128,7 @@ public class SoundRecorder : MonoBehaviour
 		}
 		else if(mMode==Modes.Playing){
 			//Playing
-			if(CurrentTime < audioSource.clip.length){
+			if(CurrentTime < audio.clip.length){
 				CurrentTime += Time.deltaTime;
 			}
 			//End playing
@@ -142,7 +137,7 @@ public class SoundRecorder : MonoBehaviour
 				mVoiceFxButton.Show();
 				mVoiceSaveButton.Show();
 				mVoicePlayButton.Checked=false;
-				audioSource.Stop();
+				audio.Stop();
 				mMode=Modes.Idle;
 			}
 		}
@@ -166,8 +161,8 @@ public class SoundRecorder : MonoBehaviour
 			mVoiceSaveButton.Hide();
 			guiManagerBlocks.mVoiceFxButtonBar.Hide();
 
-			if(audioSource!=null && audioSource.isPlaying)
-				audioSource.Stop();
+			if(audio!=null && audio.isPlaying)
+				audio.Stop();
 		}
 	}
 	
@@ -202,7 +197,7 @@ public class SoundRecorder : MonoBehaviour
 		samples = null;
 		samplesTrim = null;
 		
-		audioSource.clip = audioClips[0];
+		audio.clip = audioClips[0];
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -270,8 +265,8 @@ public class SoundRecorder : MonoBehaviour
 	{
 		//Start playing
 		if(mMode==Modes.Idle){
-			audioSource.clip=audioClips[mCurrentFilter];
-			audioSource.Play();
+			audio.clip=audioClips[mCurrentFilter];
+			audio.Play();
 			mVoiceRecButton.Show(0, Globals.ANIMATIONDURATION, false);
 			mVoiceFxButton.Show(0, Globals.ANIMATIONDURATION, false);
 			mVoiceSaveButton.Show(0, Globals.ANIMATIONDURATION, false);
@@ -280,7 +275,7 @@ public class SoundRecorder : MonoBehaviour
 		}
 		//Stop playing
 		else if(mMode==Modes.Playing){
-			audioSource.Stop();
+			audio.Stop();
 			guiManagerBlocks.SetTime((int)audioClips[mCurrentFilter].length);
 			mVoiceRecButton.Show();
 			mVoiceFxButton.Show();
@@ -378,8 +373,8 @@ public class SoundRecorder : MonoBehaviour
 		}
 
 		CloseButtonBar();
-		audioSource.clip = audioClips[mCurrentFilter];
-		CurrentTime = (int)audioSource.clip.length;
+		audio.clip = audioClips[mCurrentFilter];
+		CurrentTime = (int)audio.clip.length;
 		bLastSaved=false;
 	}
 

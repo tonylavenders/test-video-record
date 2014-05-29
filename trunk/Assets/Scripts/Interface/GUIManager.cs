@@ -89,29 +89,34 @@ public class GUIManager : MonoBehaviour
 		Vector3 scale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 
 		EditButton.Init(pos, scale);
+		EditButton.Show(0, Globals.ANIMATIONDURATION, CurrentCharacter!=null && CurrentBackground!=null);
 
 		//Play button
 		pos_x -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 
 		PlayButton.Init(pos, scale);
-		PlayButton.Show(0, Globals.ANIMATIONDURATION, false);
+		PlayButton.Show(0, Globals.ANIMATIONDURATION, Data.selChapter!=null && Data.selChapter.Blocks.Count>0);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public virtual void EnableButtons()
+	public virtual void EnableButtons(ButtonBar.ElementTypes elemType)
 	{
 		LeftButtonBar.EnableButtons();
-		PlayButton.Enable=true;
+		if(elemType==ButtonBar.ElementTypes.blocks){
+			PlayButton.Enable=true;
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public virtual void DisableButtons()
+	public virtual void DisableButtons(ButtonBar.ElementTypes elemType)
 	{
 		LeftButtonBar.DisableButtons();
-		PlayButton.Enable=false;
+		if(elemType==ButtonBar.ElementTypes.blocks){
+			PlayButton.Enable=false;
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,13 +145,7 @@ public class GUIManager : MonoBehaviour
 	protected virtual void OnGUI()
 	{
 		TVR.Utils.Message.OnGUI();
-		//This is necessary for the Samsung Galaxy S (Android 2.3)
-		//Pressing HOME button freezes the device
-		//if(Application.platform == RuntimePlatform.Android) {
-		//	if(GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height - 120, 100, 100), "QUIT")) {
-		//		Application.Quit();
-		//	}
-		//}
+
 		//if(GUI.Button(new Rect(Screen.width / 2 - 50, 70, 100, 50), "Blur")) {
 		//	blur = !blur;
 		//}
@@ -155,10 +154,10 @@ public class GUIManager : MonoBehaviour
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	protected virtual void OnApplicationPause(bool pauseStatus)
-	{
+	{/*
 		if(Application.platform == RuntimePlatform.Android){
 			Application.Quit();
-		}
+		}*/
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

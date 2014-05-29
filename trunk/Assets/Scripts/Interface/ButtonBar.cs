@@ -58,13 +58,12 @@ public class ButtonBar : MonoBehaviour
 		get { return mCurrentSelected; }
 		set {
 			if(value!=null){
-				mGUIManager.EnableButtons();
+				mGUIManager.EnableButtons(elementType);
 
 				//Current chapter has changed
 				if(elementType==ElementTypes.chapters){
 					if(Data.selChapter!=null){
 						Data.selChapter.Save();
-						//Data.selChapter = value.iObj as Data.Chapter;
 						mGUIManager.inputText.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
 						mGUIManager.inputText.Text = Data.selChapter.Title;
 					}
@@ -73,17 +72,11 @@ public class ButtonBar : MonoBehaviour
 				else if(elementType==ElementTypes.blocks){
 					if(Data.selChapter!=null){
 						if(Data.selChapter.selBlock!=null){
-							//mGUIManager.SaveWarning(Data.selChapter.selBlock, mCurrentSelected); //save the previous block
 							Data.selChapter.selBlock.Save();
 						}
-						//Data.selChapter.selBlock = value.iObj as Data.Chapter.Block;
 					}
 				}
-				//Current category has changed
-				//else if((elementType==ElementTypes.main || elementType==ElementTypes.time) && mGUIManager is GUIManagerBlocks){
-				//	mGUIManager.SaveWarning(null, null);
-				//}
-			}//currentSelected ---> null
+			}//currentSelected is null
 			else{
 				if(elementType==ElementTypes.chapters){
 					mGUIManager.inputText.Fade(0, Globals.ANIMATIONDURATION, true, false);
@@ -216,7 +209,6 @@ public class ButtonBar : MonoBehaviour
 		if(state==States.hidden || Camera.main == null)
 			return;
 
-		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
@@ -331,7 +323,6 @@ public class ButtonBar : MonoBehaviour
 	public void EnableButtons()
 	{
 		foreach(GameObject button in listButtons){
-			//button.GetComponent<BasicButton>().Enable = true;
 			button.GetComponent<BasicButton>().Show(0, Globals.ANIMATIONDURATION, true);
 		}
 	}
@@ -341,7 +332,6 @@ public class ButtonBar : MonoBehaviour
 	public void DisableButtons()
 	{
 		foreach(GameObject button in listButtons){
-			//button.GetComponent<BasicButton>().Enable = false;
 			button.GetComponent<BasicButton>().Show(0, Globals.ANIMATIONDURATION, false);
 		}
 	}
@@ -353,7 +343,6 @@ public class ButtonBar : MonoBehaviour
 		foreach(GameObject button in listButtons){
 			button.GetComponent<BasicButton>().Checked=false;
 		}
-		//currentSelected=null;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,7 +367,6 @@ public class ButtonBar : MonoBehaviour
 	
 	public virtual void Show(bool bReactivate)
 	{
-		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
@@ -417,7 +405,6 @@ public class ButtonBar : MonoBehaviour
 
 	public void Hide()
 	{
-		//if(TVR.Utils.Message.State!=TVR.Utils.Message.States.Hide)
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
