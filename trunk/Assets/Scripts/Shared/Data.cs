@@ -208,6 +208,7 @@ namespace TVR {
 
 	public class Chapter : System.IComparable<Chapter>, iObject {
 			private List<Block> mBlocks;
+			private List<Block> mBlocksPerfomed;
 			private int mIdChapter;
 			private int mNumber;
 			private string mTitle;
@@ -281,6 +282,7 @@ namespace TVR {
 				set { mSelBlock = value; }
 			}
 
+			private float MiliSeconds;
 			public GameObject Character;
 
 			public Chapter(int idChapter, int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
@@ -439,6 +441,28 @@ namespace TVR {
 						return 0;
 			}
 
+			public void Frame(float miliSeconds, bool play, bool omitCameraRot=false, bool player = false) {
+				miliSeconds += 0.00001f;
+				if(MiliSeconds != miliSeconds) {
+					//TODO: Play music.
+					MiliSeconds = miliSeconds;
+					int frame = (int)(miliSeconds / Globals.MILISPERFRAME);
+					List<Block> blocksTemp = new List<Block>(mBlocksPerfomed);
+					foreach(Block block in blocksTemp) {
+						if(block.endAction(Character, frame, play, player) || !Blocks.Contains(block)) {
+							mBlocksPerfomed.Remove(block); //TODO: Una sola instancia?
+						}
+					}
+
+					foreach(Block block in Blocks) {
+						if(block.performAction(Character, frame, play, player)) {
+							mBlocksPerfomed.Add(block);
+							//return; Una sola instancia?
+						}
+					}
+				}
+			}
+
 			public class Block : System.IComparable<Block>, iObject {
 				public enum blockTypes {
 					Time = 1,
@@ -557,6 +581,8 @@ namespace TVR {
 					mOldIdExpression = idExpression;
 					mOldIdAnimation = idAnimation;
 					mOldIdProp = idProp;
+
+					mPerformed = -1;
 				}
 
 				public void Save() {
@@ -990,6 +1016,78 @@ namespace TVR {
 						System.IO.File.Delete(System.IO.Path.Combine(TVR.Globals.RecordedSoundsPath, mIdBlock + ORIGINAL + EXTENSION));
 				}
 				#endregion
+
+				private int mPerformed;
+
+				public bool performAction(GameObject Character, int frame, bool play, bool player) {
+					/*if(StartFrame <= frame && EndFrame > frame && mPerformed != frame && mPerformed != -2) {
+						switch(mType) {
+						case Types.Animation:
+							bool ret = mPerformed == -1;
+							if(mPerformed != -2) {
+								Character.GetComponent<DataManager>().PlayAnimation(BRBRec.ResourcesLibrary.getAnimation(mParent.IdResource, IdResource).ResourceName, StartFrame, frame * Globals.MILISPERFRAME, play, Control);
+								if(play)
+									mPerformed = -2;
+								else
+									mPerformed = frame;
+							}
+							//mPerformed=frame;
+							return ret;
+						case Types.Expression:
+							Character.GetComponent<DataManager>().SetExpression(BRBRec.ResourcesLibrary.getExpression(mParent.IdResource, IdResource).ResourceName, false);
+							mPerformed = -2;
+							return true;
+						case Types.Voice:
+							bool ret1 = mPerformed == -1;
+							if(play) {
+								float secAD1 = (frame - StartFrame) * Globals.MILISPERFRAME;
+								Character.GetComponent<DataManager>().PlayAudio(IdResource, mType, secAD1, controlValue);
+								Character.GetComponent<DataManager>().startLipSync();
+								mPerformed = -2;
+								return ret1;
+							} else {
+								AudioClip clip;
+								if(IdResource > 0)
+									clip = ResourcesManager.LoadResource(ResourcesLibrary.getVoice(IdResource).ResourceName, "Scene") as AudioClip;
+								else
+									clip = Data.dicRecordedSounds[IdResource].Sound;
+								Character.GetComponent<DataManager>().lipSync(clip, frame, StartFrame, controlValue);
+								mPerformed = frame;
+								return ret1;
+							}
+							break;
+						}
+					}*/
+					return false;
+				}
+				public virtual bool endAction(GameObject Character, int frame, bool play, bool player) {
+					/*if((StartFrame > frame || EndFrame <= frame) && mPerformed != -1) {
+						switch(mType) {
+						case Types.Animation:
+							int lastFrame;
+							if(EndFrame == frame)
+								lastFrame = EndFrame;
+							else
+								lastFrame = mParent.lastFrame(mType, frame);
+							Character.GetComponent<DataManager>().IdleAnimation(lastFrame, frame * Globals.MILISPERFRAME, play);
+							break;
+						case Types.Expression:
+							if(frame != Data.selStage.mFrames || (frame == Data.selStage.mFrames && EndFrame != Data.selStage.mFrames))
+								Character.GetComponent<DataManager>().SetExpression("exp_base", false);
+							else
+								return false;
+							break;
+						case Types.Voice:
+							if(mPerformed == -2)
+								Character.GetComponent<DataManager>().StopAudio(mType);
+							Character.GetComponent<DataManager>().stopLipSync();
+							break;
+						}
+						mPerformed = -1;
+						return true;
+					}*/
+					return false;
+				}
 			}
 		}
 
