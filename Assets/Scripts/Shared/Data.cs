@@ -463,6 +463,16 @@ namespace TVR {
 				}
 			}
 
+			public void Stop(float miliSeconds, bool Play = false) {
+				//TODO: Stop music.
+				//Una sola instancia?
+				List<Block> blocksTemp = new List<Block>(mBlocksPerfomed);
+				foreach(Block block in blocksTemp) {
+					if(block.Stop(Character, Play))
+						mBlocksPerfomed.Remove(block);
+				}
+			}
+
 			public class Block : System.IComparable<Block>, iObject {
 				public enum blockTypes {
 					Time = 1,
@@ -1087,6 +1097,24 @@ namespace TVR {
 						return true;
 					}*/
 					return false;
+				}
+				public virtual bool Stop(GameObject Characsster, bool Play) {
+					/*if(mPerformed != -1) {
+						switch(mType) {
+						case Types.Animation:
+							Character.GetComponent<DataManager>().StopAnimation();
+							mPerformed = 1;
+							return false;
+						case Types.Voice:
+							Character.GetComponent<DataManager>().StopAudio(mType);
+							mPerformed = -3;
+							return false;
+						case Types.Expression:
+							return false;
+						}
+						mPerformed = -1;
+					}*/
+					return true;
 				}
 			}
 		}
