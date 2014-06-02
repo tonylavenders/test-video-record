@@ -168,9 +168,9 @@ public class GUIManagerBlocks : GUIManager
 		mTimeButtonBar.Hide();
 		mVoiceFxButtonBar.Hide();
 		
-		mAnimationsButtonBar.UncheckButtons();
-		mExpressionsButtonBar.UncheckButtons();
-		mCamerasButtonBar.UncheckButtons();
+		//mAnimationsButtonBar.UncheckButtons();
+		//mExpressionsButtonBar.UncheckButtons();
+		//mCamerasButtonBar.UncheckButtons();
 		mTimeButtonBar.UncheckButtons();
 		mVoiceFxButtonBar.UncheckButtons();
 		
@@ -268,6 +268,8 @@ public class GUIManagerBlocks : GUIManager
 			if(CurrentCharacter!=null){
 				CurrentCharacter.transform.Find("mesh").animation.Stop();
 			}
+		}else{
+			mAnimationsButtonBar.SetCurrentButton(1);
 		}
 		//Expression
 		if(Data.selChapter.selBlock.IdExpression!=-1){
@@ -275,11 +277,15 @@ public class GUIManagerBlocks : GUIManager
 			//if(CurrentCharacter!=null){
 				//SetExpression(ResourcesLibrary.getExpression(Data.selChapter.selBlock.IdExpression).Name);
 			//}
+		}else{
+			mExpressionsButtonBar.SetCurrentButton(1);
 		}
 		//Camera
 		if((int)Data.selChapter.selBlock.ShotType!=-1){
 			mCamerasButtonBar.SetCurrentButton((int)Data.selChapter.selBlock.ShotType);
 			//SetCamParams();
+		}else{
+			mCamerasButtonBar.SetCurrentButton(1);
 		}
 	}
 
@@ -467,8 +473,8 @@ public class GUIManagerBlocks : GUIManager
 					soundRecorder.ResetAudio();
 				}
 			}
-			SetCurrentBlockElements();
 			Data.selChapter.selBlock = sender.iObj as Data.Chapter.Block;
+			SetCurrentBlockElements();
 			HideAllButtonBars();
 		}
 	}
