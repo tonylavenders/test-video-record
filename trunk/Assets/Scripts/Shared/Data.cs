@@ -1064,7 +1064,6 @@ namespace TVR {
 								else
 									mPerformed = frame;
 							}
-							//mPerformed=frame;
 							return ret;
 						case Types.Expression:
 							Character.GetComponent<DataManager>().SetExpression(BRBRec.ResourcesLibrary.getExpression(mParent.IdResource, IdResource).ResourceName, false);
