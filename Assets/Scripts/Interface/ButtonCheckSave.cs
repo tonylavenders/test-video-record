@@ -35,7 +35,7 @@ public class ButtonCheckSave : MonoBehaviour
 		}
 
 		if(!mBasicButton.bClickable && TVR.Utils.Message.State==TVR.Utils.Message.States.Hide){
-			if(((GUIManagerBlocks)mBasicButton.mGUIManager).LastSaved){
+			if((mBasicButton.mGUIManager is GUIManagerBlocks) &&((GUIManagerBlocks)mBasicButton.mGUIManager).LastSaved){
 				mBasicButton.bClickable=true;
 				mBasicButton.Checked=true;
 				if(mBasicButton.clickedCallback!=null){

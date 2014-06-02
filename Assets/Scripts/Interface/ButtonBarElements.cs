@@ -5,6 +5,8 @@ using TVR;
 
 public class ButtonBarElements : ButtonBar
 {
+	BasicButton CurrentSelectedDeleted=null;
+
 	enum StatesElements{
 		idle,
 		adding_element,
@@ -177,6 +179,7 @@ public class ButtonBarElements : ButtonBar
 		if(buttonClicked == TVR.Utils.Message.ButtonClicked.Yes){
 			currentSelected.Hide(0, 0.2f);
 			currentSelected.iObj.Delete();
+			CurrentSelectedDeleted=currentSelected;
 			MoveButtonsAfterDelete();
 			stateElements=StatesElements.deleting_element;
 			mSpeed.End();
@@ -246,9 +249,9 @@ public class ButtonBarElements : ButtonBar
 		        listButtons[0].GetComponent<BasicButton>().state == BasicButton.States.idle &&
 		        (listButtons[1].GetComponent<BasicButton>().state == BasicButton.States.idle || 
 		         listButtons[1].GetComponent<BasicButton>().state == BasicButton.States.hidden)){
-			listButtons.RemoveAt(currentSelected.iObj.Number);
-			Destroy(currentSelected.gameObject);
-			currentSelected=null;
+			listButtons.RemoveAt(CurrentSelectedDeleted.iObj.Number);
+			Destroy(CurrentSelectedDeleted.gameObject);
+			CurrentSelectedDeleted=null;
 			stateElements=StatesElements.idle;
 			ResizeButtonBarAfterDelete();
 		}
