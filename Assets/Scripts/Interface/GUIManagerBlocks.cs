@@ -22,8 +22,6 @@ public class GUIManagerBlocks : GUIManager
 	public GUIText mTextTime;
 	public GUIText mTextTimeShadow;
 
-	public Transform mCamera;
-
 	public bool bLastSaved=true;
 	public bool LastSaved{
 		get { return (bLastSaved && soundRecorder.bLastSaved); }
@@ -209,16 +207,6 @@ public class GUIManagerBlocks : GUIManager
 	{
 		mTextTime.color = color;
 	}
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	public void SetCamParams()
-	{
-		TVR.ResourcesLibrary.CameraParams mCameraParams = ResourcesLibrary.getCamera((int)Data.selChapter.selBlock.ShotType);
-		mCamera.position = mCameraParams.Position;
-		mCamera.eulerAngles = mCameraParams.EulerAngles;
-		mCamera.camera.fieldOfView = mCameraParams.DoF;
-	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -283,7 +271,7 @@ public class GUIManagerBlocks : GUIManager
 		//Camera
 		if((int)Data.selChapter.selBlock.ShotType!=-1){
 			mCamerasButtonBar.SetCurrentButton((int)Data.selChapter.selBlock.ShotType);
-			//SetCamParams();
+			mCamera.GetComponent<SceneCameraManager>().SetParams((int)Data.selChapter.selBlock.ShotType);
 		}else{
 			mCamerasButtonBar.SetCurrentButton(1);
 		}
@@ -370,7 +358,7 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(sender.Checked){
 			Data.selChapter.selBlock.ShotType=(Data.Chapter.Block.shotTypes)sender.ID;
-			SetCamParams();
+			mCamera.GetComponent<SceneCameraManager>().SetParams((int)Data.selChapter.selBlock.ShotType);
 		}
 	}
 
@@ -501,13 +489,18 @@ public class GUIManagerBlocks : GUIManager
 			Data.selChapter.selBlock.Save();
 		}
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	protected override void OnApplicationPause(bool pauseStatus)
+	void OnApplicationPause(bool pauseStatus)
 	{
-		//base.OnApplicationPause(pauseStatus);
-		
 		if(pauseStatus && Data.selChapter!=null && Data.selChapter.selBlock!=null){
 			Data.selChapter.selBlock.Save();
 		}
@@ -515,7 +508,7 @@ public class GUIManagerBlocks : GUIManager
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	protected override void OnApplicationQuit()
+	void OnApplicationQuit()
 	{
 		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
 			Data.selChapter.selBlock.Save();
