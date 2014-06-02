@@ -284,6 +284,8 @@ namespace TVR {
 
 			private float MiliSeconds;
 			public GameObject Character;
+			public GameObject BackGround;
+			public GameObject Camera;
 
 			public Chapter(int idChapter, int number, string title, string information, int idCharacter, int idBackground, int? idMusic) {
 				mIdChapter = idChapter;
@@ -370,7 +372,8 @@ namespace TVR {
 						block = new Block((int)row["IdBlock"], (Block.blockTypes)row["IdBlockType"], (Block.shotTypes)row["IdShotType"], (Block.filterType)row["IdFilterType"], (int)row["Number"], (int)row["Frames"], (int)row["IdExpression"], (int)row["IdAnimation"], (int?)row["IdProp"], this);
 						mBlocks.Add(block);
 					}
-					mBlocks.Sort();
+					assingFrames();
+
 					foreach(Block b in mBlocks)
 						b.loadResource();
 				}
@@ -409,7 +412,12 @@ namespace TVR {
 					mBlocks.Add(block);
 					if(block.Number < mBlocks.Count - 1) {
 						renumberBlocks(block, -1, block.Number);
-						mBlocks.Sort();
+						assingFrames();
+					} else {
+						if(mBlocks.Count > 1)
+							block.StartFrame = mBlocks[mBlocks.Count - 2].StartFrame + mBlocks[mBlocks.Count - 2].Frames;
+						else
+							block.StartFrame = 0;
 					}
 				}
 			}
@@ -449,13 +457,13 @@ namespace TVR {
 					int frame = (int)(miliSeconds / Globals.MILISPERFRAME);
 					List<Block> blocksTemp = new List<Block>(mBlocksPerfomed);
 					foreach(Block block in blocksTemp) {
-						if(block.endAction(Character, frame, play, player) || !Blocks.Contains(block)) {
+						if(block.endAction(frame, play, player) || !Blocks.Contains(block)) {
 							mBlocksPerfomed.Remove(block); //TODO: Una sola instancia?
 						}
 					}
 
 					foreach(Block block in Blocks) {
-						if(block.performAction(Character, frame, play, player)) {
+						if(block.performAction(frame, play, player)) {
 							mBlocksPerfomed.Add(block);
 							//return; Una sola instancia?
 						}
@@ -468,8 +476,17 @@ namespace TVR {
 				//Una sola instancia?
 				List<Block> blocksTemp = new List<Block>(mBlocksPerfomed);
 				foreach(Block block in blocksTemp) {
-					if(block.Stop(Character, Play))
+					if(block.Stop(Play))
 						mBlocksPerfomed.Remove(block);
+				}
+			}
+
+			private void assingFrames() {
+				int Frames = 0;
+				mBlocks.Sort();
+				foreach(Block b in mBlocks) {
+					b.StartFrame = Frames;
+					Frames += b.Frames;
 				}
 			}
 
@@ -606,6 +623,8 @@ namespace TVR {
 						if(Change()) {
 							string idProp = mIdProp == null ? "NULL" : mIdProp.ToString();
 							db.ExecuteNonQuery("UPDATE Blocks SET IdBlockType = " + (int)mBlockType + ", IdShotType = " + (int)mShotType + ", IdFilterType = " + (int)mFilterType + ", Frames = " + mFrames + ", IdExpression = " + mIdExpression + ", IdAnimation = " + mIdAnimation + ", IdProp = " + idProp + " WHERE IdBlock = " + mIdBlock);
+							if(mOldFrames != mFrames)
+								mParent.assingFrames();
 							mOldBlockType = mBlockType;
 							mOldShotType = mShotType;
 							mOldFilterType = mFilterType;
@@ -647,7 +666,7 @@ namespace TVR {
 							throw new System.Exception("The new number must be between 0 and mParent.Blocks.Count.");
 						db.ExecuteNonQuery("UPDATE Blocks SET Number = " + newNumber + " WHERE IdBlock = " + mIdBlock);
 						mParent.renumberBlocks(this, mNumber, newNumber);
-						mParent.mBlocks.Sort();
+						mParent.assingFrames();
 						mNumber = newNumber;
 					}
 				}
@@ -1028,8 +1047,12 @@ namespace TVR {
 				#endregion
 
 				private int mPerformed;
+				internal int StartFrame;
+				private int EndFrame {
+					get { return StartFrame + Frames; }
+				}
 
-				public bool performAction(GameObject Character, int frame, bool play, bool player) {
+				public bool performAction(int frame, bool play, bool player) {
 					/*if(StartFrame <= frame && EndFrame > frame && mPerformed != frame && mPerformed != -2) {
 						switch(mType) {
 						case Types.Animation:
@@ -1070,7 +1093,7 @@ namespace TVR {
 					}*/
 					return false;
 				}
-				public virtual bool endAction(GameObject Character, int frame, bool play, bool player) {
+				public virtual bool endAction(int frame, bool play, bool player) {
 					/*if((StartFrame > frame || EndFrame <= frame) && mPerformed != -1) {
 						switch(mType) {
 						case Types.Animation:
@@ -1098,7 +1121,7 @@ namespace TVR {
 					}*/
 					return false;
 				}
-				public virtual bool Stop(GameObject Characsster, bool Play) {
+				public virtual bool Stop(bool Play) {
 					/*if(mPerformed != -1) {
 						switch(mType) {
 						case Types.Animation:
