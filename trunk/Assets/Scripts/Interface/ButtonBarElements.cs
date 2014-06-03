@@ -190,6 +190,8 @@ public class ButtonBarElements : ButtonBar
 			if(elementType==ElementTypes.chapters){
 				mGUIManager.CurrentCharacter=null;
 				mGUIManager.CurrentBackground=null;
+				mGUIManager.inputText.enable = false;
+				mGUIManager.inputText.Fade(0, Globals.ANIMATIONDURATION, true, false, 0);
 			}
 		}
 		mGUIManager.blur = false;

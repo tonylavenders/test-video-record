@@ -64,7 +64,7 @@ public class ButtonBar : MonoBehaviour
 				if(elementType==ElementTypes.chapters){
 					if(Data.selChapter!=null){
 						Data.selChapter.Save();
-						mGUIManager.inputText.Fade(1, Globals.ANIMATIONDURATION, true, true, -2);
+						mGUIManager.inputText.Fade(1, Globals.ANIMATIONDURATION, true, true, 0.25f);
 						mGUIManager.inputText.Text = Data.selChapter.Title;
 					}
 				}
