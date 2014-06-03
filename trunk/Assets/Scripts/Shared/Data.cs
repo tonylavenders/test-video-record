@@ -310,6 +310,8 @@ namespace TVR {
 				mOldIdMusic = idMusic;
 				mBlocks = new List<Block>();
 				mMusicPlaying = false;
+
+				MiliSeconds = -1;
 			}
 
 			public void Save() {
@@ -495,6 +497,14 @@ namespace TVR {
 				mMusicPlaying = false;
 				Camera.GetComponent<SceneCameraManager>().StopAudio();
 				mBlockPerformed.Stop();
+			}
+
+			public void Reset() {
+				/*if(mBlockPerformed != null)
+					mBlockPerformed.endAction(-1);*/
+				mBlockPerformed = null;
+				foreach(Block b in mBlocks)
+					b.Reset();
 			}
 
 			private void assingFrames() {
@@ -1106,8 +1116,8 @@ namespace TVR {
 					}
 					return ret;
 				}
-				public virtual bool endAction(int frame) {
-					if((StartFrame > frame || EndFrame <= frame) && mPerformed != -1) {
+				public bool endAction(int frame) {
+					if((StartFrame > frame || EndFrame <= frame) && mPerformed != (int)performStates.NotPerformed) {
 						//Camera
 						//Experssion
 						//Animation mParent.Character.GetComponent<DataManager>().StopAnimation();
@@ -1121,7 +1131,7 @@ namespace TVR {
 					}
 					return false;
 				}
-				public virtual bool Stop() {
+				public bool Stop() {
 					mPerformed = (int)performStates.PerformedStop;
 					//Camera
 					//Experssion
@@ -1129,6 +1139,9 @@ namespace TVR {
 					if(mBlockType == blockTypes.Voice)
 						mParent.Character.GetComponent<DataManager>().StopAudio();
 					return true;
+				}
+				public void Reset() {
+					mPerformed = (int)performStates.NotPerformed;
 				}
 			}
 		}
