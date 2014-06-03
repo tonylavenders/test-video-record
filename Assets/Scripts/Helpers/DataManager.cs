@@ -7,7 +7,6 @@ public class DataManager : MonoBehaviour
 {
 	private const float CROSSTIME = 0.2f;
 	Transform mMesh;
-	string currentAnim;
 	AudioSource audioSource;
 	List<activeAnim> mActivesAnims;
 
@@ -16,7 +15,6 @@ public class DataManager : MonoBehaviour
 	void Awake()
 	{
 		mMesh = transform.Find("mesh");
-		currentAnim = "";
 		mActivesAnims = new List<activeAnim>();
 		audioSource = gameObject.AddComponent<AudioSource>();
 		audioSource.loop = true;
@@ -119,9 +117,10 @@ public class DataManager : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void PlayAudio(AudioClip audioClip)
+	public void PlayAudio(AudioClip audioClip, float sec)
 	{
 		audioSource.clip = audioClip;
+		audioSource.time = sec;
 		audioSource.Play();
 	}
 

@@ -124,6 +124,7 @@ public class GUIManagerChapters : GUIManager
 		//Character
 		if(Data.selChapter.IdCharacter!=-1){
 			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
+			CurrentCharacter.AddComponent<DataManager>();
 			mCharactersButtonBar.SetCurrentButton(Data.selChapter.IdCharacter);
 		}else{
 			CurrentCharacter=null;
@@ -236,6 +237,7 @@ public class GUIManagerChapters : GUIManager
 			if(sender.sPrefab!=""){
 				Data.selChapter.IdCharacter = sender.ID;
 				CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
+				CurrentCharacter.AddComponent<DataManager>();
 			}else{
 				Debug.Log("El boton no tiene prefab asociado!");
 			}
