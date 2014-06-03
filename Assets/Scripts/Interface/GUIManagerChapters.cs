@@ -57,9 +57,9 @@ public class GUIManagerChapters : GUIManager
 
 		base.Start();
 
-		audio.loop = true;
-		audio.playOnAwake = false;
-		audio.clip = null;
+		mCamera.audio.loop = true;
+		mCamera.audio.playOnAwake = false;
+		mCamera.audio.clip = null;
 
 		SetCurrentChapterElements();
 	}
@@ -141,11 +141,11 @@ public class GUIManagerChapters : GUIManager
 		//Music
 		if(Data.selChapter.IdMusicNotNullable!=-1){
 			mMusicButtonBar.SetCurrentButton(Data.selChapter.IdMusicNotNullable);
-			audio.Stop();
-			audio.clip = ResourcesManager.LoadResource(ResourcesLibrary.getMusic(Data.selChapter.IdMusicNotNullable).ResourceName, "Chapter") as AudioClip;
+			mCamera.audio.Stop();
+			mCamera.audio.clip = ResourcesManager.LoadResource(ResourcesLibrary.getMusic(Data.selChapter.IdMusicNotNullable).ResourceName, "Chapter") as AudioClip;
 		}else{
 			mMusicButtonBar.SetCurrentButton(-1);
-			audio.clip = null;
+			mCamera.audio.clip = null;
 		}
 	}
 
@@ -179,12 +179,12 @@ public class GUIManagerChapters : GUIManager
 	{
 		if(sender.Checked){
 			mMusicButtonBar.Show(true);
-			if(audio.clip!=null){
-				audio.Play();
+			if(mCamera.audio.clip!=null){
+				mCamera.audio.Play();
 			}
 		}else{
 			mMusicButtonBar.Hide();
-			audio.Stop();
+			mCamera.audio.Stop();
 		}
 		Count(sender.Checked);
 	}
@@ -265,10 +265,10 @@ public class GUIManagerChapters : GUIManager
 		if(sender.Checked){
 			Data.selChapter.IdMusicNotNullable = sender.ID;
 			if(Data.selChapter.IdMusicNotNullable>0){
-				audio.clip = ResourcesManager.LoadResource(ResourcesLibrary.getMusic(Data.selChapter.IdMusicNotNullable).ResourceName, "Chapter") as AudioClip;
-				audio.Play();
+				mCamera.audio.clip = ResourcesManager.LoadResource(ResourcesLibrary.getMusic(Data.selChapter.IdMusicNotNullable).ResourceName, "Chapter") as AudioClip;
+				mCamera.audio.Play();
 			}else{
-				audio.clip=null;
+				mCamera.audio.clip=null;
 			}
 		}
 	}
