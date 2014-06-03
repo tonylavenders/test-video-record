@@ -303,6 +303,7 @@ namespace TVR {
 				mOldIdBackground = idBackground;
 				mOldIdMusic = idMusic;
 				mBlocks = new List<Block>();
+				mMusicPlaying = false;
 			}
 
 			public void Save() {
@@ -450,40 +451,44 @@ namespace TVR {
 						return 0;
 			}
 
+			private bool mMusicPlaying;
+
 			public void Frame(float miliSeconds, bool play) {
 				miliSeconds += 0.00001f;
 				if(MiliSeconds != miliSeconds) {
-					//TODO: Play music.
 					MiliSeconds = miliSeconds;
+
+					if(play && !mMusicPlaying) {
+						if(mIdMusic != null)
+							Camera.GetComponent<SceneCameraManager>().PlayAudio(IdMusicNotNullable, MiliSeconds);
+						mMusicPlaying = true;
+					}
+
 					int frame = (int)(miliSeconds / Globals.MILISPERFRAME);
-
-					/*List<Block> blocksTemp = new List<Block>(mBlocksPerfomed);
-					foreach(Block block in blocksTemp) {
-						if(block.endAction(frame, play, player) || !Blocks.Contains(block)) {
-							mBlocksPerfomed.Remove(block);
+					if(mBlockPerformed != null) {
+						if(mBlockPerformed.endAction(frame)) {
+							foreach(Block block in Blocks) {
+								if(block.performAction(frame, play)) {
+									mBlockPerformed = block;
+									break;
+								}
+							}
 						}
-					}*/
-
-					foreach(Block block in Blocks) {
-						if(block.performAction(frame, play)) {
-							if(mBlockPerformed != null)
-								mBlockPerformed.endAction(frame);
-							mBlockPerformed = block;
-							break;
-							//mBlocksPerfomed.Add(block);
+					} else {
+						foreach(Block block in Blocks) {
+							if(block.performAction(frame, play)) {
+								mBlockPerformed = block;
+								break;
+							}
 						}
 					}
 				}
 			}
 
 			public void Stop() {
-				//TODO: Stop music.
+				mMusicPlaying = false;
+				Camera.GetComponent<SceneCameraManager>().StopAudio();
 				mBlockPerformed.Stop();
-				/*List<Block> blocksTemp = new List<Block>(mBlocksPerfomed);
-				foreach(Block block in blocksTemp) {
-					if(block.Stop(Play))
-						mBlocksPerfomed.Remove(block);
-				}*/
 			}
 
 			private void assingFrames() {
@@ -517,10 +522,6 @@ namespace TVR {
 					Noise = 8,
 					Compression = 9,
 				}
-				/*Utils.AudioFilters filter = new TVR.Utils.AudioFilters();
-				float[] outSamples;
-				filter.Robot(samples, out outSamples);
-				samples = outSamples;*/
 
 				private Chapter mParent;
 				private int mIdBlock;
@@ -1052,12 +1053,13 @@ namespace TVR {
 				#endregion
 
 				private enum performStates {
+					//Positive frame performed.
 					NotPerformed = -1,
 					PerformedPlay = -2,
 					PerformedStop = -3,
 				}
 				private int mPerformed;
-				internal int StartFrame;
+				public int StartFrame;
 				private int EndFrame {
 					get { return StartFrame + Frames; }
 				}
