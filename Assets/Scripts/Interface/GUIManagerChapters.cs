@@ -231,6 +231,7 @@ public class GUIManagerChapters : GUIManager
 			Data.selChapter.loadBlocks();
 			HideAllButtonBars();
 			SetCurrentChapterElements();
+			SetDataGameObjects();
 		}
 	}
 

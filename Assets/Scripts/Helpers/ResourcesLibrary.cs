@@ -88,10 +88,10 @@ namespace TVR
 		{
 			Animations = new Folder(null);
 			
-			Animations.addResource(1, "idle", "");
-			Animations.addResource(2, "wave", "");
-			Animations.addResource(3, "talk", "");
-			Animations.addResource(4, "walk", "");
+			Animations.addResource(1, "idle", "idle");
+			Animations.addResource(2, "wave", "wave");
+			Animations.addResource(3, "talk", "talk");
+			Animations.addResource(4, "walk", "walk");
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
