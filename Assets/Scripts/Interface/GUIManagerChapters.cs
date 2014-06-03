@@ -147,6 +147,10 @@ public class GUIManagerChapters : GUIManager
 			mMusicButtonBar.SetCurrentButton(-1);
 			mCamera.audio.clip = null;
 		}
+
+		if(Data.selChapter.Blocks.Count>0){
+			PlayButton.Enable=true;
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,7 +219,7 @@ public class GUIManagerChapters : GUIManager
 		if(Data.selChapter!=null){
 			Data.selChapter.Save();
 		}
-		Debug.Log("play chapters");
+		SceneMgr.Get.SwitchTo("Player");
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -224,6 +228,7 @@ public class GUIManagerChapters : GUIManager
 	{
 		if(sender.Checked){
 			Data.selChapter = sender.iObj as Data.Chapter;
+			Data.selChapter.loadBlocks();
 			HideAllButtonBars();
 			SetCurrentChapterElements();
 		}

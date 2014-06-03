@@ -63,6 +63,9 @@ public class GUIManager : MonoBehaviour
 
 	protected virtual void Start()
 	{
+		mCamera = GameObject.Find("CameraMain").transform;
+		mCamera.gameObject.AddComponent<SceneCameraManager>();
+
 		QueueManager.pauseOnButtonDown = true;
 		SetGUICamera();
 
@@ -78,9 +81,6 @@ public class GUIManager : MonoBehaviour
 		RightButtonBar.Show(true);
 
 		InitButtons();
-
-		mCamera = GameObject.Find("CameraMain").transform;
-		mCamera.gameObject.AddComponent<SceneCameraManager>();
 
 		SetDataGameObjects();
 	}
