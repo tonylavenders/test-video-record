@@ -218,6 +218,7 @@ public class GUIManagerChapters : GUIManager
 	{
 		if(Data.selChapter!=null){
 			Data.selChapter.Save();
+			Data.selChapter.Reset();
 		}
 		SceneMgr.Get.SwitchTo("Player");
 	}
@@ -232,6 +233,7 @@ public class GUIManagerChapters : GUIManager
 			HideAllButtonBars();
 			SetCurrentChapterElements();
 			SetDataGameObjects();
+			Data.selChapter.Frame(0,false);
 		}
 	}
 

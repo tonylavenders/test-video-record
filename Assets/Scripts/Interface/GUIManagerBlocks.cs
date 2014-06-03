@@ -19,6 +19,9 @@ public class GUIManagerBlocks : GUIManager
 	public BasicButton mIncreaseTimeButton;
 	public BasicButton mSaveTimeButton;
 
+	bool mPlay;
+	float mTime;
+
 	public GUIText mTextTime;
 	public GUIText mTextTimeShadow;
 
@@ -54,6 +57,9 @@ public class GUIManagerBlocks : GUIManager
 
 	protected override void Start()
 	{
+		mPlay=false;
+		mTime=0;
+
 		base.Start();
 
 		mTextTime.fontSize = Mathf.RoundToInt(ButtonProperties.buttonSize);
@@ -62,6 +68,23 @@ public class GUIManagerBlocks : GUIManager
 		float y_pos = (ButtonProperties.buttonMargin+ButtonProperties.buttonSize/2.0f)/Screen.height;
 		mTextTime.transform.position = new Vector3(mTextTime.transform.position.x, y_pos, mTextTime.transform.position.z);
 		mTextTimeShadow.transform.position = new Vector3(mTextTimeShadow.transform.position.x, y_pos, mTextTimeShadow.transform.position.z);
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	protected override void Update()
+	{
+		base.Update();
+
+		if(mPlay){
+			mTime += Time.deltaTime;
+			if(mTime>Data.selChapter.selBlock.EndTime){
+				Data.selChapter.Stop();
+				mPlay=false;
+			}else{
+				Data.selChapter.Frame(mTime,true);
+			}
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -255,6 +278,7 @@ public class GUIManagerBlocks : GUIManager
 			mAnimationsButtonBar.SetCurrentButton(Data.selChapter.selBlock.IdAnimation);
 			if(CurrentCharacter!=null){
 				CurrentCharacter.transform.Find("mesh").animation.Stop();
+				Data.selChapter.Frame(Data.selChapter.selBlock.StartTime,false);
 			}
 		}else{
 			mAnimationsButtonBar.SetCurrentButton(1);
@@ -487,6 +511,15 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
 			Data.selChapter.selBlock.Save();
+			Data.selChapter.Reset();
+
+			if(mPlay){
+				Data.selChapter.Stop();
+				mPlay=false;
+			}else{
+				mTime=Data.selChapter.selBlock.StartTime;
+				mPlay=true;
+			}
 		}
 	}
 
