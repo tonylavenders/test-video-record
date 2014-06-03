@@ -11,9 +11,11 @@ public class Player_Main : GUIManager
 
 	protected override void Start()
 	{
+		Data.selChapter.Frame(0,false);
 		SetGUICamera();
 
 		mPlay=true;
+		mTime=0;
 		LoadChapterElements();
 
 		float pos_x = Screen.width/2.0f;
