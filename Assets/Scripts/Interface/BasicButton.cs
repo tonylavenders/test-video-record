@@ -17,7 +17,8 @@ public enum ButtonType{
 	EDIT_TIME_VOICE_FX_MONSTER, EDIT_TIME_VOICE_FX_SMURF, EDIT_TIME_VOICE_FX_ECHO, EDIT_TIME_VOICE_FX_OFF,
 	EDIT_TIME_VOICE_FX_MONSTER_PRO, EDIT_TIME_VOICE_FX_SMURF_PRO, EDIT_TIME_VOICE_FX_ROBOT, EDIT_TIME_VOICE_FX_DIST,
 	EDIT_TIME_VOICE_FX_NOISE, EDIT_TIME_VOICE_FX_COMPRESS,
-	CAM_PARAM
+	CAM_PARAM,
+	PLAYER_PLAY, PLAYER_EDIT
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -236,7 +237,7 @@ public class BasicButton : MonoBehaviour
 		//Check if user is touching the button
 		if(bEnabled && state == States.idle && mSharedTime != Time.time) {
 			RaycastHit hit;
-			Ray ray = Camera.main.ScreenPointToRay(InputHelp.mousePositionYDown);
+			Ray ray = mGUIManager.camera.ScreenPointToRay(InputHelp.mousePositionYDown);
 
 			if(InputHelp.GetMouseButtonDown(0)) {
 				if(collider.Raycast(ray, out hit, 1000.0f)) {
@@ -430,6 +431,15 @@ public class BasicButton : MonoBehaviour
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_OFF) {
 			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+		}
+
+		//PLAYER ////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		else if(buttonType == ButtonType.PLAYER_PLAY) {
+			checkedCallback = ((Player_Main)mGUIManager).OnButtonPlayerPlayChecked;
+		}
+		else if(buttonType == ButtonType.PLAYER_EDIT) {
+			clickedCallback = ((Player_Main)mGUIManager).OnButtonPlayerEditClicked;
 		}
 	}
 	
