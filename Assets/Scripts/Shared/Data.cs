@@ -496,7 +496,8 @@ namespace TVR {
 			public void Stop() {
 				mMusicPlaying = false;
 				Camera.GetComponent<SceneCameraManager>().StopAudio();
-				mBlockPerformed.Stop();
+				if(mBlockPerformed != null)
+					mBlockPerformed.Stop();
 			}
 
 			public void Reset() {
