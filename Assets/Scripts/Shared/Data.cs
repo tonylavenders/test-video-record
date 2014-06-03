@@ -208,7 +208,8 @@ namespace TVR {
 
 	public class Chapter : System.IComparable<Chapter>, iObject {
 			private List<Block> mBlocks;
-			private List<Block> mBlocksPerfomed;
+			//private List<Block> mBlocksPerfomed;
+			private Block mBlockPerformed;
 			private int mIdChapter;
 			private int mNumber;
 			private string mTitle;
@@ -449,36 +450,40 @@ namespace TVR {
 						return 0;
 			}
 
-			public void Frame(float miliSeconds, bool play, bool omitCameraRot=false, bool player = false) {
+			public void Frame(float miliSeconds, bool play) {
 				miliSeconds += 0.00001f;
 				if(MiliSeconds != miliSeconds) {
 					//TODO: Play music.
 					MiliSeconds = miliSeconds;
 					int frame = (int)(miliSeconds / Globals.MILISPERFRAME);
-					List<Block> blocksTemp = new List<Block>(mBlocksPerfomed);
+
+					/*List<Block> blocksTemp = new List<Block>(mBlocksPerfomed);
 					foreach(Block block in blocksTemp) {
 						if(block.endAction(frame, play, player) || !Blocks.Contains(block)) {
-							mBlocksPerfomed.Remove(block); //TODO: Una sola instancia?
+							mBlocksPerfomed.Remove(block);
 						}
-					}
+					}*/
 
 					foreach(Block block in Blocks) {
-						if(block.performAction(frame, play, player)) {
-							mBlocksPerfomed.Add(block);
-							//return; Una sola instancia?
+						if(block.performAction(frame, play)) {
+							if(mBlockPerformed != null)
+								mBlockPerformed.endAction(frame);
+							mBlockPerformed = block;
+							break;
+							//mBlocksPerfomed.Add(block);
 						}
 					}
 				}
 			}
 
-			public void Stop(float miliSeconds, bool Play = false) {
+			public void Stop() {
 				//TODO: Stop music.
-				//Una sola instancia?
-				List<Block> blocksTemp = new List<Block>(mBlocksPerfomed);
+				mBlockPerformed.Stop();
+				/*List<Block> blocksTemp = new List<Block>(mBlocksPerfomed);
 				foreach(Block block in blocksTemp) {
 					if(block.Stop(Play))
 						mBlocksPerfomed.Remove(block);
-				}
+				}*/
 			}
 
 			private void assingFrames() {
@@ -609,7 +614,7 @@ namespace TVR {
 					mOldIdAnimation = idAnimation;
 					mOldIdProp = idProp;
 
-					mPerformed = -1;
+					mPerformed = (int)performStates.NotPerformed;
 				}
 
 				public void Save() {
@@ -1046,96 +1051,69 @@ namespace TVR {
 				}
 				#endregion
 
+				private enum performStates {
+					NotPerformed = -1,
+					PerformedPlay = -2,
+					PerformedStop = -3,
+				}
 				private int mPerformed;
 				internal int StartFrame;
 				private int EndFrame {
 					get { return StartFrame + Frames; }
 				}
 
-				public bool performAction(int frame, bool play, bool player) {
-					/*if(StartFrame <= frame && EndFrame > frame && mPerformed != frame && mPerformed != -2) {
-						switch(mType) {
-						case Types.Animation:
-							bool ret = mPerformed == -1;
-							if(mPerformed != -2) {
-								Character.GetComponent<DataManager>().PlayAnimation(BRBRec.ResourcesLibrary.getAnimation(mParent.IdResource, IdResource).ResourceName, StartFrame, frame * Globals.MILISPERFRAME, play, Control);
-								if(play)
-									mPerformed = -2;
-								else
-									mPerformed = frame;
-							}
-							return ret;
-						case Types.Expression:
-							Character.GetComponent<DataManager>().SetExpression(BRBRec.ResourcesLibrary.getExpression(mParent.IdResource, IdResource).ResourceName, false);
-							mPerformed = -2;
-							return true;
-						case Types.Voice:
-							bool ret1 = mPerformed == -1;
-							if(play) {
-								float secAD1 = (frame - StartFrame) * Globals.MILISPERFRAME;
-								Character.GetComponent<DataManager>().PlayAudio(IdResource, mType, secAD1, controlValue);
-								Character.GetComponent<DataManager>().startLipSync();
-								mPerformed = -2;
-								return ret1;
-							} else {
-								AudioClip clip;
-								if(IdResource > 0)
-									clip = ResourcesManager.LoadResource(ResourcesLibrary.getVoice(IdResource).ResourceName, "Scene") as AudioClip;
-								else
-									clip = Data.dicRecordedSounds[IdResource].Sound;
-								Character.GetComponent<DataManager>().lipSync(clip, frame, StartFrame, controlValue);
-								mPerformed = frame;
-								return ret1;
-							}
-							break;
+				public bool performAction(int frame, bool play) {
+					bool ret = false;
+					if(StartFrame <= frame && EndFrame > frame && mPerformed != (int)performStates.PerformedPlay) {
+						if(mPerformed == (int)performStates.NotPerformed) {
+							mParent.Camera.GetComponent<SceneCameraManager>().SetParams((int)mShotType);
+							mParent.Character.GetComponent<DataManager>().SetExpression(ResourcesLibrary.getExpression(mIdExpression).ResourceName);
+							ret = true;
 						}
-					}*/
-					return false;
+						if(mPerformed != frame) {
+							mParent.Character.GetComponent<DataManager>().PlayAnimation(ResourcesLibrary.getAnimation(mIdAnimation).ResourceName, StartFrame, frame * Globals.MILISPERFRAME, play);
+							if(mBlockType == blockTypes.Voice) {
+								if(play) {
+									float sec = (frame - StartFrame) * Globals.MILISPERFRAME;
+									mParent.Character.GetComponent<DataManager>().PlayAudio(Sound, sec);
+									//TODO: lipSync
+									//Character.GetComponent<DataManager>().startLipSync();
+								} else {
+									//TODO: lipSync
+									//Character.GetComponent<DataManager>().lipSync(Sound, frame, StartFrame);
+									mPerformed = frame;
+								}
+							}
+						}
+						if(play)
+							mPerformed = (int)performStates.PerformedPlay;
+						else
+							mPerformed = frame;
+					}
+					return ret;
 				}
-				public virtual bool endAction(int frame, bool play, bool player) {
-					/*if((StartFrame > frame || EndFrame <= frame) && mPerformed != -1) {
-						switch(mType) {
-						case Types.Animation:
-							int lastFrame;
-							if(EndFrame == frame)
-								lastFrame = EndFrame;
-							else
-								lastFrame = mParent.lastFrame(mType, frame);
-							Character.GetComponent<DataManager>().IdleAnimation(lastFrame, frame * Globals.MILISPERFRAME, play);
-							break;
-						case Types.Expression:
-							if(frame != Data.selStage.mFrames || (frame == Data.selStage.mFrames && EndFrame != Data.selStage.mFrames))
-								Character.GetComponent<DataManager>().SetExpression("exp_base", false);
-							else
-								return false;
-							break;
-						case Types.Voice:
-							if(mPerformed == -2)
-								Character.GetComponent<DataManager>().StopAudio(mType);
-							Character.GetComponent<DataManager>().stopLipSync();
-							break;
+				public virtual bool endAction(int frame) {
+					if((StartFrame > frame || EndFrame <= frame) && mPerformed != -1) {
+						//Camera
+						//Experssion
+						//Animation
+						if(mPerformed == (int)performStates.PerformedPlay) {
+							mParent.Character.GetComponent<DataManager>().StopAudio();
+							//TODO: lipSync
+							//mParent.Character.GetComponent<DataManager>().stopLipSync();
 						}
 						mPerformed = -1;
 						return true;
-					}*/
+					}
 					return false;
 				}
-				public virtual bool Stop(bool Play) {
-					/*if(mPerformed != -1) {
-						switch(mType) {
-						case Types.Animation:
-							Character.GetComponent<DataManager>().StopAnimation();
-							mPerformed = 1;
-							return false;
-						case Types.Voice:
-							Character.GetComponent<DataManager>().StopAudio(mType);
-							mPerformed = -3;
-							return false;
-						case Types.Expression:
-							return false;
-						}
-						mPerformed = -1;
-					}*/
+				public virtual bool Stop() {
+					mPerformed = (int)performStates.PerformedStop;
+					//Camera
+					//Experssion
+					mParent.Character.GetComponent<DataManager>().StopAnimation();
+					if(mBlockType == blockTypes.Voice)
+						mParent.Character.GetComponent<DataManager>().StopAudio();
 					return true;
 				}
 			}
