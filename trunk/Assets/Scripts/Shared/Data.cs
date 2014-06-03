@@ -1072,6 +1072,9 @@ namespace TVR {
 				public float EndTime {
 					get { return EndFrame * Globals.MILISPERFRAME; }
 				}
+				public float StartTime {
+					get { return StartFrame * Globals.MILISPERFRAME; }
+				}
 
 				public bool performAction(int frame, bool play) {
 					bool ret = false;
@@ -1107,7 +1110,7 @@ namespace TVR {
 					if((StartFrame > frame || EndFrame <= frame) && mPerformed != -1) {
 						//Camera
 						//Experssion
-						//Animation
+						//Animation mParent.Character.GetComponent<DataManager>().StopAnimation();
 						if(mPerformed == (int)performStates.PerformedPlay) {
 							mParent.Character.GetComponent<DataManager>().StopAudio();
 							//TODO: lipSync
