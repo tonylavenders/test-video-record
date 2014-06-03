@@ -286,7 +286,7 @@ namespace TVR {
 				get { return totalFrames * Globals.MILISPERFRAME; }
 			}
 			public float totalFrames {
-				get { return mBlocks[mBlocks.Count - 1].StartFrame + mBlocks[mBlocks.Count - 1].Frames; }
+				get { return mBlocks[mBlocks.Count - 1].EndFrame; }
 			}
 
 			private float MiliSeconds;
@@ -1066,8 +1066,11 @@ namespace TVR {
 				}
 				private int mPerformed;
 				public int StartFrame;
-				private int EndFrame {
+				public int EndFrame {
 					get { return StartFrame + Frames; }
+				}
+				public float EndTime {
+					get { return EndFrame * Globals.MILISPERFRAME; }
 				}
 
 				public bool performAction(int frame, bool play) {
