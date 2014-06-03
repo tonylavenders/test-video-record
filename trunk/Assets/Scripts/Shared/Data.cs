@@ -282,6 +282,12 @@ namespace TVR {
 				get { return mSelBlock; }
 				set { mSelBlock = value; }
 			}
+			public float totalTime {
+				get { return totalFrames * Globals.MILISPERFRAME; }
+			}
+			public float totalFrames {
+				get { return mBlocks[mBlocks.Count - 1].StartFrame + mBlocks[mBlocks.Count - 1].Frames; }
+			}
 
 			private float MiliSeconds;
 			public GameObject Character;
