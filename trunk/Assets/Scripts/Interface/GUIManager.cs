@@ -68,6 +68,7 @@ public class GUIManager : MonoBehaviour
 
 		if(Data.selChapter!=null && Data.selChapter.IdCharacter!=-1){
 			CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
+			CurrentCharacter.AddComponent<DataManager>();
 		}
 		if(Data.selChapter!=null && Data.selChapter.IdBackground!=-1){
 			CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
@@ -79,6 +80,7 @@ public class GUIManager : MonoBehaviour
 		InitButtons();
 
 		mCamera = GameObject.Find("CameraMain").transform;
+		mCamera.gameObject.AddComponent<SceneCameraManager>();
 
 		SetDataGameObjects();
 	}
