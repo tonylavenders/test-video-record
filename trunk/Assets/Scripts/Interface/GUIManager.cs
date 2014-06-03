@@ -162,7 +162,7 @@ public class GUIManager : MonoBehaviour
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void SetGUICamera()
+	protected void SetGUICamera()
 	{
 		transform.position = new Vector3(Screen.width/2.0f, Screen.height/2.0f, cameraZDepth);
 		camera.orthographicSize = Screen.height/2.0f;

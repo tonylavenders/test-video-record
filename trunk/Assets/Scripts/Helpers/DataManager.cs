@@ -106,8 +106,10 @@ public class DataManager : MonoBehaviour
 
 		foreach(Component child in children){
 			if(child.name.StartsWith("exp_")){
-				if(child.name == idExpr){
+				if(child.name == "exp_"+idExpr){
 					child.gameObject.SetActive(true);
+				}else if(child.name == "exp_"+idExpr+"_m"){
+						child.gameObject.SetActive(true);
 				}else{
 					child.gameObject.SetActive(false);
 				}

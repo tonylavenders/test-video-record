@@ -100,10 +100,10 @@ namespace TVR
 		{
 			Expressions = new Folder(null);
 
-			Expressions.addResource(1, "base", "");
-			Expressions.addResource(2, "bostezo", "");
-			Expressions.addResource(3, "indignado_c", "");
-			Expressions.addResource(4, "ouch", "");
+			Expressions.addResource(1, "base", "base");
+			Expressions.addResource(2, "bostezo", "bostezo");
+			Expressions.addResource(3, "indignado_c", "indignado_c");
+			Expressions.addResource(4, "ouch", "ouch");
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
