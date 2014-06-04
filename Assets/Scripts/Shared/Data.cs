@@ -505,6 +505,7 @@ namespace TVR {
 					mBlockPerformed.endAction(-1);*/
 				MiliSeconds = -1;
 				mBlockPerformed = null;
+				Character.GetComponent<DataManager>().stopLipSync();
 				foreach(Block b in mBlocks)
 					b.Reset();
 			}
@@ -649,6 +650,13 @@ namespace TVR {
 							db.ExecuteNonQuery("UPDATE Blocks SET IdBlockType = " + (int)mBlockType + ", IdShotType = " + (int)mShotType + ", IdFilterType = " + (int)mFilterType + ", Frames = " + mFrames + ", IdExpression = " + mIdExpression + ", IdAnimation = " + mIdAnimation + ", IdProp = " + idProp + " WHERE IdBlock = " + mIdBlock);
 							if(mOldFrames != mFrames)
 								mParent.assingFrames();
+							if(mOldBlockType != mBlockType) {
+								if(mBlockType==blockTypes.Voice)
+									mParent.Character.GetComponent<DataManager>().startLipSync();
+								else
+									mParent.Character.GetComponent<DataManager>().stopLipSync();
+								mParent.Character.GetComponent<DataManager>().SetExpression(ResourcesLibrary.getExpression(mIdExpression).ResourceName);
+							}
 							mOldBlockType = mBlockType;
 							mOldShotType = mShotType;
 							mOldFilterType = mFilterType;
@@ -1102,11 +1110,9 @@ namespace TVR {
 								if(play) {
 									float sec = (frame - StartFrame) * Globals.MILISPERFRAME;
 									mParent.Character.GetComponent<DataManager>().PlayAudio(Sound, sec);
-									//TODO: lipSync
-									//Character.GetComponent<DataManager>().startLipSync();
+									mParent.Character.GetComponent<DataManager>().startLipSync();
 								} else {
-									//TODO: lipSync
-									//Character.GetComponent<DataManager>().lipSync(Sound, frame, StartFrame);
+									mParent.Character.GetComponent<DataManager>().lipSync(Sound, frame, StartFrame);
 									mPerformed = frame;
 								}
 							}
@@ -1123,10 +1129,10 @@ namespace TVR {
 						//Camera
 						//Experssion
 						//Animation mParent.Character.GetComponent<DataManager>().StopAnimation();
-						if(mPerformed == (int)performStates.PerformedPlay) {
-							mParent.Character.GetComponent<DataManager>().StopAudio();
-							//TODO: lipSync
-							//mParent.Character.GetComponent<DataManager>().stopLipSync();
+						if(mBlockType==blockTypes.Voice) {
+							if(mPerformed == (int)performStates.PerformedPlay)
+								mParent.Character.GetComponent<DataManager>().StopAudio();
+							mParent.Character.GetComponent<DataManager>().stopLipSync();
 						}
 						mPerformed = -1;
 						return true;
