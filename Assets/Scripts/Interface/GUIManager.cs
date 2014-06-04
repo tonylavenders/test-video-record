@@ -76,11 +76,11 @@ public class GUIManager : MonoBehaviour
 		if(Data.selChapter!=null && Data.selChapter.IdBackground!=-1){
 			CurrentBackground = ResourcesLibrary.getBackground(Data.selChapter.IdBackground).getInstance("ChapterMgr");
 		}
+		SetDataGameObjects();
+
 		if(Data.selChapter!=null){
 			Data.selChapter.Reset();
 		}
-		SetDataGameObjects();
-
 		LeftButtonBar.Show(false);
 		RightButtonBar.Show(true);
 
