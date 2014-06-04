@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //http://trac.ffmpeg.org/wiki/EncodeforYouTube
 //http://stackoverflow.com/questions/13294919/can-you-stream-images-to-ffmpeg-to-construct-a-video-instead-of-saving-them-t
 //http://stackoverflow.com/questions/15280722/android-camera-capture-using-ffmpeg
@@ -41,7 +41,7 @@ public class Export_Main : GUIManager
 
 	//GameObject sceneCamera;
 	//Camera mainCam;
-	RenderTexture renderTex;
+	public RenderTexture renderTex;
 	Texture2D myTexture2D;
 	int mCountCurrentFrame = 0;
 	int mCountTotalFrames = 0;
@@ -57,8 +57,11 @@ public class Export_Main : GUIManager
 	}
 	States state=States.INIT;
 
-	const int video_w = 1280;
-	const int video_h = 720;
+	//const int video_w = 1280;
+	//const int video_h = 720;
+
+	int video_w = Screen.width;
+	int video_h = Screen.height;
 
 	string mCurrentPath;
 	Rect rectGUI;
@@ -291,12 +294,10 @@ public class Export_Main : GUIManager
 		//LetterboxManager.Init();
 		//rectGUI = LetterboxManager.GetRectPercent();
 
-		SetGUICamera();
-		LoadChapterElements();
-
+		//SetGUICamera();
 		OnFinishedFadeOut();
-
-		SetButtons();
+		LoadChapterElements();
+		//SetButtons();
 
 		//SceneMgr.Get().OnFinished = OnFinishedFadeOut;
 		//mCurrentScene = 0;
@@ -355,6 +356,7 @@ public class Export_Main : GUIManager
 	{
 		mCamera = GameObject.Find("CameraMain").transform;
 		mCamera.gameObject.AddComponent<SceneCameraManager>();
+
 		mCamera.camera.enabled = false;
 		mCamera.camera.targetTexture = renderTex;
 		Data.selChapter.Camera = mCamera.gameObject;

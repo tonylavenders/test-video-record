@@ -24,7 +24,9 @@ public class GUIManager : MonoBehaviour
 		}set{
 			Destroy(mCurrentCharacter);
 			mCurrentCharacter=value;
-			EditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
+			if(EditButton!=null){
+				EditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
+			}
 		}
 	}
 	GameObject mCurrentBackground;
@@ -34,7 +36,9 @@ public class GUIManager : MonoBehaviour
 		}set{
 			Destroy(mCurrentBackground);
 			mCurrentBackground=value;
-			EditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
+			if(EditButton!=null){
+				EditButton.Enable=(mCurrentCharacter!=null && mCurrentBackground!=null);
+			}
 		}
 	}
 
