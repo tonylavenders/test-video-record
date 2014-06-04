@@ -211,8 +211,6 @@ public class DataManager : MonoBehaviour
 		}
 		midSamples /= samples.Length;
 
-		Debug.Log(midSamples);
-
 		Component[] children = GetComponentsInChildren<Component>(true);
 		foreach(Component child in children) {
 			if((child.name.StartsWith("exp_") && child.name.EndsWith("_m")) || child.name.StartsWith("lipsync_"))
