@@ -76,11 +76,13 @@ public class GUIManagerBlocks : GUIManager
 	{
 		base.Update();
 
+		if(Data.selChapter.selBlock==null)
+			return;
+
 		if(mPlay){
 			mTime += Time.deltaTime;
 			if(mTime>Data.selChapter.selBlock.EndTime){
-				Data.selChapter.Stop();
-				mPlay=false;
+				StopPlayBlock();
 			}else{
 				Data.selChapter.Frame(mTime,true);
 			}
@@ -513,16 +515,36 @@ public class GUIManagerBlocks : GUIManager
 		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
 			Data.selChapter.selBlock.Save();
 			SetDataGameObjects();
-			Data.selChapter.Reset();
 
+			//Stop and rewind
 			if(mPlay){
-				Data.selChapter.Stop();
-				mPlay=false;
-			}else{
-				mTime=Data.selChapter.selBlock.StartTime;
-				mPlay=true;
+				StopPlayBlock();
+			}
+			//Start playing from the beginning
+			else{
+				StartPlayBlock();
 			}
 		}
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	void StartPlayBlock()
+	{
+		mTime=Data.selChapter.selBlock.StartTime;
+		Data.selChapter.Reset();
+		Data.selChapter.Frame(Data.selChapter.selBlock.StartTime,true);
+		mPlay=true;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	void StopPlayBlock()
+	{
+		Data.selChapter.Stop();
+		Data.selChapter.Reset();
+		Data.selChapter.Frame(Data.selChapter.selBlock.StartTime,false);
+		mPlay=false;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
