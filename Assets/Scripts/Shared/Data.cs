@@ -503,6 +503,7 @@ namespace TVR {
 			public void Reset() {
 				/*if(mBlockPerformed != null)
 					mBlockPerformed.endAction(-1);*/
+				MiliSeconds = -1;
 				mBlockPerformed = null;
 				foreach(Block b in mBlocks)
 					b.Reset();
