@@ -285,7 +285,7 @@ namespace TVR {
 			public float totalTime {
 				get { return totalFrames * Globals.MILISPERFRAME; }
 			}
-			public float totalFrames {
+			public int totalFrames {
 				get { return mBlocks[mBlocks.Count - 1].EndFrame; }
 			}
 
@@ -509,6 +509,244 @@ namespace TVR {
 				foreach(Block b in mBlocks)
 					b.Reset();
 			}
+
+			public void saveAudioClips(string path, System.IO.StreamWriter log, Export_Main export) {
+				byte[] emptySamplesBytes = null;
+				if(totalFrames * Globals.MILISPERFRAME < 15)
+					emptySamplesBytes = new byte[totalFrames * Globals.NUMCHANNELS * Globals.OUTPUTRATEPERFRAME * sizeof(short)];
+				saveAudioClips(totalFrames * Globals.OUTPUTRATEPERFRAME, emptySamplesBytes, path, log, export);
+			}
+			internal void saveAudioClips(int samples, byte[] emptySamplesBytes, string path, System.IO.StreamWriter log, Export_Main export) {
+				QueueManager.add(new QueueManager.QueueManagerAction("Export", () => log.WriteLine("Exportando audio del episodio " + mNumber + "."), "Stage.Log(Exportando)"), QueueManager.Priorities.High);
+				System.Threading.Thread t = new System.Threading.Thread(() => saveAudioClips2(samples, emptySamplesBytes, path, log, export));
+				QueueManager.add(new QueueManager.QueueManagerAction("Export", t.Start, "StageObject.saveAudioClips2"), QueueManager.Priorities.High);
+			}
+
+			//Se ejecuta en otro hilo.
+			private void saveAudioClips2(int samples, byte[] emptySamplesBytes, string path, System.IO.StreamWriter log, Export_Main export) {
+				export.Processing = true;
+				string fileNameBase = "Voice";
+				log.WriteLine("");
+				log.WriteLine("Exportando audio de " + fileNameBase + ".");
+				bool somethingExported = false;
+				foreach(Block b in mBlocks) {
+					if(b.BlockType == Block.blockTypes.Voice) {
+						somethingExported = true;
+						break;
+					}
+				}
+				if(somethingExported && !export.Abort) {
+					somethingExported = true;
+					saveAudioClips(samples, fileNameBase + ".wav", emptySamplesBytes, log, export);
+				}
+				if(!somethingExported && !export.Abort)
+					log.WriteLine("El objeto " + fileNameBase + " no emite audio.");
+				if(IdMusicNotNullable != -1)
+					saveMusic(samples, "music.wav", emptySamplesBytes, log, export);
+				else
+					log.WriteLine("El episodio no emite audio.");
+				export.Processing = false;
+			}
+
+			//Se ejecuta en otro hilo, el hilo de saveAudioClips2.
+			private void saveAudioClips(int samples, string fileName, byte[] emptySamplesBytes, System.IO.StreamWriter log, Export_Main export) {
+				createWAV(samples, fileName, emptySamplesBytes, log, export);
+
+				//TODO: Music
+				/*if(block.IdResource > 0)
+					Resources.UnloadAsset(clip);*/
+
+				if(!export.Abort) {
+					foreach(Block b in  mBlocks) {
+						if(export.Abort)
+							break;
+						if(b.BlockType == Block.blockTypes.Voice) {
+							Block blk = b;
+							QueueManager.add(new QueueManager.QueueManagerAction("Export", () => saveAudioClip(fileName, blk, log, export), "StageObject.saveAudioClip"), QueueManager.Priorities.Highest);
+						}
+					}
+				}
+			}
+			//Se ejecuta en otro hilo, el hilo de saveAudioClips2.
+			private void saveMusic(int samples, string fileName, byte[] emptySamplesBytes, System.IO.StreamWriter log, Export_Main export) {
+				createWAV(samples, fileName, emptySamplesBytes, log, export);
+				if(!export.Abort)
+					QueueManager.add(new QueueManager.QueueManagerAction("Export", () => saveMusic(fileName, log, export), "StageObject.saveAudioClip"), QueueManager.Priorities.Highest);
+			}
+
+			private void createWAV(int samples, string fileName, byte[] emptySamplesBytes, System.IO.StreamWriter log, Export_Main export) {
+				const int maxSamples = 15 * Globals.OUTPUTRATEPERSECOND * Globals.NUMCHANNELS;
+				if(!System.IO.File.Exists(fileName)) {
+					log.WriteLine("Generado archivo " + fileName + ".");
+					using(System.IO.BinaryWriter writer = new System.IO.BinaryWriter(System.IO.File.Open(fileName, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write))) {
+						writer.Write("RIFF".ToCharArray());
+						writer.Write((samples * Globals.NUMCHANNELS * 2) + Globals.WAVHEADERSIZE - 8);
+						writer.Write("WAVE".ToCharArray());
+						writer.Write("fmt ".ToCharArray());
+						writer.Write(16);
+						writer.Write((short)1);
+						writer.Write(Globals.NUMCHANNELS);
+						writer.Write(Globals.OUTPUTRATEPERSECOND);
+						writer.Write(Globals.OUTPUTRATEPERSECOND * 2 * Globals.NUMCHANNELS);
+						writer.Write((short)(2 * Globals.NUMCHANNELS));
+						writer.Write((short)16);
+						writer.Write("data".ToCharArray());
+						writer.Write(samples * Globals.NUMCHANNELS * 2);
+						if(emptySamplesBytes != null)
+							writer.Write(emptySamplesBytes);
+						else {
+							for(int i = 0; i < samples * Globals.NUMCHANNELS; ++i) {
+								if(i % maxSamples == 0 && i > 0) {
+									if(export.Abort)
+										break;
+									else
+										writer.Flush();
+								}
+								writer.Write((short)0);
+							}
+						}
+						writer.Close();
+					}
+				}
+			}
+
+			private void saveAudioClip(string fileName, Block block, System.IO.StreamWriter log, Export_Main export) {
+				AudioClip clip = null;
+				string soundName = "";
+				clip = block.Sound;
+
+				float duration = Mathf.Min(clip.length, (block.EndFrame - block.StartFrame) * Globals.MILISPERFRAME);
+				if(duration < 15) {
+					float[] clipSamples = new float[Mathf.RoundToInt(duration * clip.channels * Globals.OUTPUTRATEPERSECOND)];
+					clip.GetData(clipSamples, 0);
+					int clipChannels = clip.channels;
+					System.Threading.Thread t = new System.Threading.Thread(() => saveAudioClip2(fileName, soundName, block, clipSamples, clipChannels, log, export));
+					QueueManager.add(new QueueManager.QueueManagerAction("Export", t.Start, "StageObject.saveAudioClip2"), QueueManager.Priorities.Highest);
+				} else {
+					saveAudioClip3(fileName, soundName, block, clip, log, export);
+				}
+				Resources.UnloadAsset(clip);
+			}
+
+			private void saveMusic(string fileName, System.IO.StreamWriter log, Export_Main export) {
+				AudioClip clip = null;
+				string soundName = "";
+				clip = Resources.Load<AudioClip>(ResourcesLibrary.getMusic(IdMusicNotNullable).ResourceName);;
+
+				float duration = Mathf.Min(clip.length, totalTime);
+				if(duration < 15) {
+					float[] clipSamples = new float[Mathf.RoundToInt(duration * clip.channels * Globals.OUTPUTRATEPERSECOND)];
+					clip.GetData(clipSamples, 0);
+					int clipChannels = clip.channels;
+					System.Threading.Thread t = new System.Threading.Thread(() => saveAudioClip2(fileName, soundName, null, clipSamples, clipChannels, log, export));
+					QueueManager.add(new QueueManager.QueueManagerAction("Export", t.Start, "StageObject.saveAudioClip2"), QueueManager.Priorities.Highest);
+				} else {
+					saveAudioClip3(fileName, soundName, null, clip, log, export);
+				}
+			}
+			//Se ejecuta en otro hilo.
+			private void saveAudioClip2(string fileName, string soundName, Block block, float[] clipSamples, int channels, System.IO.StreamWriter log, Export_Main export) {
+				int StartFrame = 0;
+				int EndFrame = totalFrames;
+				if(block != null) {
+					StartFrame = block.StartFrame;
+					EndFrame = block.EndFrame;
+				}
+				export.Processing = true;
+				log.WriteLine("Insertando sonido " + soundName + "(" + StartFrame + " - " + EndFrame + ") en " + System.IO.Path.GetFileName(fileName) + ".");
+				using(System.IO.BinaryWriter writer = new System.IO.BinaryWriter(System.IO.File.Open(fileName, System.IO.FileMode.Open, System.IO.FileAccess.Write))) {
+					writer.Seek((StartFrame * Globals.OUTPUTRATEPERFRAME * 2 * Globals.NUMCHANNELS) + Globals.WAVHEADERSIZE, System.IO.SeekOrigin.Begin);
+					int sample = 0;
+					if((EndFrame - StartFrame) * Globals.MILISPERFRAME < 15) {
+						short[] shortSamples = new short[(EndFrame - StartFrame) * Globals.OUTPUTRATEPERFRAME * Globals.NUMCHANNELS];
+						float fSample;
+						for(int i = 0; i < (EndFrame - StartFrame) * Globals.OUTPUTRATEPERFRAME * channels; ++i, ++sample) {
+							if(sample >= clipSamples.Length)
+								sample = 0;
+								fSample = Mathf.Clamp(clipSamples[sample], -1f, 1f);
+							short sSample = (short)Math.Round((fSample * short.MaxValue));
+							if(channels == 1) {
+								shortSamples[i * 2] = sSample;
+								shortSamples[(i * 2) + 1] = sSample;
+							} else if(channels == 2)
+								shortSamples[i] = sSample;
+							sSample = (short)Mathf.Abs(sSample);
+							if(export.HighestSample < sSample)
+								export.HighestSample = sSample;
+						}
+						if(!export.Abort) {
+							byte[] bytesSamples = new byte[shortSamples.Length * sizeof(short)];
+							Buffer.BlockCopy(shortSamples, 0, bytesSamples, 0, bytesSamples.Length);
+							writer.Write(bytesSamples);
+						}
+					} else {
+						//Si dura más de 15 segundos escribir byte a byte.
+						const int maxSamples = 15 * Globals.OUTPUTRATEPERSECOND * Globals.NUMCHANNELS;
+						float fSample;
+						for(int i = 0; i < (EndFrame - StartFrame) * Globals.OUTPUTRATEPERFRAME * channels; ++i, ++sample) {
+							if(i % maxSamples == 0 && i > 0) {
+								if(export.Abort)
+									break;
+								else
+									writer.Flush();
+							}
+							if(sample >= clipSamples.Length)
+								sample = 0;
+								fSample = Mathf.Clamp(clipSamples[sample], -1f, 1f);
+							short sSample = (short)Math.Round((fSample * short.MaxValue));
+							if(channels == 1) {
+								writer.Write(sSample);
+								writer.Write(sSample);
+							} else if(channels == 2)
+								writer.Write(sSample);
+							sSample = (short)Mathf.Abs(sSample);
+							if(export.HighestSample < sSample)
+								export.HighestSample = sSample;
+						}
+					}
+					writer.Close();
+				}
+				export.Processing = false;
+			}
+			private void saveAudioClip3(string fileName, string soundName, Block block, AudioClip clip, System.IO.StreamWriter log, Export_Main export) {
+				int StartFrame = 0;
+				int EndFrame = totalFrames;
+				if(block != null) {
+					StartFrame = block.StartFrame;
+					EndFrame = block.EndFrame;
+				}
+				log.WriteLine("Insertando sonido " + soundName + "(" + StartFrame + " - " + EndFrame + ") en " + System.IO.Path.GetFileName(fileName) + ".");
+				using(System.IO.BinaryWriter writer = new System.IO.BinaryWriter(System.IO.File.Open(fileName, System.IO.FileMode.Open, System.IO.FileAccess.Write))) {
+					writer.Seek((StartFrame * Globals.OUTPUTRATEPERFRAME * 2 * Globals.NUMCHANNELS) + Globals.WAVHEADERSIZE, System.IO.SeekOrigin.Begin);
+					int sample = 0;
+					float fSample;
+					const int maxSamples = 15 * Globals.OUTPUTRATEPERSECOND * Globals.NUMCHANNELS;
+					float[] clipSamples = new float[maxSamples];
+					clip.GetData(clipSamples, 0);
+					for(int i = 0; i < (EndFrame - StartFrame) * Globals.OUTPUTRATEPERFRAME * clip.channels; ++i, ++sample) {
+						if(sample == maxSamples) {
+							sample = 0;
+							int offset = i / 2;
+							offset -= (offset / clip.samples) * clip.samples;
+							clip.GetData(clipSamples, offset);
+						}
+						fSample = Mathf.Clamp(clipSamples[sample], -1f, 1f);
+						short sSample = (short)Math.Round((fSample * short.MaxValue));
+						if(clip.channels == 1) {
+							writer.Write(sSample);
+							writer.Write(sSample);
+						} else if(clip.channels == 2)
+							writer.Write(sSample);
+						sSample = (short)Mathf.Abs(sSample);
+						if(export.HighestSample < sSample)
+							export.HighestSample = sSample;
+						if(i % maxSamples == 0 && i > 0)
+							writer.Flush();
+					}
+					writer.Close();
+				}
+			}
+
 
 			private void assingFrames() {
 				int Frames = 0;
