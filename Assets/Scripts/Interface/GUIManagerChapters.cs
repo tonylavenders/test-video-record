@@ -218,6 +218,7 @@ public class GUIManagerChapters : GUIManager
 	{
 		if(Data.selChapter!=null){
 			Data.selChapter.Save();
+			SetDataGameObjects();
 			Data.selChapter.Reset();
 		}
 		SceneMgr.Get.SwitchTo("Player");
