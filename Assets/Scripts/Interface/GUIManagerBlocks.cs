@@ -278,7 +278,6 @@ public class GUIManagerBlocks : GUIManager
 			mAnimationsButtonBar.SetCurrentButton(Data.selChapter.selBlock.IdAnimation);
 			if(CurrentCharacter!=null){
 				CurrentCharacter.transform.Find("mesh").animation.Stop();
-				Data.selChapter.Frame(Data.selChapter.selBlock.StartTime,false);
 			}
 		}else{
 			mAnimationsButtonBar.SetCurrentButton(1);
@@ -299,6 +298,8 @@ public class GUIManagerBlocks : GUIManager
 		}else{
 			mCamerasButtonBar.SetCurrentButton(1);
 		}
+
+		Data.selChapter.Frame(Data.selChapter.selBlock.StartTime,false);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
