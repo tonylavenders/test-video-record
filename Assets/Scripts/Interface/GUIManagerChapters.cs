@@ -197,7 +197,7 @@ public class GUIManagerChapters : GUIManager
 	//Main: Share button
 	public void OnButtonShareClicked(BasicButton sender)
 	{
-		Debug.Log("share");
+		SceneMgr.Get.SwitchTo("Export");
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
