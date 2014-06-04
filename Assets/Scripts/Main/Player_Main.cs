@@ -11,12 +11,12 @@ public class Player_Main : GUIManager
 
 	protected override void Start()
 	{
-		Data.selChapter.Frame(0,false);
-		SetGUICamera();
-
 		mPlay=true;
 		mTime=0;
+
+		SetGUICamera();
 		LoadChapterElements();
+		Data.selChapter.Frame(0,false);
 
 		float pos_x = Screen.width/2.0f;
 		float pos_y = ButtonProperties.buttonSize/2.0f + ButtonProperties.buttonMargin*2;
