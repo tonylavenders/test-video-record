@@ -16,8 +16,12 @@ public class Player_Main : GUIManager
 
 		SetGUICamera();
 		LoadChapterElements();
-		Data.selChapter.Frame(0,false);
-
+		/*
+		LetterboxManager.Start();
+		LetterboxManager.Init();
+		mCamera.camera.rect = LetterboxManager.GetRectPercent();
+		//CameraManagerSmall.pixelInset = LetterboxManager.GetPixelInset();
+*/
 		float pos_x = Screen.width/2.0f;
 		float pos_y = ButtonProperties.buttonSize/2.0f + ButtonProperties.buttonMargin*2;
 
@@ -52,12 +56,30 @@ public class Player_Main : GUIManager
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*
+	protected override void OnGUI()
+	{
+		LetterboxManager.OnGUI();
+	}
+*/
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	protected override void Update()
 	{
+		base.Update();
+
 		if(mPlay){
 			mTime += Time.deltaTime;
-			Data.selChapter.Frame(mTime, true);
+			if(mTime>Data.selChapter.totalTime){
+				Data.selChapter.Stop();
+				Data.selChapter.Reset();
+				Data.selChapter.Frame(0,false);
+				PlayButton.Checked=true;
+				mTime=0;
+				mPlay=false;
+			}else{
+				Data.selChapter.Frame(mTime, true);
+			}
 		}
 	}
 
@@ -65,10 +87,14 @@ public class Player_Main : GUIManager
 
 	public void OnButtonPlayerPlayChecked(BasicButton sender)
 	{
+		//Pause
 		if(mPlay){
 			Data.selChapter.Stop();
 			mPlay=false;
-		}else{
+		}
+		//Continue
+		else{
+			Data.selChapter.Reset();
 			mPlay=true;
 		}
 	}
