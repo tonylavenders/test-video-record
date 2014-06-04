@@ -512,6 +512,7 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(Data.selChapter!=null && Data.selChapter.selBlock!=null){
 			Data.selChapter.selBlock.Save();
+			SetDataGameObjects();
 			Data.selChapter.Reset();
 
 			if(mPlay){
