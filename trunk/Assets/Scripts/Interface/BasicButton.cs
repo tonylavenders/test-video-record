@@ -18,7 +18,7 @@ public enum ButtonType{
 	EDIT_TIME_VOICE_FX_MONSTER_PRO, EDIT_TIME_VOICE_FX_SMURF_PRO, EDIT_TIME_VOICE_FX_ROBOT, EDIT_TIME_VOICE_FX_DIST,
 	EDIT_TIME_VOICE_FX_NOISE, EDIT_TIME_VOICE_FX_COMPRESS,
 	CAM_PARAM,
-	PLAYER_PLAY, PLAYER_EDIT
+	PLAYER_PLAY, PLAYER_EDIT, EXPORT_EDIT
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -440,6 +440,12 @@ public class BasicButton : MonoBehaviour
 		}
 		else if(buttonType == ButtonType.PLAYER_EDIT) {
 			clickedCallback = ((Player_Main)mGUIManager).OnButtonPlayerEditClicked;
+		}
+		
+		//EXPORT ////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		else if(buttonType == ButtonType.EXPORT_EDIT) {
+			clickedCallback = ((Export_Main)mGUIManager).OnButtonExportEditClicked;
 		}
 	}
 	

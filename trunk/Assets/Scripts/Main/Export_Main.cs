@@ -296,6 +296,8 @@ public class Export_Main : GUIManager
 
 		OnFinishedFadeOut();
 
+		SetButtons();
+
 		//SceneMgr.Get().OnFinished = OnFinishedFadeOut;
 		//mCurrentScene = 0;
 		/*
@@ -323,6 +325,28 @@ public class Export_Main : GUIManager
 		}
 		mAudioProcessed = false;
 		mAbort = false;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void SetButtons()
+	{
+		float pos_x = Screen.width - ButtonProperties.buttonSize/2.0f - ButtonProperties.buttonMargin*2;
+		float pos_y = ButtonProperties.buttonSize/2.0f + ButtonProperties.buttonMargin*2;
+		
+		Vector3 pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+		Vector3 scale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
+		
+		EditButton.Init(pos, scale);
+		EditButton.Show(0, Globals.ANIMATIONDURATION, true);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	 
+	public void OnButtonExportEditClicked(BasicButton sender)
+	{
+		Data.selChapter.Stop();
+		SceneMgr.Get.SwitchTo("ChapterMgr");
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
