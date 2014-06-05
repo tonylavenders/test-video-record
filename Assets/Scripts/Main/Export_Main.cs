@@ -295,8 +295,10 @@ public class Export_Main : GUIManager
 		//rectGUI = LetterboxManager.GetRectPercent();
 
 		//SetGUICamera();
-		OnFinishedFadeOut();
+		//OnFinishedFadeOut();
+		myTexture2D = new Texture2D(video_w, video_h, TextureFormat.RGB24, false);
 		LoadChapterElements();
+		Data.selChapter.Reset();
 		//SetButtons();
 
 		//SceneMgr.Get().OnFinished = OnFinishedFadeOut;
@@ -357,8 +359,8 @@ public class Export_Main : GUIManager
 		mCamera = GameObject.Find("CameraMain").transform;
 		mCamera.gameObject.AddComponent<SceneCameraManager>();
 
-		mCamera.camera.enabled = false;
-		mCamera.camera.targetTexture = renderTex;
+		//mCamera.camera.enabled = false;
+		//mCamera.camera.targetTexture = renderTex;
 		Data.selChapter.Camera = mCamera.gameObject;
 		
 		CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("Player");
@@ -569,6 +571,7 @@ public class Export_Main : GUIManager
 			Directory.CreateDirectory(Globals.RendersPath);
 
 		mCurrentPath = Globals.RendersPath;
+		Debug.Log (mCurrentPath);
 
 		/*
 		string path;
@@ -613,17 +616,20 @@ public class Export_Main : GUIManager
 
 	void EncodeVideo()
 	{
-		if(/*QueueManager.isEmpty && */!mThreadMixingAudio.IsAlive && mAudioProcessed) {
+		//if(/*QueueManager.isEmpty && */!mThreadMixingAudio.IsAlive && mAudioProcessed) {
 			Processing = true;
 			mLog.WriteLine("Codificando vídeo.");
-			if(Application.platform != RuntimePlatform.IPhonePlayer) {
+
+			if(Application.platform != RuntimePlatform.IPhonePlayer)
+			{
 				Process myProcess = new Process();
 				myProcess.StartInfo.WorkingDirectory = mCurrentPath;
-			#if UNITY_STANDALONE_WIN
-				myProcess.StartInfo.FileName = Path.Combine(Application.streamingAssetsPath,"ffmpeg.exe");
-			#else
-				myProcess.StartInfo.FileName = Path.Combine(Application.streamingAssetsPath, "ffmpeg");
-			#endif
+
+				if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor){
+					myProcess.StartInfo.FileName = Path.Combine(Application.streamingAssetsPath,"ffmpeg.exe");
+				}else{
+					myProcess.StartInfo.FileName = Path.Combine(Application.streamingAssetsPath, "ffmpeg");
+				}
 				if(bHaveAudio)
 					myProcess.StartInfo.Arguments = "-i " + Path.Combine(mCurrentPath, "screenshot_%04d.png") + " -i " + Path.Combine(mCurrentPath, "AudioOutput.wav") + " -c:v libx264 -c:a aac -strict experimental " + GetVideoName();
 				else
@@ -668,9 +674,9 @@ public class Export_Main : GUIManager
 
 			mLog.Close();
 			mLog.Dispose();
-			renderTex.Release();
+			//renderTex.Release();
 			Processing = false;
-		}
+		//}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -684,14 +690,15 @@ public class Export_Main : GUIManager
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void SaveImage()
+	IEnumerator SaveImage()
 	{
+		yield return new WaitForEndOfFrame();
 		//mainCam.Render();
-		mCamera.camera.Render();
+		//mCamera.camera.Render();
 
 		if(Application.platform!=RuntimePlatform.IPhonePlayer){
-			RenderTexture.active = renderTex;
-			myTexture2D.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
+			//RenderTexture.active = renderTex;
+			myTexture2D.ReadPixels(new Rect(0, 0, video_w, video_h), 0, 0);
 			myTexture2D.Apply();
 
 			byte[] bytes = myTexture2D.EncodeToPNG();
@@ -704,7 +711,7 @@ public class Export_Main : GUIManager
 			ivcp_CaptureFrameFromRenderTexture();
 		}
 
-		renderTex.DiscardContents();
+		//renderTex.DiscardContents();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -771,7 +778,7 @@ public class Export_Main : GUIManager
 
 		if(Event.current.type!=EventType.Repaint)
 			return;
-
+		/*
 		if(Application.platform==RuntimePlatform.IPhonePlayer){
 			GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height), texRendering);
 		}
@@ -781,7 +788,7 @@ public class Export_Main : GUIManager
 				GUI.DrawTexture(new Rect(rectGUI.x * Screen.width, rectGUI.y * Screen.height, rectGUI.width * Screen.width, rectGUI.height * Screen.height), myTexture2D, ScaleMode.StretchToFill);
 			}
 		}
-
+		*/
 		if(state == States.EXPORTING) {
 			GUI.Box(new Rect(-2, -2, 220, 120), "");
 			GUILabelWithShadows(new Rect(10, 10, 200, 25), "VIDEO CREATION PROCESS");
@@ -908,17 +915,22 @@ public class Export_Main : GUIManager
 			if(!render){
 				render = true;
 				Data.selChapter.Frame(mTime,true);
-				mTime += Globals.MILISPERFRAME;
+				mTime += Globals.MILISPEºRFRAME;
 			}
 			//Second pass: Save image to disk
 			else {
-				SaveImage();
+				StartCoroutine(SaveImage());
 				if(mCountCurrentFrame < Data.selChapter.totalFrames) {
 					mCountCurrentFrame++;
 					mCountTotalFrames++;
 				}
 				render = false;
 			}
+		}else{
+			mLog.WriteLine("Frames exportados (" + mCountTotalFrames + ").");
+			state = States.ENCODING;
+			mTime = Data.selChapter.totalTime;
+			Data.selChapter.Stop();
 		}
 	}
 	
@@ -946,14 +958,14 @@ public class Export_Main : GUIManager
 	{
 		if(Data.selChapter.Blocks.Count > 0)
 		{
-			renderTex = new RenderTexture(video_w, video_h, 24, RenderTextureFormat.ARGB32);
+			//renderTex = new RenderTexture(video_w, video_h, 24, RenderTextureFormat.ARGB32);
 
-			if(Application.platform!=RuntimePlatform.OSXEditor && Application.platform!=RuntimePlatform.OSXPlayer){
-				renderTex.antiAliasing=8; //En MAC no funciona de momento
-			}
+			//if(Application.platform!=RuntimePlatform.OSXEditor && Application.platform!=RuntimePlatform.OSXPlayer){
+			//	renderTex.antiAliasing=8; //En MAC no funciona de momento
+			//}
 				
-			renderTex.Create();
-			myTexture2D = new Texture2D(renderTex.width, renderTex.height, TextureFormat.RGB24, false);
+			//renderTex.Create();
+			myTexture2D = new Texture2D(video_w, video_h, TextureFormat.RGB24, false);
 		}
 	}
 
