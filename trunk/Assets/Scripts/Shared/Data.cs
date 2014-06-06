@@ -537,12 +537,12 @@ namespace TVR {
 				}
 				if(somethingExported && !export.Abort) {
 					somethingExported = true;
-					saveAudioClips(samples, fileNameBase + ".wav", emptySamplesBytes, log, export);
+					saveAudioClips(samples, System.IO.Path.Combine(path, fileNameBase) + ".wav", emptySamplesBytes, log, export);
 				}
 				if(!somethingExported && !export.Abort)
 					log.WriteLine("El objeto " + fileNameBase + " no emite audio.");
 				if(IdMusicNotNullable != -1)
-					saveMusic(samples, "music.wav", emptySamplesBytes, log, export);
+					saveMusic(samples, System.IO.Path.Combine(path, "music.wav"), emptySamplesBytes, log, export);
 				else
 					log.WriteLine("El episodio no emite audio.");
 				export.Processing = false;
