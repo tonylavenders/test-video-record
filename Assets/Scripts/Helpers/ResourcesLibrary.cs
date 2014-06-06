@@ -78,8 +78,10 @@ namespace TVR
 		{
 			Characters = new Folder(null);
 			
-			Characters.addResource(1, "q_main", "Characters/Prefabs/q_main");
-			Characters.addResource(2, "liz_cory", "Characters/Prefabs/liz_cory");
+			Characters.addResource(1, "Cat", "Characters/Prefabs/Cat");
+			Characters.addResource(2, "Dog", "Characters/Prefabs/Dog");
+			Characters.addResource(3, "Owl", "Characters/Prefabs/Owl");
+			Characters.addResource(4, "Turtle", "Characters/Prefabs/Turtle");
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,10 +90,18 @@ namespace TVR
 		{
 			Animations = new Folder(null);
 			
-			Animations.addResource(1, "idle", "idle");
-			Animations.addResource(2, "wave", "wave");
-			Animations.addResource(3, "talk", "talk");
-			Animations.addResource(4, "walk", "walk");
+			Animations.addResource(1, "Idle", "Idle");
+			Animations.addResource(2, "Idle2", "Idle2");
+			Animations.addResource(3, "Run", "Run");
+			Animations.addResource(4, "Walk", "Walk");
+			Animations.addResource(5, "Talk", "Talk");
+			Animations.addResource(6, "Jump", "Jump");
+			Animations.addResource(7, "Fall", "Fall");
+			Animations.addResource(8, "Land", "Land");
+			Animations.addResource(9, "Rolling", "Rolling");
+			Animations.addResource(10, "Sleep", "Sleep");
+			Animations.addResource(11, "Success", "Success");
+			Animations.addResource(12, "Failure", "Failure");
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
