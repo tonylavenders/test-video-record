@@ -915,7 +915,7 @@ public class Export_Main : GUIManager
 			if(!render){
 				render = true;
 				Data.selChapter.Frame(mTime,true);
-				mTime += Globals.MILISPEºRFRAME;
+				mTime += Globals.MILISPERFRAME;
 			}
 			//Second pass: Save image to disk
 			else {
