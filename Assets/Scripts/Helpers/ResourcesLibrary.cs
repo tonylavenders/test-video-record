@@ -95,13 +95,10 @@ namespace TVR
 			Animations.addResource(3, "Run", "Run");
 			Animations.addResource(4, "Walk", "Walk");
 			Animations.addResource(5, "Talk", "Talk");
-			Animations.addResource(6, "Jump", "Jump");
-			Animations.addResource(7, "Fall", "Fall");
-			Animations.addResource(8, "Land", "Land");
-			Animations.addResource(9, "Rolling", "Rolling");
-			Animations.addResource(10, "Sleep", "Sleep");
-			Animations.addResource(11, "Success", "Success");
-			Animations.addResource(12, "Failure", "Failure");
+			Animations.addResource(6, "Rolling", "Rolling");
+			Animations.addResource(7, "Sleep", "Sleep");
+			Animations.addResource(8, "Success", "Success");
+			Animations.addResource(9, "Failure", "Failure");
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
