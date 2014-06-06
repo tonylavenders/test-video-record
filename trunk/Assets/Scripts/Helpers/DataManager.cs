@@ -91,8 +91,8 @@ public class DataManager : MonoBehaviour
 	/*
 	public void IdleAnimation()
 	{
-		if(mMesh!=null && mMesh.animation!=null && mMesh.animation.GetClip("idle")!=null){
-			PlayAnimation("idle", false);
+		if(mMesh!=null && mMesh.animation!=null && mMesh.animation.GetClip("Idle")!=null){
+			PlayAnimation("Idle", false);
 		}
 	}
 	*/

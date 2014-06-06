@@ -310,11 +310,11 @@ public class GUIManagerBlocks : GUIManager
 	{
 		Transform mMesh = CurrentCharacter.transform.Find("mesh");
 		mMesh.animation[ResourcesLibrary.getAnimation(mAnimationsButtonBar.currentSelected.ID).Name].enabled = false;
-		mMesh.animation["idle"].time = 0.0f;
-		mMesh.animation["idle"].weight = 1.0f;
-		mMesh.animation["idle"].enabled = true;
+		mMesh.animation["Idle"].time = 0.0f;
+		mMesh.animation["Idle"].weight = 1.0f;
+		mMesh.animation["Idle"].enabled = true;
 		mMesh.animation.Sample();
-		mMesh.animation["idle"].enabled = false;
+		mMesh.animation["Idle"].enabled = false;
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
