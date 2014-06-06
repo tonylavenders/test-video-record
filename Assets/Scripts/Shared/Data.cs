@@ -474,7 +474,7 @@ namespace TVR {
 
 					int frame = (int)(miliSeconds / Globals.MILISPERFRAME);
 					if(mBlockPerformed != null) {
-						if(mBlockPerformed.endAction(frame)) {
+						if(mBlockPerformed.endAction(frame) || !play) {
 							foreach(Block block in Blocks) {
 								if(block.performAction(frame, play)) {
 									mBlockPerformed = block;
