@@ -889,11 +889,13 @@ namespace TVR {
 							if(mOldFrames != mFrames)
 								mParent.assingFrames();
 							if(mOldBlockType != mBlockType) {
-								if(mBlockType==blockTypes.Voice)
-									mParent.Character.GetComponent<DataManager>().startLipSync();
-								else
+								if(mBlockType==blockTypes.Voice) {
+									//mParent.Character.GetComponent<DataManager>().SetExpression(ResourcesLibrary.getExpression(mIdExpression).ResourceName);
+									mParent.Character.GetComponent<DataManager>().lipSync(Sound, StartFrame, StartFrame);
+								} else {
 									mParent.Character.GetComponent<DataManager>().stopLipSync();
-								mParent.Character.GetComponent<DataManager>().SetExpression(ResourcesLibrary.getExpression(mIdExpression).ResourceName);
+									//mParent.Character.GetComponent<DataManager>().SetExpression(ResourcesLibrary.getExpression(mIdExpression).ResourceName);
+								}
 							}
 							mOldBlockType = mBlockType;
 							mOldShotType = mShotType;

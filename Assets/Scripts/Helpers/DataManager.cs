@@ -125,7 +125,7 @@ public class DataManager : MonoBehaviour
 	}*/
 
 	public void SetExpression(string idExpr) {
-		mExpression = idExpr;
+		mExpression = "exp_" + idExpr;
 
 		if(mExpression.EndsWith("_c"))
 			mMouthClose = true;
@@ -135,9 +135,9 @@ public class DataManager : MonoBehaviour
 		Component[] children = GetComponentsInChildren<Component>(true);
 		foreach(Component child in children) {
 			if(child.name.StartsWith("exp_")) {
-				if(child.name == "exp_" + idExpr)
+				if(child.name == mExpression)
 					child.gameObject.SetActive(true);
-				else if(child.name == "exp_" + idExpr + "_m" && !mLipSync)
+				else if(child.name == mExpression + "_m" && !mLipSync)
 					child.gameObject.SetActive(true);
 				else
 					child.gameObject.SetActive(false);
