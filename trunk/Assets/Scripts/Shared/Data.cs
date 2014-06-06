@@ -1043,7 +1043,7 @@ namespace TVR {
 								throw new Exception("You can't assign a null sound.");
 							} else
 								mOriginalSoundLoaded = true;
-							if(mOriginalSound != mOldSound)
+							if(mOriginalSound != mOldOriginalSound)
 								MonoBehaviour.DestroyImmediate(mOriginalSound);
 							mOriginalSound = value;
 						} else
@@ -1260,7 +1260,7 @@ namespace TVR {
 						if(mSound != mOldSound && mSoundLoaded) {
 							samples = new float[mSound.samples * mSound.channels];
 							mSound.GetData(samples, 0);
-							if(mOldSound != null)
+							if(mOldSound != null && mOldSound != mOldOriginalSound)
 								MonoBehaviour.DestroyImmediate(mOldSound);
 							mOldSound = mSound;
 							/*System.Threading.Thread t = new System.Threading.Thread(() => SaveSound(samples));
