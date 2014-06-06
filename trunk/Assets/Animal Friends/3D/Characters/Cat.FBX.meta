@@ -153,6 +153,7 @@ ModelImporter:
     7400018: Sleep
     7400020: Success
     7400022: Failure
+    7400024: Jump2
     9500000: //RootNode
     11100000: //RootNode
     13700000: Cat
