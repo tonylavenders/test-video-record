@@ -323,6 +323,7 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(sender.Checked){
 			mAnimationsButtonBar.Show(true);
+			CurrentCharacter.transform.Find("mesh").animation.Stop();
 			CurrentCharacter.transform.Find("mesh").animation.Play(ResourcesLibrary.getAnimation(mAnimationsButtonBar.currentSelected.ID).Name);
 		}else{
 			mAnimationsButtonBar.Hide();
@@ -361,6 +362,7 @@ public class GUIManagerBlocks : GUIManager
 	{
 		if(sender.Checked){
 			if(CurrentCharacter!=null){
+				CurrentCharacter.transform.Find("mesh").animation.Stop();
 				CurrentCharacter.transform.Find("mesh").animation.Play(ResourcesLibrary.getAnimation(sender.ID).Name);
 			}
 			Data.selChapter.selBlock.IdAnimation=sender.ID;
