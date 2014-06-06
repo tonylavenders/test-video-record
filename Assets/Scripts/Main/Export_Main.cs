@@ -57,11 +57,11 @@ public class Export_Main : GUIManager
 	}
 	States state=States.INIT;
 
-	//const int video_w = 1280;
-	//const int video_h = 720;
+	const int video_w = 1280;
+	const int video_h = 720;
 
-	int video_w = Screen.width;
-	int video_h = Screen.height;
+	//const int video_w = Screen.width;
+	//const int video_h = Screen.height;
 
 	string mCurrentPath;
 	Rect rectGUI;
@@ -295,7 +295,7 @@ public class Export_Main : GUIManager
 		//rectGUI = LetterboxManager.GetRectPercent();
 
 		//SetGUICamera();
-		//OnFinishedFadeOut();
+		OnFinishedFadeOut();
 		myTexture2D = new Texture2D(video_w, video_h, TextureFormat.RGB24, false);
 		LoadChapterElements();
 		Data.selChapter.Reset();
@@ -359,8 +359,8 @@ public class Export_Main : GUIManager
 		mCamera = GameObject.Find("CameraMain").transform;
 		mCamera.gameObject.AddComponent<SceneCameraManager>();
 
-		//mCamera.camera.enabled = false;
-		//mCamera.camera.targetTexture = renderTex;
+		mCamera.camera.enabled = false;
+		mCamera.camera.targetTexture = renderTex;
 		Data.selChapter.Camera = mCamera.gameObject;
 		
 		CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("Player");
@@ -389,7 +389,7 @@ public class Export_Main : GUIManager
 			mStage.saveAudioClips(mCurrentPath, mLog, this);
 		*/
 
-		//FALTA QUE XAVI LO IMPLEMENTE--> Data.selChapter.saveAudioClips(mCurrentPath, mLog, this);
+		Data.selChapter.saveAudioClips(mCurrentPath, mLog, this);
 
 		mThreadMixingAudio = new System.Threading.Thread(() => mixAudio());
 		QueueManager.add(new QueueManager.QueueManagerAction("Export", mThreadMixingAudio.Start, "Export_Main.mixAudio"), QueueManager.Priorities.Normal);
@@ -674,7 +674,7 @@ public class Export_Main : GUIManager
 
 			mLog.Close();
 			mLog.Dispose();
-			//renderTex.Release();
+			renderTex.Release();
 			Processing = false;
 		//}
 	}
@@ -690,14 +690,13 @@ public class Export_Main : GUIManager
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	IEnumerator SaveImage()
+	void SaveImage()
 	{
-		yield return new WaitForEndOfFrame();
 		//mainCam.Render();
-		//mCamera.camera.Render();
+		mCamera.camera.Render();
 
 		if(Application.platform!=RuntimePlatform.IPhonePlayer){
-			//RenderTexture.active = renderTex;
+			RenderTexture.active = renderTex;
 			myTexture2D.ReadPixels(new Rect(0, 0, video_w, video_h), 0, 0);
 			myTexture2D.Apply();
 
@@ -711,7 +710,7 @@ public class Export_Main : GUIManager
 			ivcp_CaptureFrameFromRenderTexture();
 		}
 
-		//renderTex.DiscardContents();
+		renderTex.DiscardContents();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -880,7 +879,7 @@ public class Export_Main : GUIManager
 			*/
 		}
 		else if(state == States.AUDIO) {
-			//ExportAudioFiles();
+			ExportAudioFiles();
 			state = States.EXPORTING;
 			/*mLog.WriteLine("");
 			mLog.WriteLine("Exportando Frames.");
@@ -919,7 +918,7 @@ public class Export_Main : GUIManager
 			}
 			//Second pass: Save image to disk
 			else {
-				StartCoroutine(SaveImage());
+				SaveImage();
 				if(mCountCurrentFrame < Data.selChapter.totalFrames) {
 					mCountCurrentFrame++;
 					mCountTotalFrames++;
@@ -958,13 +957,13 @@ public class Export_Main : GUIManager
 	{
 		if(Data.selChapter.Blocks.Count > 0)
 		{
-			//renderTex = new RenderTexture(video_w, video_h, 24, RenderTextureFormat.ARGB32);
+			renderTex = new RenderTexture(video_w, video_h, 24, RenderTextureFormat.ARGB32);
 
-			//if(Application.platform!=RuntimePlatform.OSXEditor && Application.platform!=RuntimePlatform.OSXPlayer){
-			//	renderTex.antiAliasing=8; //En MAC no funciona de momento
-			//}
+			if(Application.platform!=RuntimePlatform.OSXEditor && Application.platform!=RuntimePlatform.OSXPlayer){
+				renderTex.antiAliasing=8; //En MAC no funciona de momento
+			}
 				
-			//renderTex.Create();
+			renderTex.Create();
 			myTexture2D = new Texture2D(video_w, video_h, TextureFormat.RGB24, false);
 		}
 	}
