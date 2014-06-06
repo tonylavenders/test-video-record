@@ -914,7 +914,7 @@ public class Export_Main : GUIManager
 			//First pass: Update scene
 			if(!render){
 				render = true;
-				Data.selChapter.Frame(mTime,true);
+				Data.selChapter.Frame(mTime,false);
 				mTime += Globals.MILISPERFRAME;
 			}
 			//Second pass: Save image to disk
