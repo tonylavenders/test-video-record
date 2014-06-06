@@ -625,7 +625,6 @@ namespace TVR {
 				} else {
 					saveAudioClip3(fileName, soundName, block, clip, log, export);
 				}
-				Resources.UnloadAsset(clip);
 			}
 
 			private void saveMusic(string fileName, System.IO.StreamWriter log, Export_Main export) {
@@ -643,6 +642,7 @@ namespace TVR {
 				} else {
 					saveAudioClip3(fileName, soundName, null, clip, log, export);
 				}
+				Resources.UnloadAsset(clip);
 			}
 			//Se ejecuta en otro hilo.
 			private void saveAudioClip2(string fileName, string soundName, Block block, float[] clipSamples, int channels, System.IO.StreamWriter log, Export_Main export) {
