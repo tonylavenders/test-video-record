@@ -33,7 +33,7 @@ public class GUITextController : MonoBehaviour
 			if(bIsTime || bIsFX){
 				guiText.fontSize = (int)(mParent.lossyScale.x*(15.0f/90.0f)); 
 			}else{
-				guiText.fontSize = (int)(mParent.lossyScale.x*(26.0f/90.0f)); //para button.scale=90 ==> font_size=26
+				guiText.fontSize = (int)(mParent.lossyScale.x*(22.0f/90.0f)); //para button.scale=90 ==> font_size=22
 			}
 		}
 		Color c = guiText.color;
@@ -73,7 +73,7 @@ public class GUITextController : MonoBehaviour
 
 			//time or fx label
 			if(bIsTime || bIsFX){
-				pos_y = (mParent.position.y-mParent.lossyScale.x * 0.3f)/Screen.height;
+				pos_y = (mParent.position.y-mParent.lossyScale.x * 0.28f)/Screen.height;
 			//chapter or block number label
 			}else{
 				pos_y = mParent.position.y/Screen.height;
