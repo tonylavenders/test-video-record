@@ -78,6 +78,7 @@ namespace TVR
 		{
 			Characters = new Folder(null);
 			
+			//Characters.addResource(1, "Cat", "Characters/Prefabs/_Old/q_main");
 			Characters.addResource(1, "Cat", "Characters/Prefabs/Cat");
 			Characters.addResource(2, "Dog", "Characters/Prefabs/Dog");
 			Characters.addResource(3, "Owl", "Characters/Prefabs/Owl");
@@ -90,6 +91,10 @@ namespace TVR
 		{
 			Animations = new Folder(null);
 			
+			/*Animations.addResource(1, "idle", "idle");
+			Animations.addResource(2, "wave", "wave");
+			Animations.addResource(3, "talk", "talk");
+			Animations.addResource(4, "walk", "walk");*/
 			Animations.addResource(1, "Idle", "Idle");
 			Animations.addResource(2, "Idle2", "Idle2");
 			Animations.addResource(3, "Run", "Run");
