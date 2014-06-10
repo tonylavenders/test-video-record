@@ -101,6 +101,9 @@ public class SoundRecorder : MonoBehaviour
 			if(Data.selChapter.selBlock.FilterType!=Data.Chapter.Block.filterType.Off){
 				audioClips[0] = Data.selChapter.selBlock.OriginalSound;
 			}
+		}else{
+			mCurrentFilter=0;
+			guiManagerBlocks.mVoiceFxButtonBar.SetCurrentButton(mCurrentFilter);
 		}
 	}
 
@@ -323,6 +326,12 @@ public class SoundRecorder : MonoBehaviour
 			guiManagerBlocks.mVoiceFxButtonBar.Show(true);
 			guiManagerBlocks.HideTime();
 			sender.Hide(0,0);
+
+			//First time we press Filter button
+			if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Time){
+				mCurrentFilter=0;
+				guiManagerBlocks.mVoiceFxButtonBar.SetCurrentButton(mCurrentFilter);
+			}
 		}
 	}
 
