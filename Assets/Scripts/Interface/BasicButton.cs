@@ -295,11 +295,11 @@ public class BasicButton : MonoBehaviour
 
 	public void Refresh()
 	{
-		if(buttonType==ButtonType.CHAPTER){
-			Text = "vid"+iObj.Number.ToString("00");
-		}else{
+		//if(buttonType==ButtonType.CHAPTER){
+		//	Text = "vid"+iObj.Number.ToString("00");
+		//}else{
 			Text = iObj.Number.ToString("00");
-		}
+		//}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
