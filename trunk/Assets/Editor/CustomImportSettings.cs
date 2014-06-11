@@ -14,6 +14,10 @@ public class CustomImportSettings : AssetPostprocessor
 			textureImporter.textureType = TextureImporterType.GUI;
 			textureImporter.npotScale = TextureImporterNPOTScale.None;
 			textureImporter.textureFormat = TextureImporterFormat.AutomaticTruecolor;
+		}else{
+			textureImporter.textureType = TextureImporterType.Image;
+			textureImporter.textureFormat = TextureImporterFormat.AutomaticCompressed;
+			textureImporter.maxTextureSize = 512;
 		}
 	}
 }

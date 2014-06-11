@@ -118,6 +118,18 @@ public class GUIManager : MonoBehaviour
 			Data.selChapter.Camera=null;
 		}
 	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	protected void SampleAnimation()
+	{
+		Transform mMesh = CurrentCharacter.transform.Find("mesh");
+		mMesh.animation["Idle"].time = 0.0f;
+		mMesh.animation["Idle"].weight = 1.0f;
+		mMesh.animation["Idle"].enabled = true;
+		mMesh.animation.Sample();
+		mMesh.animation["Idle"].enabled = false;
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
