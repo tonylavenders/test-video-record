@@ -62,6 +62,8 @@ public class GUIManagerBlocks : GUIManager
 
 		base.Start();
 
+		SampleAnimation();
+
 		mTextTime.fontSize = Mathf.RoundToInt(ButtonProperties.buttonSize);
 		mTextTimeShadow.fontSize = Mathf.RoundToInt(ButtonProperties.buttonSize);
 
@@ -114,6 +116,9 @@ public class GUIManagerBlocks : GUIManager
 			}
 		}else{
 			CurrentBlockTime=mLastBlockTime;
+			if(Mode==Modes.VoiceMode){
+				soundRecorder.ResetAudio((int)Data.selChapter.selBlock.FilterType);
+			}
 		}
 		bLastSaved=true;
 		soundRecorder.bLastSaved=true;
@@ -279,11 +284,12 @@ public class GUIManagerBlocks : GUIManager
 		if(Data.selChapter.selBlock.IdAnimation!=-1){
 			mAnimationsButtonBar.SetCurrentButton(Data.selChapter.selBlock.IdAnimation);
 			if(CurrentCharacter!=null){
-				CurrentCharacter.transform.Find("mesh").animation.Stop();
+				//CurrentCharacter.transform.Find("mesh").animation.Stop();
+				StopAnimation();
 			}
 		}else{
 			mAnimationsButtonBar.SetCurrentButton(1);
-		}
+		}/*
 		//Expression
 		if(Data.selChapter.selBlock.IdExpression!=-1){
 			mExpressionsButtonBar.SetCurrentButton(Data.selChapter.selBlock.IdExpression);
@@ -292,7 +298,7 @@ public class GUIManagerBlocks : GUIManager
 			//}
 		}else{
 			mExpressionsButtonBar.SetCurrentButton(1);
-		}
+		}*/
 		//Camera
 		if((int)Data.selChapter.selBlock.ShotType!=-1){
 			mCamerasButtonBar.SetCurrentButton((int)Data.selChapter.selBlock.ShotType);
@@ -301,11 +307,11 @@ public class GUIManagerBlocks : GUIManager
 			mCamerasButtonBar.SetCurrentButton(1);
 		}
 
-		Data.selChapter.Frame(Data.selChapter.selBlock.StartTime,false);
+		//Data.selChapter.Frame(Data.selChapter.selBlock.StartTime,false);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	/*
 	void StopAnimation()
 	{
 		Transform mMesh = CurrentCharacter.transform.Find("mesh");
@@ -316,7 +322,19 @@ public class GUIManagerBlocks : GUIManager
 		mMesh.animation.Sample();
 		mMesh.animation["Idle"].enabled = false;
 	}
-	
+*/
+	void StopAnimation()
+	{
+		string sAnimName = ResourcesLibrary.getAnimation(Data.selChapter.selBlock.IdAnimation).Name;
+		Transform mMesh = CurrentCharacter.transform.Find("mesh");
+		mMesh.animation[ResourcesLibrary.getAnimation(mAnimationsButtonBar.currentSelected.ID).Name].enabled = false;
+		mMesh.animation[sAnimName].time = 0.0f;
+		mMesh.animation[sAnimName].weight = 1.0f;
+		mMesh.animation[sAnimName].enabled = true;
+		mMesh.animation.Sample();
+		mMesh.animation[sAnimName].enabled = false;
+	}
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Main: Animations button
 	public void OnButtonAnimationsChecked(BasicButton sender)

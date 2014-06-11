@@ -67,9 +67,9 @@ namespace TVR
 		{
 			Cameras = new Folder(null);
 
-			Cameras.addCameraParams(1, "Front", new Vector3(0.0f,0.0f,0.0f), new Vector3(15,0,0), 50);
-			Cameras.addCameraParams(2, "Side", new Vector3(-1.4f,-0.2f,0.9f), new Vector3(12,34,-2), 50);
-			Cameras.addCameraParams(3, "Full", new Vector3(0.0f,1.0f,-0.8f), new Vector3(27,0,0), 50);
+			Cameras.addCameraParams(1, "Front", new Vector3(0.0f,0.726f,-2.24f), new Vector3(5,0,0), 50);
+			Cameras.addCameraParams(2, "Side", new Vector3(-1.1f,1.0f,-1.75f), new Vector3(12,34,-2), 50);
+			Cameras.addCameraParams(3, "Full", new Vector3(0.0f,2.0f,-4.0f), new Vector3(20,0,0), 50);
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

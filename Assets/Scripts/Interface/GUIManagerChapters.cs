@@ -248,6 +248,7 @@ public class GUIManagerChapters : GUIManager
 				Data.selChapter.IdCharacter = sender.ID;
 				CurrentCharacter = ResourcesLibrary.getCharacter(Data.selChapter.IdCharacter).getInstance("ChapterMgr");
 				CurrentCharacter.AddComponent<DataManager>();
+				SampleAnimation();
 			}else{
 				Debug.Log("El boton no tiene prefab asociado!");
 			}
