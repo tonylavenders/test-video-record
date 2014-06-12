@@ -148,9 +148,7 @@ public class GUIManagerChapters : GUIManager
 			mCamera.audio.clip = null;
 		}
 
-		if(Data.selChapter.Blocks.Count>0){
-			PlayButton.Enable=true;
-		}
+		PlayButton.Enable=(Data.selChapter.Blocks.Count>0);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -237,6 +235,8 @@ public class GUIManagerChapters : GUIManager
 			SetDataGameObjects();
 			Data.selChapter.Frame(0,false);
 		}
+
+		sender.SetChapterTextColor(sender.Checked);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
