@@ -124,9 +124,17 @@ namespace TVR
 		{
 			Music = new Folder(null);
 			
-			Music.addResource(1, "dance", "Music/dance_loop");
-			Music.addResource(2, "lisa", "Music/lisa_mirror_loop");
-			Music.addResource(3, "love", "Music/love_song_loop");
+			Music.addResource(1, "Bossa", "Music/Bossa");
+			Music.addResource(2, "Budda", "Music/Budda");
+			Music.addResource(3, "Calm", "Music/Calm");
+			Music.addResource(4, "Chase", "Music/Chase");
+			Music.addResource(5, "Evil", "Music/Evil");
+			Music.addResource(6, "Funny", "Music/Funny");
+			Music.addResource(7, "Love", "Music/Love");
+			Music.addResource(8, "Mistery", "Music/Mistery");
+			Music.addResource(9, "Techno", "Music/Techno");
+			Music.addResource(10, "Western", "Music/Western");
+			Music.addResource(11, "Wonder", "Music/Wonder");
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
