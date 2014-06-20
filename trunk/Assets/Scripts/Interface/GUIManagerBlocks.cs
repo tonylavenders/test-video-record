@@ -512,6 +512,9 @@ public class GUIManagerBlocks : GUIManager
 			SetCurrentBlockElements();
 			HideAllButtonBars();
 		}
+
+		sender.SetTextColor(sender.Checked, new Color(1,0,0.5f,1)); //pink
+		sender.SetTextBottomColor(sender.Checked, new Color(1,0,0.5f,1)); //pink
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

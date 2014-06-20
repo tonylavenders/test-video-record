@@ -300,6 +300,17 @@ public class BasicButton : MonoBehaviour
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	public void SetTextBottomColor(bool bChecked, Color checkedColor)
+	{
+		if(bChecked){
+			mGUITextBottom.guiText.color = checkedColor; //selected
+		}else{
+			mGUITextBottom.guiText.color = new Color(0.96f,0.96f,0.96f,1); //white -> unselected
+		}
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	public void SetBottomTextColor(bool bChecked, Color checkedColor)
 	{
 		if(bChecked){
