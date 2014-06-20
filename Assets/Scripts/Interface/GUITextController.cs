@@ -77,11 +77,17 @@ public class GUITextController : MonoBehaviour
 			float pos_x = mParent.position.x/Screen.width;
 			float pos_y;
 
-			//time or fx label
-			if(contentType!=ContentType.None){
+			//fx or lib
+			//if(contentType!=ContentType.None){
+			if(contentType==ContentType.Fx || contentType==ContentType.Lib){
 				pos_y = (mParent.position.y-mParent.lossyScale.x * 0.28f)/Screen.height;
+			}
+			//block
+			else if(contentType==ContentType.Duration){
+				pos_y = (mParent.position.y-mParent.lossyScale.x * 0.42f)/Screen.height;
+			}
 			//chapter or block number label
-			}else{
+			else{
 				pos_y = mParent.position.y/Screen.height;
 			}
 			guiText.transform.position = new Vector3(pos_x, pos_y, 0.0f);
