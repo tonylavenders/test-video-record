@@ -67,7 +67,8 @@ public class GUIManagerBlocks : GUIManager
 		mTextTime.fontSize = Mathf.RoundToInt(ButtonProperties.buttonSize);
 		mTextTimeShadow.fontSize = Mathf.RoundToInt(ButtonProperties.buttonSize);
 
-		float y_pos = (ButtonProperties.buttonMargin+ButtonProperties.buttonSize/2.0f)/Screen.height;
+		//float y_pos = (ButtonProperties.buttonMargin+ButtonProperties.buttonSize/2.0f)/Screen.height;
+		float y_pos = 0.92f;
 		mTextTime.transform.position = new Vector3(mTextTime.transform.position.x, y_pos, mTextTime.transform.position.z);
 		mTextTimeShadow.transform.position = new Vector3(mTextTimeShadow.transform.position.x, y_pos, mTextTimeShadow.transform.position.z);
 	}
