@@ -292,7 +292,7 @@ public class ButtonBar : MonoBehaviour
 
 			foreach(GameObject button in listButtons){
 				BasicButton b = button.GetComponent<BasicButton>();
-				if(sender!=b)
+				if(b!=null && sender!=b)
 					b.Checked=false;
 			}
 			mSpeed.End();
@@ -308,11 +308,13 @@ public class ButtonBar : MonoBehaviour
 
 		foreach(GameObject button in listButtons){
 			BasicButton b = button.GetComponent<BasicButton>();
-			if(b.ID==id_button){
-				currentSelected=b;
-				b.Checked=true;
-			}else{
-				b.Checked=false;
+			if(b!=null){
+				if(b.ID==id_button){
+					currentSelected=b;
+					b.Checked=true;
+				}else{
+					b.Checked=false;
+				}
 			}
 		}
 	}

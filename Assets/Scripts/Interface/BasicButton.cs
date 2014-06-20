@@ -18,7 +18,8 @@ public enum ButtonType{
 	EDIT_TIME_VOICE_FX_MONSTER_PRO, EDIT_TIME_VOICE_FX_SMURF_PRO, EDIT_TIME_VOICE_FX_ROBOT, EDIT_TIME_VOICE_FX_DIST,
 	EDIT_TIME_VOICE_FX_NOISE, EDIT_TIME_VOICE_FX_COMPRESS,
 	CAM_PARAM,
-	PLAYER_PLAY, PLAYER_EDIT, EXPORT_EDIT
+	PLAYER_PLAY, PLAYER_EDIT, EXPORT_EDIT,
+	MAIN_HELP
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -196,8 +197,8 @@ public class BasicButton : MonoBehaviour
 	
 	void Update()
 	{
-		if(!bClickable)
-			return;
+		//if(!bClickable)  //Lo pongo mas abajo para que me funcionen los botones "Coming Soon"
+		//	return;
 
 		if(state == States.hidden || Camera.main == null)
 			return;
@@ -228,6 +229,9 @@ public class BasicButton : MonoBehaviour
 			Color c = renderer.material.color;
 			renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 		}
+
+		if(!bClickable)
+			return;
 
 		if(mGUIManager is GUIManagerBlocks && buttonType!=ButtonType.EDIT_TIME_VOICE_PLAY && buttonType!=ButtonType.EDIT_TIME_VOICE_REC){
 			if(((GUIManagerBlocks)mGUIManager).soundRecorder.mMode!=SoundRecorder.Modes.Idle)
@@ -285,12 +289,23 @@ public class BasicButton : MonoBehaviour
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void SetChapterTextColor(bool bChecked)
+	public void SetTextColor(bool bChecked, Color checkedColor)
 	{
 		if(bChecked){
-			mGUIText.guiText.color = new Color(255,210,0,1);
+			mGUIText.guiText.color = checkedColor; //selected
 		}else{
-			mGUIText.guiText.color = new Color(244,244,244,1);
+			mGUIText.guiText.color = new Color(0.96f,0.96f,0.96f,1); //white -> unselected
+		}
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void SetBottomTextColor(bool bChecked, Color checkedColor)
+	{
+		if(bChecked){
+			mGUITextBottom.guiText.color = checkedColor; //selected
+		}else{
+			mGUITextBottom.guiText.color = new Color(0.96f,0.96f,0.96f,1); //white -> unselected
 		}
 	}
 

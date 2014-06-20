@@ -7,10 +7,16 @@ public class GUITextController : MonoBehaviour
 {
 	Transform mParent;
 	SmoothStep mFade;
-	public bool bIsTime=false;
-	public bool bIsFX=false;
 	Data.Chapter.Block mBlock;
 	BasicButton mButton;
+
+	public enum ContentType{
+		None,
+		Duration,
+		Fx,
+		Lib
+	}
+	public ContentType contentType;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,7 +36,7 @@ public class GUITextController : MonoBehaviour
 		SetTextBottom();
 
 		if(mParent!=null){
-			if(bIsTime || bIsFX){
+			if(contentType!=ContentType.None){
 				guiText.fontSize = (int)(mParent.lossyScale.x*(15.0f/90.0f)); 
 			}else{
 				guiText.fontSize = (int)(mParent.lossyScale.x*(22.0f/90.0f)); //para button.scale=90 ==> font_size=22
@@ -44,13 +50,13 @@ public class GUITextController : MonoBehaviour
 
 	public void SetTextBottom(string text="")
 	{
-		if(bIsTime){
+		if(contentType==ContentType.Duration){
 			Data.Chapter.Block mBlock = mButton.iObj as Data.Chapter.Block;
 			int seconds = Mathf.RoundToInt(mBlock.Frames*Globals.MILISPERFRAME);
 			seconds = Mathf.Max(seconds,1);
 			guiText.text = "00:"+seconds.ToString("00");
 		}
-		else if(bIsFX){
+		else if(contentType==ContentType.Fx){
 			guiText.text = text;
 		}
 	}
@@ -72,7 +78,7 @@ public class GUITextController : MonoBehaviour
 			float pos_y;
 
 			//time or fx label
-			if(bIsTime || bIsFX){
+			if(contentType!=ContentType.None){
 				pos_y = (mParent.position.y-mParent.lossyScale.x * 0.28f)/Screen.height;
 			//chapter or block number label
 			}else{

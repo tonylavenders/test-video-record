@@ -14,6 +14,7 @@ public class GUIManager : MonoBehaviour
 
 	public BasicButton EditButton;
 	public BasicButton PlayButton;
+	public BasicButton HelpButton;
 
 	public InputText inputText;
 	
@@ -135,19 +136,26 @@ public class GUIManager : MonoBehaviour
 
 	protected virtual void InitButtons()
 	{
-		//Edit button
+		//Help button
 		float pos_x = Screen.width-ButtonProperties.buttonBarScaleX-ButtonProperties.buttonMargin-ButtonProperties.buttonSize/2.0f;
 		float pos_y = ButtonProperties.buttonMargin+ButtonProperties.buttonSize/2.0f;
 		Vector3 pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 		Vector3 scale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 
+		HelpButton.Init(pos, scale);
+		HelpButton.Show(0, Globals.ANIMATIONDURATION, CurrentCharacter!=null && CurrentBackground!=null);
+
+		//Edit button
+		pos_x -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
+		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
+
 		EditButton.Init(pos, scale);
-		EditButton.Show(0, Globals.ANIMATIONDURATION, CurrentCharacter!=null && CurrentBackground!=null);
+		EditButton.Show(0, Globals.ANIMATIONDURATION, Data.selChapter!=null && Data.selChapter.Blocks.Count>0);
 
 		//Play button
 		pos_x -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
-
+		
 		PlayButton.Init(pos, scale);
 		PlayButton.Show(0, Globals.ANIMATIONDURATION, Data.selChapter!=null && Data.selChapter.Blocks.Count>0);
 	}
