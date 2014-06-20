@@ -9,7 +9,7 @@ public class CustomImportSettings : AssetPostprocessor
 	{
 		TextureImporter textureImporter = assetImporter as TextureImporter;
 
-		if(textureImporter.assetPath.Contains("Interface"))
+		if(textureImporter.assetPath.Contains("Interface") || textureImporter.assetPath.Contains("Icons"))
 		{
 			textureImporter.textureType = TextureImporterType.GUI;
 			textureImporter.npotScale = TextureImporterNPOTScale.None;
@@ -19,6 +19,14 @@ public class CustomImportSettings : AssetPostprocessor
 			textureImporter.textureFormat = TextureImporterFormat.AutomaticCompressed;
 			textureImporter.maxTextureSize = 512;
 		}
+	}
+
+	//MODELS
+	void OnPreprocessModel()
+	{
+		ModelImporter modelImporter = assetImporter as ModelImporter;
+
+		modelImporter.generateSecondaryUV=true;
 	}
 }
 

@@ -236,7 +236,7 @@ public class GUIManagerChapters : GUIManager
 			Data.selChapter.Frame(0,false);
 		}
 
-		sender.SetChapterTextColor(sender.Checked);
+		sender.SetTextColor(sender.Checked, new Color(1,0.82f,0,1)); //yellow
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,6 +253,8 @@ public class GUIManagerChapters : GUIManager
 				Debug.Log("El boton no tiene prefab asociado!");
 			}
 		}
+
+		sender.SetBottomTextColor(sender.Checked, new Color(0.11f,0.72f,1,1)); //blue
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -267,6 +269,8 @@ public class GUIManagerChapters : GUIManager
 				Debug.Log("El boton no tiene prefab asociado!");
 			}
 		}
+
+		sender.SetBottomTextColor(sender.Checked, new Color(0.11f,0.72f,1,1)); //blue
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -282,6 +286,8 @@ public class GUIManagerChapters : GUIManager
 				mCamera.audio.clip=null;
 			}
 		}
+
+		sender.SetBottomTextColor(sender.Checked, new Color(0.11f,0.72f,1,1)); //blue
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
