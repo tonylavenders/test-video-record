@@ -95,7 +95,7 @@ public class SceneMgr : MonoBehaviour  {
 		mAlpha.Reset(1, Globals.ANIMATIONDURATION);
 	}
 	
-	void Update () {
+	void Update() {
 		if(mState == States.NONE)
 			return;
 

@@ -119,6 +119,7 @@ public class GUIManagerChapters : GUIManager
 	void SetCurrentChapterElements()
 	{
 		if(Data.selChapter==null){
+			PlayButton.Enable=false;
 			return;
 		}
 		//Character

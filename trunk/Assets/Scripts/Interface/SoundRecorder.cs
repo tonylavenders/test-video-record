@@ -114,6 +114,9 @@ public class SoundRecorder : MonoBehaviour
 		if(TVR.Utils.Message.State==TVR.Utils.Message.States.Running)
 			return;
 
+		if(guiManagerBlocks.bShowHelp)
+			return;
+
 		if(mMode==Modes.Recording){
 			//Recording
 			if(Microphone.IsRecording(null)){
@@ -385,6 +388,8 @@ public class SoundRecorder : MonoBehaviour
 		audio.clip = audioClips[mCurrentFilter];
 		CurrentTime = (int)audio.clip.length;
 		bLastSaved=false;
+
+		sender.SetBottomTextColor(sender.Checked, new Color(0.79f,0.94f,0.1f,1)); //green
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

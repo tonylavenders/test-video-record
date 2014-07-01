@@ -17,6 +17,14 @@ public class GUIManager : MonoBehaviour
 	public BasicButton HelpButton;
 
 	public InputText inputText;
+	public bool bShowHelp;
+
+	public Texture texHelp01;
+	public Texture texHelp02;
+	float texHelpW;
+	float texHelpH;
+	float texHelpY01;
+	float texHelpY02;
 	
 	GameObject mCurrentCharacter;
 	public GameObject CurrentCharacter{
@@ -90,6 +98,15 @@ public class GUIManager : MonoBehaviour
 		RightButtonBar.Show(true);
 
 		InitButtons();
+
+		//Calculate W,H of help texture
+		float originalW = texHelp01.width;
+		float originalH = texHelp01.height;
+		texHelpW = Screen.width;
+		float ratio = originalW/Screen.width;
+		texHelpH = originalH/ratio;
+		texHelpY01 = (Screen.height-texHelpH)/2.0f;
+		texHelpY02 = Screen.height-texHelpH;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,14 +160,14 @@ public class GUIManager : MonoBehaviour
 		Vector3 scale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
 
 		HelpButton.Init(pos, scale);
-		HelpButton.Show(0, Globals.ANIMATIONDURATION, CurrentCharacter!=null && CurrentBackground!=null);
+		HelpButton.Show(0, Globals.ANIMATIONDURATION, true);
 
 		//Edit button
 		pos_x -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
 		pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 
 		EditButton.Init(pos, scale);
-		EditButton.Show(0, Globals.ANIMATIONDURATION, Data.selChapter!=null && Data.selChapter.Blocks.Count>0);
+		EditButton.Show(0, Globals.ANIMATIONDURATION, CurrentCharacter!=null && CurrentBackground!=null);
 
 		//Play button
 		pos_x -= ButtonProperties.buttonMargin+ButtonProperties.buttonSize;
@@ -175,9 +192,9 @@ public class GUIManager : MonoBehaviour
 	public virtual void DisableButtons(ButtonBar.ElementTypes elemType)
 	{
 		LeftButtonBar.DisableButtons();
-		if(elemType==ButtonBar.ElementTypes.blocks){
+		//if(elemType==ButtonBar.ElementTypes.blocks){
 			PlayButton.Enable=false;
-		}
+		//}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -206,6 +223,11 @@ public class GUIManager : MonoBehaviour
 	protected virtual void OnGUI()
 	{
 		TVR.Utils.Message.OnGUI();
+
+		if(bShowHelp){
+			GUI.DrawTexture(new Rect(0,texHelpY01,texHelpW,texHelpH), texHelp01);
+			GUI.DrawTexture(new Rect(0,texHelpY02,texHelpW,texHelpH), texHelp02);
+		}
 
 		//if(GUI.Button(new Rect(Screen.width / 2 - 50, 70, 100, 50), "Blur")) {
 		//	blur = !blur;
@@ -249,6 +271,17 @@ public class GUIManager : MonoBehaviour
 	//Play button
 	public virtual void OnButtonPlayClicked(BasicButton sender)
 	{
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Help button
+	public void OnButtonHelpCheched(BasicButton sender)
+	{
+		if(sender.Checked){
+			bShowHelp=true;
+		}else{
+			bShowHelp=false;
+		}
 	}
 }
 
