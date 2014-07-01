@@ -78,12 +78,11 @@ public class GUITextController : MonoBehaviour
 			float pos_y;
 
 			//fx or lib
-			//if(contentType!=ContentType.None){
-			if(contentType==ContentType.Fx || contentType==ContentType.Lib){
+			if(contentType==ContentType.Lib){
 				pos_y = (mParent.position.y-mParent.lossyScale.x * 0.28f)/Screen.height;
 			}
 			//block
-			else if(contentType==ContentType.Duration){
+			else if(contentType==ContentType.Fx || contentType==ContentType.Duration){
 				pos_y = (mParent.position.y-mParent.lossyScale.x * 0.42f)/Screen.height;
 			}
 			//chapter or block number label

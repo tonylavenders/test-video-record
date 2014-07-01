@@ -197,9 +197,6 @@ public class BasicButton : MonoBehaviour
 	
 	void Update()
 	{
-		//if(!bClickable)  //Lo pongo mas abajo para que me funcionen los botones "Coming Soon"
-		//	return;
-
 		if(state == States.hidden || Camera.main == null)
 			return;
 
@@ -229,6 +226,9 @@ public class BasicButton : MonoBehaviour
 			Color c = renderer.material.color;
 			renderer.material.color = new Color(c.r, c.g, c.b, mFade.Value);
 		}
+
+		if(buttonType!=ButtonType.MAIN_HELP && mGUIManager.bShowHelp)
+			return;
 
 		if(!bClickable)
 			return;
@@ -379,6 +379,9 @@ public class BasicButton : MonoBehaviour
 		else if(buttonType == ButtonType.MAIN_PLAY) {
 			clickedCallback = mGUIManager.OnButtonPlayClicked;
 		}
+		else if(buttonType == ButtonType.MAIN_HELP) {
+			checkedCallback = mGUIManager.OnButtonHelpCheched;
+		}
 		else if(buttonType == ButtonType.BLOCK) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonBlockChecked;
 		}
@@ -394,9 +397,9 @@ public class BasicButton : MonoBehaviour
 		else if(buttonType == ButtonType.ANIM) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonAnimationChecked;
 		}
-		else if(buttonType == ButtonType.EXPR) {
-			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonExpressionChecked;
-		}
+		//else if(buttonType == ButtonType.EXPR) {
+		//	checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonExpressionChecked;
+		//}
 		else if(buttonType == ButtonType.CAM_PARAM) {
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).OnButtonCameraChecked;
 		}

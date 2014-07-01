@@ -235,6 +235,9 @@ public class ButtonBar : MonoBehaviour
 				return;
 		}
 
+		if(mGUIManager.bShowHelp)
+			return;
+
 		//Check if user is touching the button bar
 		if(state == States.idle && Input.GetMouseButtonDown(0)){
 			RaycastHit hit;

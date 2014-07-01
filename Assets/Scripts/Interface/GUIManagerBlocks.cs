@@ -67,7 +67,6 @@ public class GUIManagerBlocks : GUIManager
 		mTextTime.fontSize = Mathf.RoundToInt(ButtonProperties.buttonSize);
 		mTextTimeShadow.fontSize = Mathf.RoundToInt(ButtonProperties.buttonSize);
 
-		//float y_pos = (ButtonProperties.buttonMargin+ButtonProperties.buttonSize/2.0f)/Screen.height;
 		float y_pos = 0.92f;
 		mTextTime.transform.position = new Vector3(mTextTime.transform.position.x, y_pos, mTextTime.transform.position.z);
 		mTextTimeShadow.transform.position = new Vector3(mTextTimeShadow.transform.position.x, y_pos, mTextTimeShadow.transform.position.z);
@@ -167,7 +166,7 @@ public class GUIManagerBlocks : GUIManager
 		base.InitButtons();
 		soundRecorder.InitButtons();
 
-		//EditButton.Show();
+		EditButton.Show();
 
 		//Time: Decrease button
 		float pos_x = ButtonProperties.buttonBarScaleX*2.0f+ButtonProperties.buttonMargin/2.0f+ButtonProperties.buttonSize/2.0f;
@@ -386,10 +385,12 @@ public class GUIManagerBlocks : GUIManager
 			}
 			Data.selChapter.selBlock.IdAnimation=sender.ID;
 		}
+
+		sender.SetBottomTextColor(sender.Checked, new Color(0.79f,0.94f,0.1f,1)); //green
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	/* De momento, no hay expresiones
 	public void OnButtonExpressionChecked(BasicButton sender)
 	{
 		if(sender.Checked){
@@ -399,7 +400,7 @@ public class GUIManagerBlocks : GUIManager
 			Data.selChapter.selBlock.IdExpression=sender.ID;
 		}
 	}
-	
+	*/
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void OnButtonCameraChecked(BasicButton sender)
@@ -408,6 +409,8 @@ public class GUIManagerBlocks : GUIManager
 			Data.selChapter.selBlock.ShotType=(Data.Chapter.Block.shotTypes)sender.ID;
 			mCamera.GetComponent<SceneCameraManager>().SetParams((int)Data.selChapter.selBlock.ShotType);
 		}
+
+		sender.SetBottomTextColor(sender.Checked, new Color(0.79f,0.94f,0.1f,1)); //green
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
