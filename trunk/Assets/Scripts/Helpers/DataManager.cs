@@ -21,7 +21,7 @@ public class DataManager : MonoBehaviour
 		mMesh = transform.Find("mesh");
 		mActivesAnims = new List<activeAnim>();
 		audioSource = gameObject.AddComponent<AudioSource>();
-		audioSource.loop = true;
+		audioSource.loop = false;
 		audioSource.playOnAwake = false;
 
 		mLipSync = false;

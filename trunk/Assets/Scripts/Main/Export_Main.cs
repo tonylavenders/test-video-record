@@ -28,7 +28,20 @@ public class Export_Main : GUIManager
 	bool render;
 	bool bHaveAudio=false;
 
-	Texture texRendering;
+	//Backgrounds and progress bar
+	public GUIStyle textStyle;
+	public Texture texLogo;
+	public Texture texBackground;
+	public Texture texProgressBkg;
+	public Texture texProgressFore;
+
+	Rect rectTexLogo;
+	Rect rectTexBackground;
+	Rect rectText;
+	Rect rectTexProgressBkg;
+	Rect rectTexProgressFore;
+
+	Color oldGUIcolor;
 
 	//TabBackUndo mTabBackUndo;
 
@@ -282,8 +295,6 @@ public class Export_Main : GUIManager
 
 	protected override void Start()
 	{
-		texRendering = (Texture)ResourcesManager.LoadResource("Interface/Textures/renderizando", "Export");
-
 		mOriginalShadowDistance = QualitySettings.shadowDistance;
 		QualitySettings.shadowDistance = 20;
 
@@ -328,6 +339,24 @@ public class Export_Main : GUIManager
 		}
 		mAudioProcessed = false;
 		mAbort = false;
+
+		//Calculate size and position for background textures and progress bar
+		float originalW = 700;
+		float originalH = 400;
+
+		float ratio = originalW/originalH;
+		float targetW = Screen.width*0.5f;
+		float targetH = targetW/ratio;
+		float y = (Screen.height-targetH)/2.0f;
+		float x = (Screen.width-targetW)/2.0f;
+
+		rectTexLogo = new Rect(x,y,targetW,targetH);
+		rectTexBackground = new Rect(0,0,Screen.width,Screen.height);
+		rectText = new Rect(0,Screen.height*0.75f,Screen.width,60);
+
+		textStyle.fontSize = (int)(30.0f*Screen.width/1024.0f);
+
+		rectTexProgressBkg = new Rect(Screen.width*0.25f, Screen.height*0.85f, Screen.width*0.5f, Screen.height*0.05f);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -788,6 +817,25 @@ public class Export_Main : GUIManager
 			}
 		}
 		*/
+
+		//Background and logo
+		GUI.DrawTexture(rectTexBackground, texBackground);
+
+		oldGUIcolor = GUI.color;
+		GUI.color = new Color(GUI.color.r, GUI.color.g, GUI.color.b, 0.3f);
+		GUI.DrawTexture(rectTexLogo, texLogo);
+		GUI.color = oldGUIcolor;
+
+		//Progress bar
+		GUI.Label(rectText, "Converting video...", textStyle);
+		GUI.DrawTexture(rectTexProgressBkg, texProgressBkg);
+
+		float percent = (float)mCountCurrentFrame/(float)Data.selChapter.totalFrames;
+		float w = percent * (rectTexProgressBkg.width-4);
+		rectTexProgressFore = new Rect(rectTexProgressBkg.x+2, rectTexProgressBkg.y+2, w, rectTexProgressBkg.height-4);
+		GUI.DrawTexture(rectTexProgressFore, texProgressFore);
+
+		/*
 		if(state == States.EXPORTING) {
 			GUI.Box(new Rect(-2, -2, 220, 120), "");
 			GUILabelWithShadows(new Rect(10, 10, 200, 25), "VIDEO CREATION PROCESS");
@@ -813,12 +861,12 @@ public class Export_Main : GUIManager
 			GUILabelWithShadows(new Rect(10, 10, 200, 25), "VIDEO CREATION PROCESS");
 			//GUILabelWithShadows(new Rect(10, 30, 200, 40), "STEP 1/3: Capturing audio");
 		}
-		else if(state == States.END/* && mStages.Count > 0*/) {
+		else if(state == States.END) {
 			GUI.Box(new Rect(-2, -2, 220, 70), "");
 			GUILabelWithShadows(new Rect(10, 10, 200, 25), "VIDEO CREATION PROCESS");
 			GUILabelWithShadows(new Rect(10, 30, 200, 40), "Video file created.");
 		}
-
+		*/
 		//mTabBackUndo.OnGUI();
 		//Message.OnGUI();
 	}
@@ -902,6 +950,9 @@ public class Export_Main : GUIManager
 		}
 		else if(state == States.END) {
 			//mTabBackUndo.update();
+			//iPhoneUtils.PlayMovieURL("file://"+Application.persistentDataPath + "/LED.mp4", Color.black, iPhoneMovieControlMode.Full, iPhoneMovieScalingMode.None);
+			Handheld.PlayFullScreenMovie ("file://"+Application.persistentDataPath + "/LED.mp4", Color.black, FullScreenMovieControlMode.CancelOnInput);
+			//Application.OpenURL();
 		}
 	}
 
