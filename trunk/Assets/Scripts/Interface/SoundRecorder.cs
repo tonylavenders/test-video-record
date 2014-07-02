@@ -340,7 +340,7 @@ public class SoundRecorder : MonoBehaviour
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//APPLY EFFECT
-	public void OnButtonTimeVoiceFxEffectClicked(BasicButton sender)
+	public void OnButtonTimeVoiceFxEffectChecked(BasicButton sender)
 	{
 		mCurrentFilter = sender.ID;
 
@@ -384,12 +384,12 @@ public class SoundRecorder : MonoBehaviour
 			audioClips[mCurrentFilter].SetData(outdata, 0);
 		}
 
+		sender.SetBottomTextColor(sender.Checked, new Color(0.79f,0.94f,0.1f,1)); //green
+
 		CloseButtonBar();
 		audio.clip = audioClips[mCurrentFilter];
 		CurrentTime = (int)audio.clip.length;
 		bLastSaved=false;
-
-		sender.SetBottomTextColor(sender.Checked, new Color(0.79f,0.94f,0.1f,1)); //green
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
