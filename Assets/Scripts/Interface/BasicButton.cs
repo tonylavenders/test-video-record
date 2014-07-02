@@ -443,34 +443,34 @@ public class BasicButton : MonoBehaviour
 		//SOUND FILTERS ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_MONSTER) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectChecked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_SMURF) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectChecked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_ECHO) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectChecked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_MONSTER_PRO) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectChecked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_SMURF_PRO) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectChecked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_ROBOT) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectChecked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_DIST) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectChecked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_NOISE) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectChecked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_COMPRESS) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectChecked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX_OFF) {
-			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectClicked;
+			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxEffectChecked;
 		}
 
 		//PLAYER ////////////////////////////////////////////////////////////////////////////////////////////////////////
