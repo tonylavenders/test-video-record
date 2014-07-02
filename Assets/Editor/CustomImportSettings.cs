@@ -20,14 +20,14 @@ public class CustomImportSettings : AssetPostprocessor
 			textureImporter.maxTextureSize = 512;
 		}
 	}
-
+	/*
 	//MODELS
 	void OnPreprocessModel()
 	{
 		ModelImporter modelImporter = assetImporter as ModelImporter;
-
 		modelImporter.generateSecondaryUV=true;
 	}
+	*/
 }
 
 
