@@ -323,73 +323,79 @@ public class SoundRecorder : MonoBehaviour
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//FX
-	public void OnButtonTimeVoiceFxChecked(BasicButton sender)
+	public void OnButtonTimeVoiceFxClicked(BasicButton sender)
 	{
-		if(sender.Checked){
+		//if(sender.Checked){
 			guiManagerBlocks.mVoiceFxButtonBar.Show(true);
 			guiManagerBlocks.HideTime();
 			sender.Hide(0,0);
 
 			//First time we press Filter button
-			if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Time){
-				mCurrentFilter=0;
-				guiManagerBlocks.mVoiceFxButtonBar.SetCurrentButton(mCurrentFilter);
-			}
-		}
+			//if(Data.selChapter.selBlock.BlockType==Data.Chapter.Block.blockTypes.Time){
+			//	mCurrentFilter=0;
+			//	guiManagerBlocks.mVoiceFxButtonBar.SetCurrentButton(mCurrentFilter);
+			//}
+		//}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//APPLY EFFECT
 	public void OnButtonTimeVoiceFxEffectChecked(BasicButton sender)
 	{
-		mCurrentFilter = sender.ID;
+		if(audioClips[0]!=null)
+		{
+			if(sender.Checked)
+			{
+				mCurrentFilter = sender.ID;
 
-		if(audioClips[sender.ID] == null) {
-			float[] indata, outdata;
-			indata = new float[audioClips[0].samples * audioClips[0].channels];
-			outdata = new float[audioClips[0].samples * audioClips[0].channels];
-			audioClips[0].GetData(indata, 0);
+				if(audioClips[sender.ID] == null) {
+					float[] indata, outdata;
+					indata = new float[audioClips[0].samples * audioClips[0].channels];
+					outdata = new float[audioClips[0].samples * audioClips[0].channels];
+					audioClips[0].GetData(indata, 0);
 
-			switch((Data.Chapter.Block.filterType)sender.ID) {
-			case Data.Chapter.Block.filterType.Monster:
-				filter.Monster(indata, out outdata);
-				break;
-			case Data.Chapter.Block.filterType.Mosquito:
-				filter.Mosquito(indata, out outdata);
-				break;
-			case Data.Chapter.Block.filterType.MonsterPro:
-				filter.MonsterPro(indata, out outdata);
-				break;
-			case Data.Chapter.Block.filterType.MosquitoPro:
-				filter.MosquitoPro(indata, out outdata);
-				break;
-			case Data.Chapter.Block.filterType.Echo:
-				filter.Echo(indata, out outdata);
-				break;
-			case Data.Chapter.Block.filterType.Compression:
-				filter.Compression(indata, out outdata);
-				break;
-			case Data.Chapter.Block.filterType.Distorsion:
-				filter.Distorsion(indata, out outdata);
-				break;
-			case Data.Chapter.Block.filterType.Robot:
-				filter.Robot(indata, out outdata);
-				break;
-			case Data.Chapter.Block.filterType.Noise:
-				filter.Noise(indata, out outdata);
-				break;
+					switch((Data.Chapter.Block.filterType)sender.ID) {
+					case Data.Chapter.Block.filterType.Monster:
+						filter.Monster(indata, out outdata);
+						break;
+					case Data.Chapter.Block.filterType.Mosquito:
+						filter.Mosquito(indata, out outdata);
+						break;
+					case Data.Chapter.Block.filterType.MonsterPro:
+						filter.MonsterPro(indata, out outdata);
+						break;
+					case Data.Chapter.Block.filterType.MosquitoPro:
+						filter.MosquitoPro(indata, out outdata);
+						break;
+					case Data.Chapter.Block.filterType.Echo:
+						filter.Echo(indata, out outdata);
+						break;
+					case Data.Chapter.Block.filterType.Compression:
+						filter.Compression(indata, out outdata);
+						break;
+					case Data.Chapter.Block.filterType.Distorsion:
+						filter.Distorsion(indata, out outdata);
+						break;
+					case Data.Chapter.Block.filterType.Robot:
+						filter.Robot(indata, out outdata);
+						break;
+					case Data.Chapter.Block.filterType.Noise:
+						filter.Noise(indata, out outdata);
+						break;
+					}
+
+					audioClips[mCurrentFilter] = AudioClip.Create("sound", outdata.Length, channels, frequency, false, false);
+					audioClips[mCurrentFilter].SetData(outdata, 0);
+				}
+
+				CloseButtonBar();
+				audio.clip = audioClips[mCurrentFilter];
+				CurrentTime = (int)audio.clip.length;
+				bLastSaved=false;
 			}
-
-			audioClips[mCurrentFilter] = AudioClip.Create("sound", outdata.Length, channels, frequency, false, false);
-			audioClips[mCurrentFilter].SetData(outdata, 0);
 		}
 
 		sender.SetBottomTextColor(sender.Checked, new Color(0.79f,0.94f,0.1f,1)); //green
-
-		CloseButtonBar();
-		audio.clip = audioClips[mCurrentFilter];
-		CurrentTime = (int)audio.clip.length;
-		bLastSaved=false;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
