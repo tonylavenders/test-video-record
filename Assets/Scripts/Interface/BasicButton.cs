@@ -434,7 +434,7 @@ public class BasicButton : MonoBehaviour
 			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceRecChecked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_FX) {
-			checkedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxChecked;
+			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceFxClicked;
 		}
 		else if(buttonType == ButtonType.EDIT_TIME_VOICE_SAVE) {
 			clickedCallback = ((GUIManagerBlocks)mGUIManager).soundRecorder.OnButtonTimeVoiceSaveClicked;
