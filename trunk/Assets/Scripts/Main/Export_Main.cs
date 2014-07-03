@@ -31,13 +31,11 @@ public class Export_Main : GUIManager
 	//Backgrounds and progress bar
 	public GUIStyle textStyle;
 	public Texture texLogo;
-	public Texture texBackground;
 	public Texture texProgressBkg;
 	public Texture texProgressFore;
 
 	Rect rectTexLogo;
-	Rect rectTexBackground;
-	Rect rectText;
+	Rect rectText, rectText2;
 	Rect rectTexProgressBkg;
 	Rect rectTexProgressFore;
 
@@ -79,7 +77,7 @@ public class Export_Main : GUIManager
 	string mCurrentPath;
 	Rect rectGUI;
 	private System.IO.StreamWriter mLog;
-	private bool mAudioProcessed;
+	//private bool mAudioProcessed;
 
 	public bool Processing;
 	public short HighestSample;
@@ -305,12 +303,12 @@ public class Export_Main : GUIManager
 		//LetterboxManager.Init();
 		//rectGUI = LetterboxManager.GetRectPercent();
 
-		//SetGUICamera();
+		SetGUICamera();
 		OnFinishedFadeOut();
 		myTexture2D = new Texture2D(video_w, video_h, TextureFormat.RGB24, false);
 		LoadChapterElements();
 		Data.selChapter.Reset();
-		//SetButtons();
+		SetButtons();
 
 		//SceneMgr.Get().OnFinished = OnFinishedFadeOut;
 		//mCurrentScene = 0;
@@ -337,22 +335,21 @@ public class Export_Main : GUIManager
 			TVR.Utils.Message.Show(1, Texts.WARNING, Texts.NOTHING_TO_REPRODUCE, TVR.Utils.Message.Type.Accept, Texts.ACCEPT, "", NothingToReproduce);
 			state = States.END;
 		}
-		mAudioProcessed = false;
+		//mAudioProcessed = false;
 		mAbort = false;
 
 		//Calculate size and position for background textures and progress bar
-		float originalW = 700;
-		float originalH = 400;
-
+		float originalW = 600;
+		float originalH = 250;
 		float ratio = originalW/originalH;
 		float targetW = Screen.width*0.5f;
 		float targetH = targetW/ratio;
-		float y = (Screen.height-targetH)/2.0f;
 		float x = (Screen.width-targetW)/2.0f;
+		float y = (Screen.height-targetH)/2.0f;
 
 		rectTexLogo = new Rect(x,y,targetW,targetH);
-		rectTexBackground = new Rect(0,0,Screen.width,Screen.height);
-		rectText = new Rect(0,Screen.height*0.75f,Screen.width,60);
+		rectText = new Rect(0,Screen.height*0.68f,Screen.width,60);
+		rectText2 = new Rect(0,Screen.height*0.75f,Screen.width,60);
 
 		textStyle.fontSize = (int)(30.0f*Screen.width/1024.0f);
 
@@ -374,9 +371,15 @@ public class Export_Main : GUIManager
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	 
+	//Edit button (back button)
 	public void OnButtonExportEditClicked(BasicButton sender)
 	{
+		if(state != States.END){
+			QueueManager.pause = true;
+			QueueManager.pauseOnButtonDown = false;
+			CancelRecordingBackButton();
+		}
+
 		Data.selChapter.Stop();
 		SceneMgr.Get.SwitchTo("ChapterMgr");
 	}
@@ -434,7 +437,7 @@ public class Export_Main : GUIManager
 		mLog.WriteLine("Mezclando audio.");
 		DirectoryInfo dir = new DirectoryInfo(mCurrentPath);
 		FileInfo[] info = dir.GetFiles("*.wav");
-		mAudioProcessed = true;
+		//mAudioProcessed = true;
 		if(info.Length > 0) {
 			float[] output;
 			float multiplier = 0.0f;
@@ -743,16 +746,17 @@ public class Export_Main : GUIManager
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void CancelRecording(TVR.Utils.Message.ButtonClicked buttonClicked, int Identifier)
+	void CancelRecordingBackButton()
+	//void CancelRecording(TVR.Utils.Message.ButtonClicked buttonClicked, int Identifier)
 	{
-		if(buttonClicked == TVR.Utils.Message.ButtonClicked.Yes) {
+		//if(buttonClicked == TVR.Utils.Message.ButtonClicked.Yes) {
 			QueueManager.clear("Export");
 			preCancelRecording();
-		} else {
-			TVR.Utils.Message.Hide();
-			QueueManager.pauseOnButtonDown = true;
-		}
+		//}
+		//else {
+		//	TVR.Utils.Message.Hide();
+		//	QueueManager.pauseOnButtonDown = true;
+		//}
 		QueueManager.pause = false;
 	}
 
@@ -819,21 +823,28 @@ public class Export_Main : GUIManager
 		*/
 
 		//Background and logo
-		GUI.DrawTexture(rectTexBackground, texBackground);
-
 		oldGUIcolor = GUI.color;
 		GUI.color = new Color(GUI.color.r, GUI.color.g, GUI.color.b, 0.3f);
 		GUI.DrawTexture(rectTexLogo, texLogo);
 		GUI.color = oldGUIcolor;
 
 		//Progress bar
-		GUI.Label(rectText, "Converting video...", textStyle);
 		GUI.DrawTexture(rectTexProgressBkg, texProgressBkg);
-
 		float percent = (float)mCountCurrentFrame/(float)Data.selChapter.totalFrames;
 		float w = percent * (rectTexProgressBkg.width-4);
 		rectTexProgressFore = new Rect(rectTexProgressBkg.x+2, rectTexProgressBkg.y+2, w, rectTexProgressBkg.height-4);
 		GUI.DrawTexture(rectTexProgressFore, texProgressFore);
+
+		//Label
+		if(state != States.END){
+			GUI.Label(rectText2, "Converting video...", textStyle);
+		}else if(mAbort){
+			GUI.Label(rectText2, "Cancelling...", textStyle);
+		}else{
+			GUI.Label(rectText, "Video created.", textStyle);
+			GUI.Label(rectText2, "Open CAMERA ROLL to play and share!", textStyle);
+		}
+			
 
 		/*
 		if(state == States.EXPORTING) {
@@ -903,12 +914,12 @@ public class Export_Main : GUIManager
 
 		//if(Message.State != Message.States.Hide)
 		//	return;
-
+		/*
 		if(InputHelp.GetMouseButton(0) && state == States.EXPORTING && mCountTotalFrames > 0) {
 			QueueManager.pause = true;
 			QueueManager.pauseOnButtonDown = false;
 			TVR.Utils.Message.Show(0, Texts.WARNING, Texts.CANCEL_ENCODING, TVR.Utils.Message.Type.YesNo, Texts.YES, Texts.NO, CancelRecording);
-		}
+		}*/
 		if(state == States.INIT) {
 			Application.runInBackground = true;
 			state = States.AUDIO;
