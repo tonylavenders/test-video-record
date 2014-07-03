@@ -196,8 +196,10 @@ public class GUIManagerChapters : GUIManager
 	//Main: Share button
 	public void OnButtonShareClicked(BasicButton sender)
 	{
-		Data.selChapter.Save();
-		SceneMgr.Get.SwitchTo("Export");
+		if(Data.selChapter!=null && Data.selChapter.Blocks.Count>0){
+			Data.selChapter.Save();
+			SceneMgr.Get.SwitchTo("Export");
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

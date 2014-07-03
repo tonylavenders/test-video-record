@@ -3,35 +3,47 @@ using System.Collections;
 
 public class Main : MonoBehaviour
 {
-	private bool click;
-	public Texture mCover;
-	const int w=700;
-	const int h=400;
-	const float delay=3;
-	float mTime=0;
+	public Texture texLogo;
+	public GUIStyle mButtonStyle;
+	Rect rectTexLogo;
+	Rect rectButton;
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Start() 
 	{
-		click = false;
+		//Calculate size and position for background textures and progress bar
+		float originalW = 600;
+		float originalH = 250;
+		float ratio = originalW/originalH;
+		float targetW = Screen.width*0.6f;
+		float targetH = targetW/ratio;
+		float x = (Screen.width-targetW)/2.0f;
+		float y = (Screen.height-targetH)*0.3f;
+		
+		rectTexLogo = new Rect(x,y,targetW,targetH);
+
+		float size = Screen.width*0.15f;
+		float x_button = (Screen.width-size)/2.0f;
+		float y_button = Screen.height*0.7f;
+
+		rectButton = new Rect(x_button,y_button,size,size);
 	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void Update()
 	{
-		mTime+=Time.deltaTime;
-		//if(TVR.Helpers.InputHelp.GetMouseButtonUp(0) && !click) {
-		if(mTime>delay && !click) {
-			SceneMgr.Get.SwitchTo("ChapterMgr");
-			click = true;
-		}
 	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void OnGUI()
 	{
-		//GUIStyle style = new GUIStyle(GUI.skin.label);
-		//style.alignment = TextAnchor.MiddleCenter;
-		//GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Touch the screen", style);
-		if(!click){
-			GUI.DrawTexture(new Rect(Screen.width/2.0f-w/2.0f, Screen.height/2.0f-h/2.0f, w, h), mCover);
+		GUI.DrawTexture(rectTexLogo, texLogo);
+
+		if(GUI.Button(rectButton, "", mButtonStyle)){
+			SceneMgr.Get.SwitchTo("ChapterMgr");
 		}
 	}
 }
