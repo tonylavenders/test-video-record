@@ -345,7 +345,7 @@ public class Export_Main : GUIManager
 		float targetW = Screen.width*0.5f;
 		float targetH = targetW/ratio;
 		float x = (Screen.width-targetW)/2.0f;
-		float y = (Screen.height-targetH)/2.0f;
+		float y = (Screen.height-targetH)*0.3f;
 
 		rectTexLogo = new Rect(x,y,targetW,targetH);
 		rectText = new Rect(0,Screen.height*0.68f,Screen.width,60);
