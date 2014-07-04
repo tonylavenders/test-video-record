@@ -6,6 +6,7 @@ public class Player_Main : GUIManager
 {
 	bool mPlay;
 	float mTime;
+	public Camera mainCamera;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,14 +17,14 @@ public class Player_Main : GUIManager
 
 		SetGUICamera();
 		LoadChapterElements();
-		/*
+
 		LetterboxManager.Start();
 		LetterboxManager.Init();
-		mCamera.camera.rect = LetterboxManager.GetRectPercent();
-		//CameraManagerSmall.pixelInset = LetterboxManager.GetPixelInset();
-*/
+		LetterboxManager.InitQuads();
+		mainCamera.rect = LetterboxManager.GetRectPercent();
+
 		float pos_x = Screen.width/2.0f;
-		float pos_y = ButtonProperties.buttonSize/2.0f + ButtonProperties.buttonMargin*2;
+		float pos_y = ButtonProperties.buttonSize/2.0f + ButtonProperties.buttonMargin;
 
 		Vector3 pos = new Vector3(pos_x, pos_y, ButtonProperties.buttonZDepth);
 		Vector3 scale = new Vector3(ButtonProperties.buttonSize, ButtonProperties.buttonSize, 1);
@@ -54,14 +55,15 @@ public class Player_Main : GUIManager
 		CurrentBackground.AddComponent<DataManager>();
 		Data.selChapter.BackGround = CurrentBackground;
 	}
-
+	/* No podemos usar OnGUI para Letterbox pq se pinta encima de los botones 3D
+	 * Usamos un letterbox hecho con un quad igual que los botones
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/*
+
 	protected override void OnGUI()
 	{
 		LetterboxManager.OnGUI();
 	}
-*/
+	*/
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	protected override void Update()
