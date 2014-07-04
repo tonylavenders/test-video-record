@@ -71,9 +71,6 @@ public class Export_Main : GUIManager
 	const int video_w = 1280;
 	const int video_h = 720;
 
-	//const int video_w = Screen.width;
-	//const int video_h = Screen.height;
-
 	string mCurrentPath;
 	Rect rectGUI;
 	private System.IO.StreamWriter mLog;
@@ -730,7 +727,8 @@ public class Export_Main : GUIManager
 
 		if(Application.platform!=RuntimePlatform.IPhonePlayer){
 			RenderTexture.active = renderTex;
-			myTexture2D.ReadPixels(new Rect(0, 0, video_w, video_h), 0, 0);
+			//myTexture2D.ReadPixels(new Rect(0, 0, video_w, video_h), 0, 0);
+			myTexture2D.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
 			myTexture2D.Apply();
 
 			byte[] bytes = myTexture2D.EncodeToPNG();
@@ -1030,7 +1028,8 @@ public class Export_Main : GUIManager
 			}
 				
 			renderTex.Create();
-			myTexture2D = new Texture2D(video_w, video_h, TextureFormat.RGB24, false);
+			//myTexture2D = new Texture2D(video_w, video_h, TextureFormat.RGB24, false);
+			myTexture2D = new Texture2D(renderTex.width, renderTex.height, TextureFormat.RGB24, false);
 		}
 	}
 
