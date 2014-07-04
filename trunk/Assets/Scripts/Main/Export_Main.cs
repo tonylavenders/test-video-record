@@ -299,7 +299,7 @@ public class Export_Main : GUIManager
 		//LetterboxManager.Start();
 		LetterboxManager.Init();
 		Transform mainCamera = GameObject.Find("CameraMain").transform;
-		mainCamera.camera.rect = LetterboxManager.GetRectPercent();
+		//mainCamera.camera.rect = LetterboxManager.GetRectPercent();
 
 		SetGUICamera();
 		OnFinishedFadeOut();
