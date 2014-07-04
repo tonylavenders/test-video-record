@@ -303,7 +303,7 @@ public class Export_Main : GUIManager
 
 		SetGUICamera();
 		OnFinishedFadeOut();
-		myTexture2D = new Texture2D(video_w, video_h, TextureFormat.RGB24, false);
+		//myTexture2D = new Texture2D(video_w, video_h, TextureFormat.RGB24, false);
 		LoadChapterElements();
 		Data.selChapter.Reset();
 		SetButtons();
