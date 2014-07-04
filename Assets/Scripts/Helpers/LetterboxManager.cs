@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-//Lower GUI size is 115pix, so we have Screen.height-115 for camera view
 //We adjust the camera rect to panoramic 16/9 format with Letterbox or Pillarbox
 using TVR.Helpers;
 
@@ -9,10 +8,6 @@ public class LetterboxManager
 {
 	static float targetRatio = 1.777f; //16/9
 	static float displayRatio;
-	static float realH;
-
-	static float GUIpercent;
-	static float guiHpix;
 
 	static float camHpix;
 	static float camHpercent;
@@ -26,36 +21,49 @@ public class LetterboxManager
 
 	static Texture texBlackPixel;
 
+	static Transform Letterbox_down;
+	static Transform Letterbox_up;
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public static void Start()
 	{
 		texBlackPixel = (Texture)ResourcesManager.LoadResource("Interface/Textures/black_pixel", "Scene");
+		Letterbox_down = GameObject.Find("Letterbox_down").transform;
+		Letterbox_up = GameObject.Find("Letterbox_up").transform;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public static void Init(float guiH=0)
+	public static void Init()
 	{
-		guiHpix = guiH;
-		GUIpercent = guiH/Screen.height;
-		realH = Screen.height-guiH;
-		displayRatio = Screen.width/realH;
+		displayRatio = Screen.width/Screen.height;
 
 		//letterboxing
 		if(displayRatio<targetRatio){
 			camHpix = Screen.width/targetRatio;
 			camHpercent = camHpix/Screen.height;
-			letterboxPercent = (1-camHpercent-GUIpercent)/2.0f;
+			letterboxPercent = (1-camHpercent)/2.0f;
 			letterboxPix = letterboxPercent*Screen.height;
 		}
 		//pillarboxing
 		else{
-			camWpix = realH*targetRatio;
+			camWpix = Screen.height*targetRatio;
 			camWpercent = camWpix/Screen.width;
 			pillarboxPercent = (1-camWpercent)/2.0f;
 			pillarboxPix = pillarboxPercent*Screen.width;
 		}
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public static void InitQuads()
+	{
+		Letterbox_down.position = new Vector3(Screen.width/2.0f, letterboxPix/2.0f, 20);
+		Letterbox_down.localScale = new Vector3(Screen.width,letterboxPix,0);
+		
+		Letterbox_up.position = new Vector3(Screen.width/2.0f, Screen.height-letterboxPix/2.0f, 20);
+		Letterbox_up.localScale = Letterbox_down.localScale;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,16 +75,16 @@ public class LetterboxManager
 		//letterboxing
 		if(displayRatio<targetRatio){
 			x = 0;
-			y = GUIpercent+letterboxPercent;
+			y = letterboxPercent;
 			w = Screen.width;
 			h = camHpercent;
 		}
 		//pillarboxing
 		else{
 			x = pillarboxPercent;
-			y = GUIpercent;
+			y = 0;
 			w = camWpercent;
-			h = 1 - GUIpercent;
+			h = 1;
 		}
 
 		if(x<0.01f)
@@ -92,19 +100,7 @@ public class LetterboxManager
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public static Rect GetPixelInset()
-	{
-		if(displayRatio<targetRatio){
-			return new Rect(-Screen.width/2,-camHpix/2,Screen.width,camHpix);
-		}
-		else{
-			return new Rect(-camWpix/2,-realH/2,camWpix,realH);
-		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	// No se usa pq los controles GUI son elementos 3D y el OnGUI se pintaria encima
 	public static void OnGUI()
 	{
 		//if(Scene_Main.getEditorInterface==null || Scene_Main.getEditorInterface.buttonEyeCamera.Checked)
@@ -120,8 +116,8 @@ public class LetterboxManager
 			//pillarboxing
 			else{
 				if(pillarboxPix>2){
-					GUI.DrawTexture(new Rect(0,0,pillarboxPix+2,Screen.height-guiHpix), texBlackPixel);
-					GUI.DrawTexture(new Rect(pillarboxPix+camWpix-2, 0, pillarboxPix+2, Screen.height-guiHpix), texBlackPixel);
+					GUI.DrawTexture(new Rect(0,0,pillarboxPix+2,Screen.height), texBlackPixel);
+					GUI.DrawTexture(new Rect(pillarboxPix+camWpix-2, 0, pillarboxPix+2, Screen.height), texBlackPixel);
 				}
 			}
 		}

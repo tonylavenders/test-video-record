@@ -43,7 +43,8 @@ namespace LZ4Sharp {
         const int HASHTABLESIZE = (1 << HASH_LOG);
         const int HASH_MASK = (HASHTABLESIZE - 1);
         const int LASTLITERALS = 5;
-        const int SKIPSTRENGTH = (NOTCOMPRESSIBLE_CONFIRMATION > 2 ? NOTCOMPRESSIBLE_CONFIRMATION : 2);
+        //const int SKIPSTRENGTH = (NOTCOMPRESSIBLE_CONFIRMATION > 2 ? NOTCOMPRESSIBLE_CONFIRMATION : 2);
+		const int SKIPSTRENGTH =  NOTCOMPRESSIBLE_CONFIRMATION;
         const int SIZE_OF_LONG_TIMES_TWO_SHIFT = 4;
         const int STEPSIZE = 4;
 		static byte[] DeBruijnBytePos = new byte[32] { 0, 0, 3, 0, 3, 1, 3, 0, 3, 2, 2, 1, 3, 2, 0, 1, 3, 3, 1, 2, 2, 2, 2, 0, 3, 1, 2, 0, 1, 0, 1, 1 };
@@ -120,7 +121,7 @@ namespace LZ4Sharp {
         int Compress(byte* source, byte* dest, int isize, int maxOutputSize)
         {
             fixed (byte* hashTablePtr = m_HashTable)
-            fixed (byte* deBruijnBytePos = DeBruijnBytePos)
+            //fixed (byte* deBruijnBytePos = DeBruijnBytePos)
             {
                 Clear(hashTablePtr, sizeof(byte*) * HASHTABLESIZE);
                 byte** hashTable = (byte**)hashTablePtr;
@@ -268,7 +269,7 @@ namespace LZ4Sharp {
         int Compress64K(byte* source, byte* dest, int isize, int maxOutputSize)
         {
             fixed (byte* hashTablePtr = m_HashTable)
-            fixed (byte* deBruijnBytePos = DeBruijnBytePos)
+            //fixed (byte* deBruijnBytePos = DeBruijnBytePos)
             {
                 Clear(hashTablePtr, sizeof(ushort) * HASHTABLESIZE * 2);
                 ushort* hashTable = (ushort*)hashTablePtr;

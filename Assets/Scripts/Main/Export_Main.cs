@@ -300,8 +300,9 @@ public class Export_Main : GUIManager
 		//CameraManagerSmall.pixelInset = new Rect(-video_w / 2, -video_h / 2, video_w, video_h);
 
 		//LetterboxManager.Start();
-		//LetterboxManager.Init();
-		//rectGUI = LetterboxManager.GetRectPercent();
+		LetterboxManager.Init();
+		Transform mainCamera = GameObject.Find("CameraMain").transform;
+		mainCamera.camera.rect = LetterboxManager.GetRectPercent();
 
 		SetGUICamera();
 		OnFinishedFadeOut();
@@ -603,7 +604,7 @@ public class Export_Main : GUIManager
 			Directory.CreateDirectory(Globals.RendersPath);
 
 		mCurrentPath = Globals.RendersPath;
-		Debug.Log (mCurrentPath);
+		//Debug.Log (mCurrentPath);
 
 		/*
 		string path;
@@ -962,7 +963,7 @@ public class Export_Main : GUIManager
 		else if(state == States.END) {
 			//mTabBackUndo.update();
 			//iPhoneUtils.PlayMovieURL("file://"+Application.persistentDataPath + "/LED.mp4", Color.black, iPhoneMovieControlMode.Full, iPhoneMovieScalingMode.None);
-			Handheld.PlayFullScreenMovie ("file://"+Application.persistentDataPath + "/LED.mp4", Color.black, FullScreenMovieControlMode.CancelOnInput);
+			//Handheld.PlayFullScreenMovie ("file://"+Application.persistentDataPath + "/LED.mp4", Color.black, FullScreenMovieControlMode.CancelOnInput);
 			//Application.OpenURL();
 		}
 	}
