@@ -832,6 +832,9 @@ public class Export_Main : GUIManager
 		//Progress bar
 		GUI.DrawTexture(rectTexProgressBkg, texProgressBkg);
 		float percent = (float)mCountCurrentFrame/(float)Data.selChapter.totalFrames;
+		if(state == States.END){
+			percent=1.0f;
+		}
 		float w = percent * (rectTexProgressBkg.width-4);
 		rectTexProgressFore = new Rect(rectTexProgressBkg.x+2, rectTexProgressBkg.y+2, w, rectTexProgressBkg.height-4);
 		GUI.DrawTexture(rectTexProgressFore, texProgressFore);
